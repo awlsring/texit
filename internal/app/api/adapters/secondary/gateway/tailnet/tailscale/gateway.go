@@ -1,8 +1,10 @@
-package tailscale
+package tailscale_gateway
 
 import (
 	"context"
 
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/tailnet"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	"github.com/tailscale/tailscale-client-go/tailscale"
 )
@@ -11,13 +13,13 @@ type TailscaleGateway struct {
 	client *tailscale.Client
 }
 
-func New(client *tailscale.Client) *TailscaleGateway {
+func New(client *tailscale.Client) gateway.Tailnet {
 	return &TailscaleGateway{
 		client: client,
 	}
 }
 
-func (g *TailscaleGateway) CreatePreauthKey(ctx context.Context) (string, error) {
+func (g *TailscaleGateway) CreatePreauthKey(ctx context.Context) (tailnet.PreauthKey, error) {
 	log := logger.FromContext(ctx)
 
 	caps := tailscale.KeyCapabilities{
@@ -49,14 +51,14 @@ func (g *TailscaleGateway) CreatePreauthKey(ctx context.Context) (string, error)
 	}
 
 	log.Debug().Msg("preauth key created")
-	return resp.Key, nil
+	return tailnet.PreauthKey(resp.Key), nil
 }
 
-func (g *TailscaleGateway) DeletePreauthKey(ctx context.Context, key string) error {
+func (g *TailscaleGateway) DeletePreauthKey(ctx context.Context, key tailnet.PreauthKey) error {
 	log := logger.FromContext(ctx)
 
 	log.Info().Msg("deleting preauth key")
-	err := g.client.DeleteKey(ctx, key)
+	err := g.client.DeleteKey(ctx, key.String())
 	if err != nil {
 		return err
 	}
@@ -65,11 +67,11 @@ func (g *TailscaleGateway) DeletePreauthKey(ctx context.Context, key string) err
 	return nil
 }
 
-func (g *TailscaleGateway) DeleteDevice(ctx context.Context, id string) error {
+func (g *TailscaleGateway) DeleteDevice(ctx context.Context, id tailnet.DeviceIdentifier) error {
 	log := logger.FromContext(ctx)
 
 	log.Info().Msg("deleting device")
-	err := g.client.DeleteDevice(ctx, id)
+	err := g.client.DeleteDevice(ctx, id.String())
 	if err != nil {
 		return err
 	}

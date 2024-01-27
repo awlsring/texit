@@ -1,8 +1,9 @@
 package config
 
 import (
-	"encoding/json"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 type TailnetType string // tailscale or headscale
@@ -14,46 +15,46 @@ const (
 // Configuration for the tailnet exit nodes will join
 type TailnetConfig struct {
 	// The type of tailnet, tailscale or headscale
-	Type TailnetType `json:"type"`
+	Type TailnetType `yaml:"type"`
 	// The network of the tailnet. On tailscale, this is your tailnet name. On headscale, this is the server address.
-	Network string `json:"tailnet"`
+	Network string `yaml:"tailnet"`
 	// The api token to communicate with the tailnet
-	ApiKey string `json:"apiKey"`
+	ApiKey string `yaml:"apiKey"`
 }
 
 type ProviderType string
 
 const (
-	ProviderTypeAwsEcs ProviderType = "aws:ecs"
+	ProviderTypeAwsEcs ProviderType = "aws-ecs"
 )
 
 // Configuration for a provider. Currently only AWS ECS.
 type ProviderConfig struct {
-	Type      ProviderType `json:"type"`
-	AccessKey string       `json:"accessKey"`
-	SecretKey string       `json:"secretKey"`
-	Region    string       `json:"region"`
-	Name      string       `json:"name"`
+	Type      ProviderType `yaml:"type"`
+	AccessKey string       `yaml:"accessKey"`
+	SecretKey string       `yaml:"secretKey"`
+	Region    string       `yaml:"region"`
+	Name      string       `yaml:"name"`
 }
 
 // Configuration for the server
 type ServerConfig struct {
-	Address string `json:"address"`
+	Address string `yaml:"address"`
 }
 
 // Configuration for the database
 type DatabaseConfig struct {
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Database string `json:"database"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	Database string `yaml:"database"`
 }
 
 type Config struct {
-	Server    ServerConfig     `json:"server"`
-	Tailscale TailnetConfig    `json:"tailscale"`
-	Providers []ProviderConfig `json:"providers"`
+	Server    ServerConfig     `yaml:"server"`
+	Tailscale TailnetConfig    `yaml:"tailscale"`
+	Providers []ProviderConfig `yaml:"providers"`
 }
 
 // Loads the application config from a file at the specified path.
@@ -64,7 +65,7 @@ func LoadFromFile(path string) (*Config, error) {
 	}
 
 	var cfg Config
-	err = json.Unmarshal(data, &cfg)
+	err = yaml.Unmarshal(data, &cfg)
 	if err != nil {
 		return nil, err
 	}

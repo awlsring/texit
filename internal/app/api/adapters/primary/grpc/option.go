@@ -16,6 +16,12 @@ func WithAddress(address string) ServerOpt {
 	}
 }
 
+func WithStaticKey(key string) ServerOpt {
+	return func(s *GrpcServer) {
+		s.apiKey = key
+	}
+}
+
 func WithLogLevel(level zerolog.Level) ServerOpt {
 	return func(s *GrpcServer) {
 		s.logLevel = level

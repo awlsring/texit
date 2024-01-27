@@ -9,3 +9,5 @@ go.work
 .vscode
 /cmd/tst
 /build
+config.yaml
+*.db

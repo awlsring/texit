@@ -25,5 +25,7 @@ func (h *Handler) StopNode(ctx context.Context, req *teen.StopNodeRequest) (*tee
 	}
 
 	log.Debug().Msg("Successfully started node")
-	return &teen.StopNodeResponse{}, nil
+	return &teen.StopNodeResponse{
+		Success: true,
+	}, nil
 }

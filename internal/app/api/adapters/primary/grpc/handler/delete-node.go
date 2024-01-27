@@ -25,5 +25,7 @@ func (h *Handler) DeleteNode(ctx context.Context, req *teen.DeleteNodeRequest) (
 	}
 
 	log.Debug().Msg("Successfully deleted node")
-	return &teen.DeleteNodeResponse{}, nil
+	return &teen.DeleteNodeResponse{
+		Success: true,
+	}, nil
 }

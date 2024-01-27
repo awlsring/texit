@@ -12,14 +12,16 @@ import (
 )
 
 const (
-	defaultNetwork  = "tcp"
-	defaultAddress  = ":7032"
-	defaultLogLevel = zerolog.InfoLevel
+	defaultNetwork   = "tcp"
+	defaultAddress   = ":7032"
+	defaultStaticKey = "set-me"
+	defaultLogLevel  = zerolog.InfoLevel
 )
 
 type GrpcServer struct {
 	network  string
 	address  string
+	apiKey   string
 	logLevel zerolog.Level
 	srv      *grpc.Server
 	listener net.Listener
@@ -29,6 +31,7 @@ func NewServer(hdl teen.TailscaleEphemeralExitNodesServiceServer, opts ...Server
 	s := &GrpcServer{
 		network:  defaultNetwork,
 		address:  defaultAddress,
+		apiKey:   defaultStaticKey,
 		logLevel: defaultLogLevel,
 	}
 
@@ -37,9 +40,10 @@ func NewServer(hdl teen.TailscaleEphemeralExitNodesServiceServer, opts ...Server
 	}
 
 	grpcOpts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(interceptor.NewLoggingInterceptor(s.logLevel)),
+		grpc.ChainUnaryInterceptor(interceptor.NewLoggingInterceptor(s.logLevel), interceptor.NewStaticAuthKeyInterceptor(s.apiKey)),
 	}
 	s.srv = grpc.NewServer(grpcOpts...)
+	teen.RegisterTailscaleEphemeralExitNodesServiceServer(s.srv, hdl)
 	lis, err := net.Listen(s.network, s.address)
 	if err != nil {
 		return nil, err

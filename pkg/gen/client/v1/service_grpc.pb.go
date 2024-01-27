@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,10 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TailscaleEphemeralExitNodesServiceClient interface {
-	HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error)
-	ListProviders(ctx context.Context, in *ListProvidersRequest, opts ...grpc.CallOption) (*ListProvidersResponse, error)
+	HealthCheck(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HealthCheckResponse, error)
+	ListProviders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProvidersResponse, error)
 	GetProvider(ctx context.Context, in *GetProviderRequest, opts ...grpc.CallOption) (*GetProviderResponse, error)
-	ListNodes(ctx context.Context, in *ListNodesRequest, opts ...grpc.CallOption) (*ListNodesResponse, error)
+	ListNodes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListNodesResponse, error)
 	GetNode(ctx context.Context, in *GetNodeRequest, opts ...grpc.CallOption) (*GetNodeResponse, error)
 	CreateNode(ctx context.Context, in *CreateNodeRequest, opts ...grpc.CallOption) (*CreateNodeResponse, error)
 	DeleteNode(ctx context.Context, in *DeleteNodeRequest, opts ...grpc.CallOption) (*DeleteNodeResponse, error)
@@ -41,7 +42,7 @@ func NewTailscaleEphemeralExitNodesServiceClient(cc grpc.ClientConnInterface) Ta
 	return &tailscaleEphemeralExitNodesServiceClient{cc}
 }
 
-func (c *tailscaleEphemeralExitNodesServiceClient) HealthCheck(ctx context.Context, in *HealthCheckRequest, opts ...grpc.CallOption) (*HealthCheckResponse, error) {
+func (c *tailscaleEphemeralExitNodesServiceClient) HealthCheck(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HealthCheckResponse, error) {
 	out := new(HealthCheckResponse)
 	err := c.cc.Invoke(ctx, "/client.TailscaleEphemeralExitNodesService/HealthCheck", in, out, opts...)
 	if err != nil {
@@ -50,7 +51,7 @@ func (c *tailscaleEphemeralExitNodesServiceClient) HealthCheck(ctx context.Conte
 	return out, nil
 }
 
-func (c *tailscaleEphemeralExitNodesServiceClient) ListProviders(ctx context.Context, in *ListProvidersRequest, opts ...grpc.CallOption) (*ListProvidersResponse, error) {
+func (c *tailscaleEphemeralExitNodesServiceClient) ListProviders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListProvidersResponse, error) {
 	out := new(ListProvidersResponse)
 	err := c.cc.Invoke(ctx, "/client.TailscaleEphemeralExitNodesService/ListProviders", in, out, opts...)
 	if err != nil {
@@ -68,7 +69,7 @@ func (c *tailscaleEphemeralExitNodesServiceClient) GetProvider(ctx context.Conte
 	return out, nil
 }
 
-func (c *tailscaleEphemeralExitNodesServiceClient) ListNodes(ctx context.Context, in *ListNodesRequest, opts ...grpc.CallOption) (*ListNodesResponse, error) {
+func (c *tailscaleEphemeralExitNodesServiceClient) ListNodes(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListNodesResponse, error) {
 	out := new(ListNodesResponse)
 	err := c.cc.Invoke(ctx, "/client.TailscaleEphemeralExitNodesService/ListNodes", in, out, opts...)
 	if err != nil {
@@ -126,10 +127,10 @@ func (c *tailscaleEphemeralExitNodesServiceClient) StopNode(ctx context.Context,
 // All implementations must embed UnimplementedTailscaleEphemeralExitNodesServiceServer
 // for forward compatibility
 type TailscaleEphemeralExitNodesServiceServer interface {
-	HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error)
-	ListProviders(context.Context, *ListProvidersRequest) (*ListProvidersResponse, error)
+	HealthCheck(context.Context, *emptypb.Empty) (*HealthCheckResponse, error)
+	ListProviders(context.Context, *emptypb.Empty) (*ListProvidersResponse, error)
 	GetProvider(context.Context, *GetProviderRequest) (*GetProviderResponse, error)
-	ListNodes(context.Context, *ListNodesRequest) (*ListNodesResponse, error)
+	ListNodes(context.Context, *emptypb.Empty) (*ListNodesResponse, error)
 	GetNode(context.Context, *GetNodeRequest) (*GetNodeResponse, error)
 	CreateNode(context.Context, *CreateNodeRequest) (*CreateNodeResponse, error)
 	DeleteNode(context.Context, *DeleteNodeRequest) (*DeleteNodeResponse, error)
@@ -142,16 +143,16 @@ type TailscaleEphemeralExitNodesServiceServer interface {
 type UnimplementedTailscaleEphemeralExitNodesServiceServer struct {
 }
 
-func (UnimplementedTailscaleEphemeralExitNodesServiceServer) HealthCheck(context.Context, *HealthCheckRequest) (*HealthCheckResponse, error) {
+func (UnimplementedTailscaleEphemeralExitNodesServiceServer) HealthCheck(context.Context, *emptypb.Empty) (*HealthCheckResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HealthCheck not implemented")
 }
-func (UnimplementedTailscaleEphemeralExitNodesServiceServer) ListProviders(context.Context, *ListProvidersRequest) (*ListProvidersResponse, error) {
+func (UnimplementedTailscaleEphemeralExitNodesServiceServer) ListProviders(context.Context, *emptypb.Empty) (*ListProvidersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProviders not implemented")
 }
 func (UnimplementedTailscaleEphemeralExitNodesServiceServer) GetProvider(context.Context, *GetProviderRequest) (*GetProviderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProvider not implemented")
 }
-func (UnimplementedTailscaleEphemeralExitNodesServiceServer) ListNodes(context.Context, *ListNodesRequest) (*ListNodesResponse, error) {
+func (UnimplementedTailscaleEphemeralExitNodesServiceServer) ListNodes(context.Context, *emptypb.Empty) (*ListNodesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNodes not implemented")
 }
 func (UnimplementedTailscaleEphemeralExitNodesServiceServer) GetNode(context.Context, *GetNodeRequest) (*GetNodeResponse, error) {
@@ -184,7 +185,7 @@ func RegisterTailscaleEphemeralExitNodesServiceServer(s grpc.ServiceRegistrar, s
 }
 
 func _TailscaleEphemeralExitNodesService_HealthCheck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HealthCheckRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -196,13 +197,13 @@ func _TailscaleEphemeralExitNodesService_HealthCheck_Handler(srv interface{}, ct
 		FullMethod: "/client.TailscaleEphemeralExitNodesService/HealthCheck",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TailscaleEphemeralExitNodesServiceServer).HealthCheck(ctx, req.(*HealthCheckRequest))
+		return srv.(TailscaleEphemeralExitNodesServiceServer).HealthCheck(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _TailscaleEphemeralExitNodesService_ListProviders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListProvidersRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -214,7 +215,7 @@ func _TailscaleEphemeralExitNodesService_ListProviders_Handler(srv interface{}, 
 		FullMethod: "/client.TailscaleEphemeralExitNodesService/ListProviders",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TailscaleEphemeralExitNodesServiceServer).ListProviders(ctx, req.(*ListProvidersRequest))
+		return srv.(TailscaleEphemeralExitNodesServiceServer).ListProviders(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -238,7 +239,7 @@ func _TailscaleEphemeralExitNodesService_GetProvider_Handler(srv interface{}, ct
 }
 
 func _TailscaleEphemeralExitNodesService_ListNodes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListNodesRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -250,7 +251,7 @@ func _TailscaleEphemeralExitNodesService_ListNodes_Handler(srv interface{}, ctx 
 		FullMethod: "/client.TailscaleEphemeralExitNodesService/ListNodes",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TailscaleEphemeralExitNodesServiceServer).ListNodes(ctx, req.(*ListNodesRequest))
+		return srv.(TailscaleEphemeralExitNodesServiceServer).ListNodes(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

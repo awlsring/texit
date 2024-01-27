@@ -2,14 +2,16 @@ syntax = "proto3";
 package client;
 option  go_package = "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1";
 
-service TailscaleEphemeralExitNodesService {
-    rpc HealthCheck(HealthCheckRequest) returns(HealthCheckResponse) {}
+import "google/protobuf/empty.proto";
 
-    rpc ListProviders(ListProvidersRequest) returns(ListProvidersResponse) {}
+service TailscaleEphemeralExitNodesService {
+    rpc HealthCheck(google.protobuf.Empty) returns(HealthCheckResponse) {}
+
+    rpc ListProviders(google.protobuf.Empty) returns(ListProvidersResponse) {}
 
     rpc GetProvider(GetProviderRequest) returns(GetProviderResponse) {}
 
-    rpc ListNodes(ListNodesRequest) returns(ListNodesResponse) {}
+    rpc ListNodes(google.protobuf.Empty) returns(ListNodesResponse) {}
     
     rpc GetNode(GetNodeRequest) returns(GetNodeResponse) {}
 
@@ -25,14 +27,14 @@ service TailscaleEphemeralExitNodesService {
 
 message HealthCheckRequest {}
 
-message HealthCheckResponse {}
+message HealthCheckResponse {
+    bool health = 1;
+}
 
 message ProviderSummary {
     string id = 1;
     string platform = 3;
 }
-
-message ListProvidersRequest {}
 
 message ListProvidersResponse {
     repeated ProviderSummary providers = 1;
@@ -58,14 +60,12 @@ enum NodeStatus {
 message NodeSummary {
     string id = 1;
     string provider_id = 2;
-    string region = 3;
-    string ip_address = 4;
-    string tailscale_ip_address = 5;
-    NodeStatus status = 6;
-    string created = 7;
+    string platform_id = 3;
+    string tailnet_id = 4;
+    string location = 5;
+    string created_at = 6;
+    string updated_at = 7;
 }
-
-message ListNodesRequest {}
 
 message ListNodesResponse {
     repeated NodeSummary nodes = 1;
@@ -92,16 +92,22 @@ message DeleteNodeRequest {
     string id = 1;
 }
 
-message DeleteNodeResponse {}
+message DeleteNodeResponse {
+    bool success = 1;
+}
 
 message StartNodeRequest {
     string id = 1;
 }
 
-message StartNodeResponse {}
+message StartNodeResponse {
+    bool success = 1;
+}
 
 message StopNodeRequest {
     string id = 1;
 }
 
-message StopNodeResponse {}
+message StopNodeResponse {
+    bool success = 1;
+}

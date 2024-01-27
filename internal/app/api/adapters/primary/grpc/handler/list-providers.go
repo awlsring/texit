@@ -6,9 +6,10 @@ import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/primary/grpc/conversion"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (h *Handler) ListProviders(ctx context.Context, req *teen.ListProvidersRequest) (*teen.ListProvidersResponse, error) {
+func (h *Handler) ListProviders(ctx context.Context, _ *emptypb.Empty) (*teen.ListProvidersResponse, error) {
 	log := logger.FromContext(ctx)
 	log.Info().Msg("Recieved list providers request")
 
