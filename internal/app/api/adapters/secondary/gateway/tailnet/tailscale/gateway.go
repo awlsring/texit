@@ -3,8 +3,8 @@ package tailscale_gateway
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/tailnet"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	"github.com/tailscale/tailscale-client-go/tailscale"
 )

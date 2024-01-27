@@ -1,26 +1,16 @@
 package api
 
 import (
-	"context"
-
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/ports/gateway"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/ports/service"
-	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
-	"google.golang.org/grpc/metadata"
 )
 
 type Service struct {
-	apiKey string
-	client v1.TailscaleEphemeralExitNodesServiceClient
+	apiGw gateway.Api
 }
 
-func NewService(apiKey string, client v1.TailscaleEphemeralExitNodesServiceClient) service.Api {
+func NewService(api gateway.Api) service.Api {
 	return &Service{
-		apiKey: apiKey,
-		client: client,
+		apiGw: api,
 	}
-}
-
-func (s *Service) setAuthInContext(ctx context.Context) context.Context {
-	md := metadata.Pairs("api-key", s.apiKey)
-	return metadata.NewOutgoingContext(ctx, md)
 }

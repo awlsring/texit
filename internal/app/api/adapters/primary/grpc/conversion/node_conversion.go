@@ -1,7 +1,7 @@
 package conversion
 
 import (
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/node"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
 	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
 )
 

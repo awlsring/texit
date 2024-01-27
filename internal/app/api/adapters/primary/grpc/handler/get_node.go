@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/primary/grpc/conversion"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/node"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
 )

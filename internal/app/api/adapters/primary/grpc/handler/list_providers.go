@@ -18,7 +18,11 @@ func (h *Handler) ListProviders(ctx context.Context, _ *teen.ListProvidersReques
 		log.Error().Err(err).Msg("Failed to list providers")
 		return nil, err
 	}
-	log.Debug().Msg("Successfully listed providers")
+	log.Debug().Msgf("Found %d providers", len(providers))
+	if len(providers) == 0 {
+		log.Warn().Msg("No providers found")
+		return &teen.ListProvidersResponse{}, nil
+	}
 
 	log.Debug().Msg("Converting providers to summaries")
 	summaries := make([]*teen.ProviderSummary, len(providers))

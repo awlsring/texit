@@ -12,7 +12,10 @@ import (
 	sqlite_node_repository "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/secondary/repository/sqlite"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/config"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/service/node"
+	provSvc "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/service/provider"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
@@ -38,6 +41,24 @@ func loadProviderGateways(providers []config.ProviderConfig) (map[string]gateway
 		}
 	}
 	return gateways, nil
+}
+
+func initProviderService(providers []config.ProviderConfig) service.Provider {
+	provs := []*provider.Provider{}
+	for _, p := range providers {
+		name, err := provider.IdentifierFromString(p.Name)
+		panicOnErr(err)
+		typ, err := provider.TypeFromString(p.Type)
+		panicOnErr(err)
+		provs = append(provs, &provider.Provider{
+			Name:     name,
+			Platform: typ,
+			Default:  p.Default,
+		})
+	}
+	svc, err := provSvc.NewService(provs)
+	panicOnErr(err)
+	return svc
 }
 
 func main() {
@@ -68,11 +89,14 @@ func main() {
 	providerGateways, err := loadProviderGateways(cfg.Providers)
 	panicOnErr(err)
 
+	log.Info().Msg("Initializing provider service")
+	providerSvc := initProviderService(cfg.Providers)
+
 	log.Info().Msg("Initializing node service")
 	nodeSvc := node.NewService(nodeRepo, tailnetGateway, providerGateways)
 
 	log.Info().Msg("Froming gRPC handler")
-	hdl := handler.New(nodeSvc, nil)
+	hdl := handler.New(nodeSvc, providerSvc)
 
 	log.Info().Msg("Creating gRPC server")
 	srv, err := grpc.NewServer(hdl, grpc.WithLogLevel(zerolog.DebugLevel))

@@ -3,9 +3,9 @@ package sqlite_node_repository
 import (
 	"time"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/provider"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/tailnet"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
 )
 
 type NodeSqlRecord struct {

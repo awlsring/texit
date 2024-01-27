@@ -2,7 +2,6 @@ package interceptor
 
 import (
 	"context"
-	"fmt"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -16,7 +15,6 @@ func NewStaticAuthKeyInterceptor(key string) grpc.UnaryServerInterceptor {
 		if !ok {
 			return nil, status.Errorf(codes.Unauthenticated, "metadata is not provided")
 		}
-		fmt.Println(md)
 
 		apiKeys, ok := md["api-key"]
 		if !ok {

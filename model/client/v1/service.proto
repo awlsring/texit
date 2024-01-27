@@ -9,6 +9,8 @@ service TailscaleEphemeralExitNodesService {
 
     rpc GetProvider(GetProviderRequest) returns(GetProviderResponse) {}
 
+    rpc GetDefaultProvider(GetDefaultProviderRequest) returns(GetDefaultProviderResponse) {}
+
     rpc ListNodes(ListNodesRequest) returns(ListNodesResponse) {}
     
     rpc GetNode(GetNodeRequest) returns(GetNodeResponse) {}
@@ -31,6 +33,7 @@ message HealthCheckResponse {
 
 message ProviderSummary {
     string id = 1;
+    bool default = 2;
     string platform = 3;
 }
 
@@ -38,6 +41,12 @@ message ListProvidersRequest {}
 
 message ListProvidersResponse {
     repeated ProviderSummary providers = 1;
+}
+
+message GetDefaultProviderRequest {}
+
+message GetDefaultProviderResponse {
+    ProviderSummary provider = 1;
 }
 
 message GetProviderRequest {

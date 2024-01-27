@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/primary/grpc/conversion"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/provider"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
 )
@@ -13,7 +13,7 @@ func (h *Handler) GetProvider(ctx context.Context, req *teen.GetProviderRequest)
 	log := logger.FromContext(ctx)
 	log.Info().Msg("Recieved get provider request")
 
-	identifier, err := provider.ProviderFromString(req.GetId())
+	identifier, err := provider.IdentifierFromString(req.GetId())
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse provider identifier")
 		return nil, err

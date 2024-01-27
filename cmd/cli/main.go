@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli/handler"
+	apiv1 "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/secondary/gateway/api_v1"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/config"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/core/service/api"
 	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
@@ -27,7 +28,8 @@ func main() {
 	panicOnErr(err)
 	client := initClient(cfg.Api.Address)
 
-	svc := api.NewService(cfg.Api.ApiKey, client)
+	apiGw := apiv1.New(cfg.Api.ApiKey, client)
+	svc := api.NewService(apiGw)
 	hdl := handler.New(svc)
 	tool := cli.New(hdl)
 	panicOnErr(tool.Run())

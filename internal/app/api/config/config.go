@@ -22,19 +22,13 @@ type TailnetConfig struct {
 	ApiKey string `yaml:"apiKey"`
 }
 
-type ProviderType string
-
-const (
-	ProviderTypeAwsEcs ProviderType = "aws-ecs"
-)
-
 // Configuration for a provider. Currently only AWS ECS.
 type ProviderConfig struct {
-	Type      ProviderType `yaml:"type"`
-	AccessKey string       `yaml:"accessKey"`
-	SecretKey string       `yaml:"secretKey"`
-	Region    string       `yaml:"region"`
-	Name      string       `yaml:"name"`
+	Type      string `yaml:"type"`
+	AccessKey string `yaml:"accessKey"`
+	SecretKey string `yaml:"secretKey"`
+	Name      string `yaml:"name"`
+	Default   bool   `yaml:"default"`
 }
 
 // Configuration for the server

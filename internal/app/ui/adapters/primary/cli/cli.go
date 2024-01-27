@@ -14,18 +14,39 @@ type CLI struct {
 
 func New(hdl *handler.Handler) *CLI {
 	app := &cli.App{
-		// Flags: []cli.Flag{
-		// 	&cli.StringFlag{
-		// 		Name:    "config",
-		// 		Aliases: []string{"c"},
-		// 		Usage:   "Load configuration from `FILE`",
-		// 	},
-		// },
 		Commands: []*cli.Command{
 			{
 				Name:   "health",
 				Usage:  "Check the health of the server",
 				Action: hdl.HealthCheck,
+			},
+			{
+				Name: "provider",
+				Subcommands: []*cli.Command{
+					{
+						Name:   "default",
+						Usage:  "Gets the default provider",
+						Action: hdl.GetDefaultProvider,
+					},
+					{
+						Name:   "describe",
+						Usage:  "Describes a provider",
+						Action: hdl.GetProvider,
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     handler.ProviderNameFlag,
+								Aliases:  []string{"n"},
+								Usage:    "The name of the provider to describe",
+								Required: true,
+							},
+						},
+					},
+					{
+						Name:   "list",
+						Usage:  "Lists all providers",
+						Action: hdl.ListProviders,
+					},
+				},
 			},
 		},
 	}

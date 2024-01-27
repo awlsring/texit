@@ -3,6 +3,8 @@ package node
 import (
 	"math/rand"
 	"time"
+
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/values"
 )
 
 const charset = "abcdefghijklmnopqrstuvwxyz" +
@@ -28,8 +30,11 @@ func (i Identifier) String() string {
 }
 
 func IdentifierFromString(id string) (Identifier, error) {
-	// TODO: do validation here
-	return Identifier(id), nil
+	identifier, err := values.NonNullString[Identifier](id)
+	if err != nil {
+		return "", err
+	}
+	return Identifier(identifier), nil
 }
 
 func FormNewNodeIdentifier() Identifier {

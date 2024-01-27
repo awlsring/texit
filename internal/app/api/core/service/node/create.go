@@ -3,9 +3,9 @@ package node
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/provider"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/domain/tailnet"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 )
 

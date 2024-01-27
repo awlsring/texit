@@ -1,6 +1,7 @@
 package provider
 
 type Provider struct {
-	Id       Identifier
+	Name     Identifier
 	Platform Type
+	Default  bool
 }
