@@ -1,0 +1,107 @@
+syntax = "proto3";
+package client;
+option  go_package = "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1";
+
+service TailscaleEphemeralExitNodesService {
+    rpc HealthCheck(HealthCheckRequest) returns(HealthCheckResponse) {}
+
+    rpc ListProviders(ListProvidersRequest) returns(ListProvidersResponse) {}
+
+    rpc GetProvider(GetProviderRequest) returns(GetProviderResponse) {}
+
+    rpc ListNodes(ListNodesRequest) returns(ListNodesResponse) {}
+    
+    rpc GetNode(GetNodeRequest) returns(GetNodeResponse) {}
+
+    rpc CreateNode(CreateNodeRequest) returns(CreateNodeResponse) {}
+
+    rpc DeleteNode(DeleteNodeRequest) returns(DeleteNodeResponse) {}
+
+    rpc StartNode(StartNodeRequest) returns(StartNodeResponse) {}
+
+    rpc StopNode(StopNodeRequest) returns(StopNodeResponse) {}
+
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {}
+
+message ProviderSummary {
+    string id = 1;
+    string platform = 3;
+}
+
+message ListProvidersRequest {}
+
+message ListProvidersResponse {
+    repeated ProviderSummary providers = 1;
+}
+
+message GetProviderRequest {
+    string id = 1;
+}
+
+message GetProviderResponse {
+    ProviderSummary provider = 1;
+}
+
+enum NodeStatus {
+    UNKNOWN = 0;
+    STARTING = 1;
+    RUNNING = 2;
+    STOPPING = 3;
+    STOPPED = 4;
+    ERROR = 5;
+}
+
+message NodeSummary {
+    string id = 1;
+    string provider_id = 2;
+    string region = 3;
+    string ip_address = 4;
+    string tailscale_ip_address = 5;
+    NodeStatus status = 6;
+    string created = 7;
+}
+
+message ListNodesRequest {}
+
+message ListNodesResponse {
+    repeated NodeSummary nodes = 1;
+}
+
+message GetNodeRequest {
+    string id = 1;
+}
+
+message GetNodeResponse {
+    NodeSummary node = 1;
+}
+
+message CreateNodeRequest {
+    string provider_id = 1;
+    string region = 2;
+}
+
+message CreateNodeResponse {
+    NodeSummary ephemeral_exit_node = 1;
+}
+
+message DeleteNodeRequest {
+    string id = 1;
+}
+
+message DeleteNodeResponse {}
+
+message StartNodeRequest {
+    string id = 1;
+}
+
+message StartNodeResponse {}
+
+message StopNodeRequest {
+    string id = 1;
+}
+
+message StopNodeResponse {}
