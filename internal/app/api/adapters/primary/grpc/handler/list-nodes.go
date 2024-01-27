@@ -6,10 +6,9 @@ import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/primary/grpc/conversion"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (h *Handler) ListNodes(ctx context.Context, _ *emptypb.Empty) (*teen.ListNodesResponse, error) {
+func (h *Handler) ListNodes(ctx context.Context, _ *teen.ListNodesRequest) (*teen.ListNodesResponse, error) {
 	log := logger.FromContext(ctx)
 	log.Info().Msg("Recieved list nodes request")
 

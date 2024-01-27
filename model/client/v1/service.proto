@@ -1,17 +1,15 @@
 syntax = "proto3";
-package client;
+package client.v1;
 option  go_package = "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1";
 
-import "google/protobuf/empty.proto";
-
 service TailscaleEphemeralExitNodesService {
-    rpc HealthCheck(google.protobuf.Empty) returns(HealthCheckResponse) {}
+    rpc HealthCheck(HealthCheckRequest) returns(HealthCheckResponse) {}
 
-    rpc ListProviders(google.protobuf.Empty) returns(ListProvidersResponse) {}
+    rpc ListProviders(ListProvidersRequest) returns(ListProvidersResponse) {}
 
     rpc GetProvider(GetProviderRequest) returns(GetProviderResponse) {}
 
-    rpc ListNodes(google.protobuf.Empty) returns(ListNodesResponse) {}
+    rpc ListNodes(ListNodesRequest) returns(ListNodesResponse) {}
     
     rpc GetNode(GetNodeRequest) returns(GetNodeResponse) {}
 
@@ -36,6 +34,8 @@ message ProviderSummary {
     string platform = 3;
 }
 
+message ListProvidersRequest {}
+
 message ListProvidersResponse {
     repeated ProviderSummary providers = 1;
 }
@@ -49,12 +49,12 @@ message GetProviderResponse {
 }
 
 enum NodeStatus {
-    UNKNOWN = 0;
-    STARTING = 1;
-    RUNNING = 2;
-    STOPPING = 3;
-    STOPPED = 4;
-    ERROR = 5;
+    NODE_STATUS_UNKNOWN_UNSPECIFIED = 0;
+    NODE_STATUS_STARTING = 1;
+    NODE_STATUS_RUNNING = 2;
+    NODE_STATUS_STOPPING = 3;
+    NODE_STATUS_STOPPED = 4;
+    NODE_STATUS_ERROR = 5;
 }
 
 message NodeSummary {
@@ -66,6 +66,8 @@ message NodeSummary {
     string created_at = 6;
     string updated_at = 7;
 }
+
+message ListNodesRequest {}
 
 message ListNodesResponse {
     repeated NodeSummary nodes = 1;

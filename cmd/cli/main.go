@@ -30,5 +30,5 @@ func main() {
 	svc := api.NewService(cfg.Api.ApiKey, client)
 	hdl := handler.New(svc)
 	tool := cli.New(hdl)
-	tool.Run()
+	panicOnErr(tool.Run())
 }
