@@ -6,32 +6,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Configuration for a provider. Currently only AWS ECS.
-type ProviderConfig struct {
-	Type      string `yaml:"type"`
-	AccessKey string `yaml:"accessKey"`
-	SecretKey string `yaml:"secretKey"`
-	Name      string `yaml:"name"`
-	Default   bool   `yaml:"default"`
-}
-
-// Configuration for the server
-type ServerConfig struct {
-	Address string `yaml:"address"`
-}
-
-// Configuration for the database
-type DatabaseConfig struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	Database string `yaml:"database"`
-}
-
 type Config struct {
 	Server    ServerConfig     `yaml:"server"`
 	Tailnet   TailnetConfig    `yaml:"tailscale"`
+	Database  DatabaseConfig   `yaml:"database"`
 	Providers []ProviderConfig `yaml:"providers"`
 }
 
@@ -48,6 +26,27 @@ func LoadFromFile(path string) (*Config, error) {
 		return nil, err
 	}
 
-	// TODO: validate config
+	err = cfg.Tailnet.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	err = cfg.Database.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	err = cfg.Server.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, p := range cfg.Providers {
+		err = p.Validate()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &cfg, nil
 }

@@ -55,7 +55,7 @@ func initProviderService(providers []config.ProviderConfig) service.Provider {
 	for _, p := range providers {
 		name, err := provider.IdentifierFromString(p.Name)
 		panicOnErr(err)
-		typ, err := provider.TypeFromString(p.Type)
+		typ, err := provider.TypeFromString(p.Type.String())
 		panicOnErr(err)
 		provs = append(provs, &provider.Provider{
 			Name:     name,
