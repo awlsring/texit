@@ -16,16 +16,19 @@ const (
 type PlatformAwsEcsGateway struct {
 	// account  interfaces.AwsAccountClient
 	ecsCache *cache.Cache
+	ec2Cache *cache.Cache
 	creds    *credentials.StaticCredentialsProvider
 }
 
 func New(accessKey, secretKey string) gateway.Platform {
 	creds := credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")
 	ecsCache := cache.New(defaultExpiration, defaultCleanUpInterval)
+	ec2Cache := cache.New(defaultExpiration, defaultCleanUpInterval)
 
 	return &PlatformAwsEcsGateway{
 		// account:  acc,
 		ecsCache: ecsCache,
+		ec2Cache: ec2Cache,
 		creds:    &creds,
 	}
 }

@@ -72,6 +72,7 @@ func main() {
 	log.Info().Msg("Loading config")
 	cfg, err := config.LoadFromFile("config.yaml")
 	panicOnErr(err)
+	// log.Debug().Interface("config", cfg).Msg("Loaded config")
 
 	log.Info().Msg("Connecting to database")
 	db, err := sqlx.Connect("sqlite3", "__deleteme.db")
@@ -81,7 +82,7 @@ func main() {
 	panicOnErr(err)
 
 	log.Info().Msg("Initializing tailscale client")
-	ts, err := tailscale.NewClient(cfg.Tailscale.ApiKey, cfg.Tailscale.Network)
+	ts, err := tailscale.NewClient(cfg.Tailscale.ApiKey, cfg.Tailscale.Tailnet)
 	panicOnErr(err)
 	log.Info().Msg("Initializing tailscale gateway")
 	tailnetGateway := tailscale_gateway.New(ts)
@@ -100,7 +101,7 @@ func main() {
 	nodeSvc := node.NewService(nodeRepo, workflowSvc, providerGateways)
 
 	log.Info().Msg("Froming gRPC handler")
-	hdl := handler.New(nodeSvc, providerSvc)
+	hdl := handler.New(nodeSvc, workflowSvc, providerSvc)
 
 	log.Info().Msg("Creating gRPC server")
 	srv, err := grpc.NewServer(hdl, grpc.WithLogLevel(zerolog.DebugLevel))

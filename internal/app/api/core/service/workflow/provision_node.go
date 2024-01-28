@@ -22,6 +22,8 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 	s.mu.Unlock()
 
 	go func() {
+		ctx = logger.InitContextLogger(context.Background(), log.GetLevel()) // TODO: Make workflow context logger
+
 		log.Debug().Msg("Forming node id")
 		id := node.FormNewNodeIdentifier()
 		log.Debug().Msgf("New node id: %s", id)

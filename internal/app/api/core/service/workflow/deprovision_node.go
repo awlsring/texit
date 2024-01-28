@@ -20,9 +20,9 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 	s.mu.Unlock()
 
 	go func() {
-		log := logger.FromContext(ctx)
-		log.Debug().Msg("Deleting node")
+		ctx = logger.InitContextLogger(context.Background(), log.GetLevel()) // TODO: Make workflow context logger
 
+		log.Debug().Msg("Deleting node")
 		log.Debug().Msgf("Getting node: %s", id)
 		n, err := s.nodeRepo.Get(ctx, id)
 		if err != nil {

@@ -14,10 +14,17 @@ func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifie
 	log.Debug().Msg("Creating node on ECS")
 
 	// TODO: Check if region is enabled
-	log.Debug().Msgf("Getting client for location %s", loc.String())
+	log.Debug().Msgf("Getting ecs client for location %s", loc.String())
 	ecsClient, err := g.getEcsClientForLocation(ctx, loc)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to get ECS client")
+		return "", err
+	}
+
+	log.Debug().Msgf("Getting default ec2 client for location %s", loc.String())
+	ec2Client, err := g.getEc2ClientForLocation(ctx, loc)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to get EC2 client")
 		return "", err
 	}
 
@@ -36,7 +43,7 @@ func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifie
 	}
 
 	log.Debug().Msg("Creating service")
-	err = g.makeService(ctx, ecsClient, tid)
+	err = g.makeService(ctx, ecsClient, ec2Client, tid)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create service")
 		return "", err

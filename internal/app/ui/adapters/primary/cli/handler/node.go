@@ -49,15 +49,13 @@ func (h *Handler) DescribeNode(c *cli.Context) error {
 }
 
 func (h *Handler) ProvisionNode(c *cli.Context) error {
-	prov, err := provider.IdentifierFromString(c.String(flag.ProviderName))
+	prov, err := provider.IdentifierFromString(c.String(flag.Provider))
 	if err != nil {
-		return err
+		e := errors.Wrap(err, "failed to parse provider name")
+		return e
 	}
 
 	location := provider.Location(c.String(flag.ProviderLocation))
-	if err != nil {
-		return err
-	}
 
 	exId, err := h.apiSvc.ProvisionNode(context.Background(), prov, location)
 	if err != nil {

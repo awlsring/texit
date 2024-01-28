@@ -18,7 +18,8 @@ func (s *Service) GetExecution(ctx context.Context, id workflow.ExecutionIdentif
 	defer s.mu.Unlock()
 	exec, ok := s.executions[id.String()]
 	if !ok {
-		log.Error().Msgf("Unknown execution: %s", id)
+		log.Warn().Msgf("Unknown execution: %s", id)
+		log.Debug().Msgf("Known executions: %v", s.executions)
 		return nil, errors.Wrap(service.ErrExecutionNotFound, id.String())
 	}
 

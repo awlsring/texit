@@ -12,9 +12,10 @@ type Handler struct {
 	teen.UnimplementedTailscaleEphemeralExitNodesServiceServer
 }
 
-func New(node service.Node, prov service.Provider) teen.TailscaleEphemeralExitNodesServiceServer {
+func New(node service.Node, work service.Workflow, prov service.Provider) teen.TailscaleEphemeralExitNodesServiceServer {
 	return &Handler{
 		nodeSvc:     node,
+		workSvc:     work,
 		providerSvc: prov,
 	}
 }

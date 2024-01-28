@@ -1,6 +1,8 @@
 package conversion
 
 import (
+	"time"
+
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/workflow"
 	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
 )
@@ -36,8 +38,8 @@ func ExecutionToSummary(ex *workflow.Execution) *v1.ExecutionSummary {
 		Id:           ex.Identifier.String(),
 		WorkflowName: TranslateWorkflowName(ex.Workflow),
 		Status:       TranslateExecutionStatus(ex.Status),
-		CreatedAt:    ex.Created.String(),
-		UpdatedAt:    ex.Updated.String(),
-		FinishedAt:   ex.Finished.String(),
+		CreatedAt:    ex.Created.Format(time.RFC3339Nano),
+		UpdatedAt:    ex.Updated.Format(time.RFC3339Nano),
+		FinishedAt:   ex.Finished.Format(time.RFC3339Nano),
 	}
 }

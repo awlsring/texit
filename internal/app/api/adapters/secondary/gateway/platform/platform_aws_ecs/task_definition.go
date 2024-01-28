@@ -35,7 +35,6 @@ func (g *PlatformAwsEcsGateway) createTaskDefinition(ctx context.Context, client
 				Name:      aws.String(defaultName),
 				Image:     aws.String(image),
 				Essential: aws.Bool(true),
-				Hostname:  aws.String(tid.String()),
 				Environment: []types.KeyValuePair{
 					{
 						Name:  aws.String(keyTsAuthkey),
@@ -70,9 +69,13 @@ func (g *PlatformAwsEcsGateway) createTaskDefinition(ctx context.Context, client
 				Value: aws.String(time.Now().Format(time.RFC3339Nano)),
 			},
 		},
-		Family: aws.String(tid.String()),
-		Cpu:    aws.String(defaultCpuAmount),
-		Memory: aws.String(defaultMemoryAmount),
+		Family:      aws.String(tid.String()),
+		Cpu:         aws.String(defaultCpuAmount),
+		Memory:      aws.String(defaultMemoryAmount),
+		NetworkMode: types.NetworkModeAwsvpc,
+		RequiresCompatibilities: []types.Compatibility{
+			types.CompatibilityFargate,
+		},
 		RuntimePlatform: &types.RuntimePlatform{
 			CpuArchitecture:       types.CPUArchitectureArm64,
 			OperatingSystemFamily: types.OSFamilyLinux,

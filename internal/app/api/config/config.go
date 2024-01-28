@@ -17,7 +17,7 @@ type TailnetConfig struct {
 	// The type of tailnet, tailscale or headscale
 	Type TailnetType `yaml:"type"`
 	// The network of the tailnet. On tailscale, this is your tailnet name. On headscale, this is the server address.
-	Network string `yaml:"tailnet"`
+	Tailnet string `yaml:"tailnet"`
 	// The api token to communicate with the tailnet
 	ApiKey string `yaml:"apiKey"`
 }
