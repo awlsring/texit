@@ -32,7 +32,7 @@ type ProviderConfig struct {
 	Default bool `yaml:"default"`
 }
 
-func (c ProviderConfig) Validate() error {
+func (c *ProviderConfig) Validate() error {
 	switch c.Type {
 	case ProviderTypeAwsEcs:
 		return c.validateAwsEcs()
@@ -41,7 +41,7 @@ func (c ProviderConfig) Validate() error {
 	}
 }
 
-func (c ProviderConfig) validateAwsEcs() error {
+func (c *ProviderConfig) validateAwsEcs() error {
 	if c.AccessKey == "" {
 		return ErrMissingProviderAwsAccessKey
 	}

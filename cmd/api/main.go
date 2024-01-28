@@ -36,7 +36,7 @@ func panicOnErr(err error) {
 	}
 }
 
-func loadProviderGateways(providers []config.ProviderConfig) (map[string]gateway.Platform, error) {
+func loadProviderGateways(providers []*config.ProviderConfig) (map[string]gateway.Platform, error) {
 	gateways := make(map[string]gateway.Platform)
 	for _, provider := range providers {
 		switch provider.Type {
@@ -50,7 +50,7 @@ func loadProviderGateways(providers []config.ProviderConfig) (map[string]gateway
 	return gateways, nil
 }
 
-func initProviderService(providers []config.ProviderConfig) service.Provider {
+func initProviderService(providers []*config.ProviderConfig) service.Provider {
 	provs := []*provider.Provider{}
 	for _, p := range providers {
 		name, err := provider.IdentifierFromString(p.Name)
@@ -68,16 +68,18 @@ func initProviderService(providers []config.ProviderConfig) service.Provider {
 	return svc
 }
 
-func initTailnetGateway(cfg config.TailnetConfig) gateway.Tailnet {
+func initTailnetGateway(cfg *config.TailnetConfig) gateway.Tailnet {
 	switch cfg.Type {
 	case config.TailnetTypeTailscale:
 		return initTailscaleGateway(cfg)
+	case config.TailnetTypeHeadscale:
+		return initHeadscaleGateway(cfg)
 	default:
 		panic("invalid tailnet type")
 	}
 }
 
-func initTailscaleGateway(cfg config.TailnetConfig) gateway.Tailnet {
+func initTailscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {
 	log.Info().Msg("Initializing tailscale client")
 	ts, err := tailscale.NewClient(cfg.ApiKey, cfg.Tailnet)
 	panicOnErr(err)
@@ -85,7 +87,7 @@ func initTailscaleGateway(cfg config.TailnetConfig) gateway.Tailnet {
 	return tailscale_gateway.New(ts)
 }
 
-func initHeadscaleGateway(cfg config.TailnetConfig) gateway.Tailnet {
+func initHeadscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {
 	u, err := url.Parse(cfg.Tailnet)
 	panicOnErr(err)
 	transport := httptransport.New(u.Host, u.Path, []string{u.Scheme})

@@ -32,7 +32,7 @@ type DatabaseConfig struct {
 	Database string `yaml:"database"`
 }
 
-func (c DatabaseConfig) Validate() error {
+func (c *DatabaseConfig) Validate() error {
 	if c.Engine == "" {
 		c.Engine = DatabaseEngineSqlite3
 	}

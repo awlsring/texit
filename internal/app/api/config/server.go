@@ -5,7 +5,7 @@ type ServerConfig struct {
 	Address string `yaml:"address"`
 }
 
-func (c ServerConfig) Validate() error {
+func (c *ServerConfig) Validate() error {
 	if c.Address == "" {
 		c.Address = ":7032"
 	}

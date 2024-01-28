@@ -27,7 +27,7 @@ type TailnetConfig struct {
 	User string
 }
 
-func (c TailnetConfig) Validate() error {
+func (c *TailnetConfig) Validate() error {
 	if c.Type == "" {
 		return ErrMissingTailnetType
 	}

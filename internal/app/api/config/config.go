@@ -7,10 +7,10 @@ import (
 )
 
 type Config struct {
-	Server    ServerConfig     `yaml:"server"`
-	Tailnet   TailnetConfig    `yaml:"tailscale"`
-	Database  DatabaseConfig   `yaml:"database"`
-	Providers []ProviderConfig `yaml:"providers"`
+	Server    *ServerConfig     `yaml:"server"`
+	Tailnet   *TailnetConfig    `yaml:"tailscale"`
+	Database  *DatabaseConfig   `yaml:"database"`
+	Providers []*ProviderConfig `yaml:"providers"`
 }
 
 // Loads the application config from a file at the specified path.
