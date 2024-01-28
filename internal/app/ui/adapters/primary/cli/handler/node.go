@@ -26,7 +26,7 @@ func (h *Handler) ListNodes(c *cli.Context) error {
 	fmt.Printf("Nodes: %d\n", len(nodes))
 	fmt.Println("==========================")
 	for _, n := range nodes {
-		fmt.Printf("Node - Id: %s | Provider: %s | Location: %s", n.Identifier.String(), n.ProviderIdentifier.String(), n.Location.String())
+		fmt.Printf("Node - Id: %s | Provider: %s | Location: %s\n", n.Identifier.String(), n.ProviderIdentifier.String(), n.Location.String())
 	}
 	return nil
 }
@@ -44,7 +44,7 @@ func (h *Handler) DescribeNode(c *cli.Context) error {
 		return e
 	}
 
-	fmt.Printf("Node - Id: %s | Provider: %s | Location: %s", n.Identifier.String(), n.ProviderIdentifier.String(), n.Location.String())
+	fmt.Printf("Node - Id: %s | Provider: %s | Location: %s\n", n.Identifier.String(), n.ProviderIdentifier.String(), n.Location.String())
 	return nil
 }
 
@@ -62,7 +62,7 @@ func (h *Handler) ProvisionNode(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Printf("Sent provision node request. Execution Id: %s", exId.String())
+	fmt.Printf("Sent provision node request. Execution Id: %s\n", exId.String())
 	return nil
 }
 
@@ -77,7 +77,7 @@ func (h *Handler) DeprovisionNode(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Printf("Sent deprovision node request. Execution Id: %s", exId.String())
+	fmt.Printf("Sent deprovision node request. Execution Id: %s\n", exId.String())
 	return nil
 }
 
@@ -92,7 +92,7 @@ func (h *Handler) StartNode(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Printf("Sent start node request for node %s", node.String())
+	fmt.Printf("Sent start node request for node %s\n", node.String())
 	return nil
 }
 
@@ -107,6 +107,6 @@ func (h *Handler) StopNode(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Printf("Sent stop node request for node %s", node.String())
+	fmt.Printf("Sent stop node request for node %s\n", node.String())
 	return nil
 }

@@ -22,6 +22,6 @@ func (h *Handler) DescribeExecution(c *cli.Context) error {
 		return e
 	}
 
-	fmt.Printf("Execution - Id: %s | Workflow: %s | Status: %s", exec.Identifier.String(), exec.Workflow.String(), exec.Status.String())
+	fmt.Printf("Execution - Id: %s | Workflow: %s | Status: %s\n", exec.Identifier.String(), exec.Workflow.String(), exec.Status.String())
 	return nil
 }

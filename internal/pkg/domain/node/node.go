@@ -16,6 +16,7 @@ type Node struct {
 	ProviderIdentifier provider.Identifier
 	// The identifier of the node on the tailnet
 	TailnetIdentifier tailnet.DeviceIdentifier
+	//TODO: Add tailnet
 	// The location the node is in
 	Location provider.Location
 	// The preauthkey used to create the node
