@@ -17,7 +17,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 	exId := workflow.FormExecutionIdentifier(workflow.WorkflowNameProvisionNode)
 
 	s.mu.Lock()
-	execution := workflow.NewExecution(exId, workflow.WorkflowNameProvisionNode, nil)
+	execution := workflow.NewExecution(exId, workflow.WorkflowNameProvisionNode)
 	s.executions[exId.String()] = execution
 	s.mu.Unlock()
 

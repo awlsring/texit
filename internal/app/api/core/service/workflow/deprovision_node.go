@@ -15,7 +15,7 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 	exId := workflow.FormExecutionIdentifier(workflow.WorkflowNameDeprovisionNode)
 
 	s.mu.Lock()
-	execution := workflow.NewExecution(exId, workflow.WorkflowNameDeprovisionNode, nil)
+	execution := workflow.NewExecution(exId, workflow.WorkflowNameDeprovisionNode)
 	s.executions[exId.String()] = execution
 	s.mu.Unlock()
 

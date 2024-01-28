@@ -15,9 +15,9 @@ func (r *SqliteNodeRepository) Get(ctx context.Context, id node.Identifier) (*no
 
 	log.Debug().Msg("Getting node from sqlite")
 	var ndb NodeSqlRecord
-	query := "SELECT * FROM nodes WHERE id = $1"
+	query := "SELECT * FROM nodes WHERE identifier = $1"
 	log.Debug().Msgf("Query: %s", query)
-	err := r.db.GetContext(ctx, &ndb, query)
+	err := r.db.GetContext(ctx, &ndb, query, id.String())
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Warn().Msgf("Node not found %s", id.String())

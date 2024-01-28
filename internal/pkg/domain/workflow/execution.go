@@ -106,38 +106,20 @@ func WorkflowNameFromString(s string) (WorkflowName, error) {
 }
 
 type Execution struct {
-	Identifier    ExecutionIdentifier
-	Workflow      WorkflowName
-	WorkflowFuncs []func() error
-	Status        Status
-	Created       time.Time
-	Updated       time.Time
-	Finished      time.Time
+	Identifier ExecutionIdentifier
+	Workflow   WorkflowName
+	Status     Status
+	Created    time.Time
+	Updated    time.Time
+	Finished   *time.Time
 }
 
-func NewExecution(id ExecutionIdentifier, workflow WorkflowName, funcs []func() error) *Execution {
+func NewExecution(id ExecutionIdentifier, workflow WorkflowName) *Execution {
 	return &Execution{
-		Identifier:    id,
-		Workflow:      workflow,
-		WorkflowFuncs: funcs,
-		Status:        StatusPending,
-		Created:       time.Now(),
-		Updated:       time.Now(),
+		Identifier: id,
+		Workflow:   workflow,
+		Status:     StatusPending,
+		Created:    time.Now(),
+		Updated:    time.Now(),
 	}
-}
-
-func (e *Execution) Run() error {
-	e.Status = StatusRunning
-	e.Updated = time.Now()
-	for _, f := range e.WorkflowFuncs {
-		if err := f(); err != nil {
-			e.Status = StatusFailed
-			e.Updated = time.Now()
-			return err
-		}
-	}
-	e.Status = StatusComplete
-	e.Updated = time.Now()
-	e.Finished = time.Now()
-	return nil
 }

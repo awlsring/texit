@@ -49,7 +49,8 @@ func (s *Service) closeWorkflow(ctx context.Context, ex *workflow.Execution, res
 
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	ex.Updated = time.Now()
-	ex.Finished = time.Now()
+	now := time.Now()
+	ex.Updated = now
+	ex.Finished = &now
 	ex.Status = result
 }

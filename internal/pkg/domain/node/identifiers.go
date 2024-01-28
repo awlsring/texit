@@ -19,6 +19,14 @@ func (i PlatformIdentifier) String() string {
 	return string(i)
 }
 
+func PlatformIdentifierFromString(id string) (PlatformIdentifier, error) {
+	identifier, err := values.NonNullString[PlatformIdentifier](id)
+	if err != nil {
+		return "", err
+	}
+	return PlatformIdentifier(identifier), nil
+}
+
 func NewPlatformIdentifier(id string) PlatformIdentifier {
 	return PlatformIdentifier(id)
 }

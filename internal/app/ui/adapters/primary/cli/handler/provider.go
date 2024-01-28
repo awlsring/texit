@@ -4,16 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli/flag"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
 	"github.com/urfave/cli/v2"
 )
 
-const (
-	ProviderNameFlag = "name"
-)
-
 func (h *Handler) GetProvider(c *cli.Context) error {
-	name, err := provider.IdentifierFromString(c.String(ProviderNameFlag))
+	name, err := provider.IdentifierFromString(c.String(flag.ProviderName))
 	if err != nil {
 		return err
 	}
