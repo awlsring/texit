@@ -6,22 +6,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type TailnetType string // tailscale or headscale
-const (
-	TailnetTypeTailscale TailnetType = "tailscale"
-	TailnetTypeHeadscale TailnetType = "headscale"
-)
-
-// Configuration for the tailnet exit nodes will join
-type TailnetConfig struct {
-	// The type of tailnet, tailscale or headscale
-	Type TailnetType `yaml:"type"`
-	// The network of the tailnet. On tailscale, this is your tailnet name. On headscale, this is the server address.
-	Tailnet string `yaml:"tailnet"`
-	// The api token to communicate with the tailnet
-	ApiKey string `yaml:"apiKey"`
-}
-
 // Configuration for a provider. Currently only AWS ECS.
 type ProviderConfig struct {
 	Type      string `yaml:"type"`
@@ -47,7 +31,7 @@ type DatabaseConfig struct {
 
 type Config struct {
 	Server    ServerConfig     `yaml:"server"`
-	Tailscale TailnetConfig    `yaml:"tailscale"`
+	Tailnet   TailnetConfig    `yaml:"tailscale"`
 	Providers []ProviderConfig `yaml:"providers"`
 }
 

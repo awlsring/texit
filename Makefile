@@ -1,17 +1,23 @@
 SRC_DIR := $(shell git rev-parse --show-toplevel)
 PKG_DIR := $(SRC_DIR)/pkg
-GRPC_GEN_DIR := $(PKG_DIR)/gen
+GEN_DIR := $(PKG_DIR)/gen
 CMD_DIR := $(SRC_DIR)/cmd
 BUILD_DIR := $(SRC_DIR)/build
 CUR_DIR := $(shell pwd)
 MODEL_DIR := $(SRC_DIR)/model
+HEADSCALE_22_MODEL := $(MODEL_DIR)/headscale/headscale-v0.22.3.json
+HEADSCALE_22_GEN := $(GEN_DIR)/headscale/v0.22.3
 
 all: build
 
 codegen:
+	@echo "Cleaning up"
+	rm -rf $(GEN_DIR)
 	@echo "Generating GRPC"
-	rm -rf $(GRPC_GEN_DIR)
 	buf generate $(MODEL_DIR)
+	@echo "Generating Headscale Client for v0.22.3"
+	mkdir -p $(HEADSCALE_22_GEN)
+	swagger generate client -f $(HEADSCALE_22_MODEL) -A headscale -t $(HEADSCALE_22_GEN)
 
 build: codegen lint
 	@echo "Tidying up"

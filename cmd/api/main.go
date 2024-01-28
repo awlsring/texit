@@ -2,12 +2,14 @@ package main
 
 import (
 	"context"
+	"net/url"
 	"os"
 	"os/signal"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/primary/grpc"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/primary/grpc/handler"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ecs"
+	headscale_v0_22_3_gateway "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/secondary/gateway/tailnet/headscale/v0.22.3"
 	tailscale_gateway "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/secondary/gateway/tailnet/tailscale"
 	sqlite_node_repository "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/secondary/repository/sqlite"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/config"
@@ -18,8 +20,12 @@ import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/headscale/v0.22.3/client"
+	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 
 	"github.com/tailscale/tailscale-client-go/tailscale"
 )
@@ -62,6 +68,34 @@ func initProviderService(providers []config.ProviderConfig) service.Provider {
 	return svc
 }
 
+func initTailnetGateway(cfg config.TailnetConfig) gateway.Tailnet {
+	switch cfg.Type {
+	case config.TailnetTypeTailscale:
+		return initTailscaleGateway(cfg)
+	default:
+		panic("invalid tailnet type")
+	}
+}
+
+func initTailscaleGateway(cfg config.TailnetConfig) gateway.Tailnet {
+	log.Info().Msg("Initializing tailscale client")
+	ts, err := tailscale.NewClient(cfg.ApiKey, cfg.Tailnet)
+	panicOnErr(err)
+	log.Info().Msg("Initializing tailscale gateway")
+	return tailscale_gateway.New(ts)
+}
+
+func initHeadscaleGateway(cfg config.TailnetConfig) gateway.Tailnet {
+	u, err := url.Parse(cfg.Tailnet)
+	panicOnErr(err)
+	transport := httptransport.New(u.Host, u.Path, []string{u.Scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(cfg.ApiKey)
+
+	client := client.New(transport, strfmt.Default)
+
+	return headscale_v0_22_3_gateway.New(cfg.User, client.HeadscaleService)
+}
+
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -72,7 +106,6 @@ func main() {
 	log.Info().Msg("Loading config")
 	cfg, err := config.LoadFromFile("config.yaml")
 	panicOnErr(err)
-	// log.Debug().Interface("config", cfg).Msg("Loaded config")
 
 	log.Info().Msg("Connecting to database")
 	db, err := sqlx.Connect("sqlite3", "__deleteme.db")
@@ -81,11 +114,8 @@ func main() {
 	err = nodeRepo.Init(ctx)
 	panicOnErr(err)
 
-	log.Info().Msg("Initializing tailscale client")
-	ts, err := tailscale.NewClient(cfg.Tailscale.ApiKey, cfg.Tailscale.Tailnet)
-	panicOnErr(err)
-	log.Info().Msg("Initializing tailscale gateway")
-	tailnetGateway := tailscale_gateway.New(ts)
+	log.Info().Msg("Initializing tailnet gateway")
+	tailnetGateway := initTailnetGateway(cfg.Tailnet)
 
 	log.Info().Msg("Initializing provider gateways")
 	providerGateways, err := loadProviderGateways(cfg.Providers)
