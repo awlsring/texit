@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
 )
 
 var (
@@ -13,8 +12,9 @@ var (
 )
 
 type Node interface {
-	Create(context.Context, provider.Identifier, provider.Location) (*node.Node, error)
-	Delete(ctx context.Context, id node.Identifier) error
+	// Create(context.Context, provider.Identifier, provider.Location) (*node.Node, error)
+	// Delete(ctx context.Context, id node.Identifier) error
+
 	Start(ctx context.Context, id node.Identifier) error
 	Stop(ctx context.Context, id node.Identifier) error
 	Status(ctx context.Context, id node.Identifier) (node.Status, error)

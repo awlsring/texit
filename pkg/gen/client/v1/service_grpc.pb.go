@@ -28,10 +28,11 @@ type TailscaleEphemeralExitNodesServiceClient interface {
 	GetDefaultProvider(ctx context.Context, in *GetDefaultProviderRequest, opts ...grpc.CallOption) (*GetDefaultProviderResponse, error)
 	ListNodes(ctx context.Context, in *ListNodesRequest, opts ...grpc.CallOption) (*ListNodesResponse, error)
 	GetNode(ctx context.Context, in *GetNodeRequest, opts ...grpc.CallOption) (*GetNodeResponse, error)
-	CreateNode(ctx context.Context, in *CreateNodeRequest, opts ...grpc.CallOption) (*CreateNodeResponse, error)
-	DeleteNode(ctx context.Context, in *DeleteNodeRequest, opts ...grpc.CallOption) (*DeleteNodeResponse, error)
 	StartNode(ctx context.Context, in *StartNodeRequest, opts ...grpc.CallOption) (*StartNodeResponse, error)
 	StopNode(ctx context.Context, in *StopNodeRequest, opts ...grpc.CallOption) (*StopNodeResponse, error)
+	ProvisionNode(ctx context.Context, in *ProvisionNodeRequest, opts ...grpc.CallOption) (*ProvisionNodeResponse, error)
+	DeprovisionNode(ctx context.Context, in *DeprovisionNodeRequest, opts ...grpc.CallOption) (*DeprovisionNodeResponse, error)
+	GetExecution(ctx context.Context, in *GetExecutionRequest, opts ...grpc.CallOption) (*GetExecutionResponse, error)
 }
 
 type tailscaleEphemeralExitNodesServiceClient struct {
@@ -96,24 +97,6 @@ func (c *tailscaleEphemeralExitNodesServiceClient) GetNode(ctx context.Context, 
 	return out, nil
 }
 
-func (c *tailscaleEphemeralExitNodesServiceClient) CreateNode(ctx context.Context, in *CreateNodeRequest, opts ...grpc.CallOption) (*CreateNodeResponse, error) {
-	out := new(CreateNodeResponse)
-	err := c.cc.Invoke(ctx, "/client.v1.TailscaleEphemeralExitNodesService/CreateNode", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *tailscaleEphemeralExitNodesServiceClient) DeleteNode(ctx context.Context, in *DeleteNodeRequest, opts ...grpc.CallOption) (*DeleteNodeResponse, error) {
-	out := new(DeleteNodeResponse)
-	err := c.cc.Invoke(ctx, "/client.v1.TailscaleEphemeralExitNodesService/DeleteNode", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *tailscaleEphemeralExitNodesServiceClient) StartNode(ctx context.Context, in *StartNodeRequest, opts ...grpc.CallOption) (*StartNodeResponse, error) {
 	out := new(StartNodeResponse)
 	err := c.cc.Invoke(ctx, "/client.v1.TailscaleEphemeralExitNodesService/StartNode", in, out, opts...)
@@ -132,6 +115,33 @@ func (c *tailscaleEphemeralExitNodesServiceClient) StopNode(ctx context.Context,
 	return out, nil
 }
 
+func (c *tailscaleEphemeralExitNodesServiceClient) ProvisionNode(ctx context.Context, in *ProvisionNodeRequest, opts ...grpc.CallOption) (*ProvisionNodeResponse, error) {
+	out := new(ProvisionNodeResponse)
+	err := c.cc.Invoke(ctx, "/client.v1.TailscaleEphemeralExitNodesService/ProvisionNode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tailscaleEphemeralExitNodesServiceClient) DeprovisionNode(ctx context.Context, in *DeprovisionNodeRequest, opts ...grpc.CallOption) (*DeprovisionNodeResponse, error) {
+	out := new(DeprovisionNodeResponse)
+	err := c.cc.Invoke(ctx, "/client.v1.TailscaleEphemeralExitNodesService/DeprovisionNode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tailscaleEphemeralExitNodesServiceClient) GetExecution(ctx context.Context, in *GetExecutionRequest, opts ...grpc.CallOption) (*GetExecutionResponse, error) {
+	out := new(GetExecutionResponse)
+	err := c.cc.Invoke(ctx, "/client.v1.TailscaleEphemeralExitNodesService/GetExecution", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TailscaleEphemeralExitNodesServiceServer is the server API for TailscaleEphemeralExitNodesService service.
 // All implementations must embed UnimplementedTailscaleEphemeralExitNodesServiceServer
 // for forward compatibility
@@ -142,10 +152,11 @@ type TailscaleEphemeralExitNodesServiceServer interface {
 	GetDefaultProvider(context.Context, *GetDefaultProviderRequest) (*GetDefaultProviderResponse, error)
 	ListNodes(context.Context, *ListNodesRequest) (*ListNodesResponse, error)
 	GetNode(context.Context, *GetNodeRequest) (*GetNodeResponse, error)
-	CreateNode(context.Context, *CreateNodeRequest) (*CreateNodeResponse, error)
-	DeleteNode(context.Context, *DeleteNodeRequest) (*DeleteNodeResponse, error)
 	StartNode(context.Context, *StartNodeRequest) (*StartNodeResponse, error)
 	StopNode(context.Context, *StopNodeRequest) (*StopNodeResponse, error)
+	ProvisionNode(context.Context, *ProvisionNodeRequest) (*ProvisionNodeResponse, error)
+	DeprovisionNode(context.Context, *DeprovisionNodeRequest) (*DeprovisionNodeResponse, error)
+	GetExecution(context.Context, *GetExecutionRequest) (*GetExecutionResponse, error)
 	mustEmbedUnimplementedTailscaleEphemeralExitNodesServiceServer()
 }
 
@@ -171,17 +182,20 @@ func (UnimplementedTailscaleEphemeralExitNodesServiceServer) ListNodes(context.C
 func (UnimplementedTailscaleEphemeralExitNodesServiceServer) GetNode(context.Context, *GetNodeRequest) (*GetNodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNode not implemented")
 }
-func (UnimplementedTailscaleEphemeralExitNodesServiceServer) CreateNode(context.Context, *CreateNodeRequest) (*CreateNodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateNode not implemented")
-}
-func (UnimplementedTailscaleEphemeralExitNodesServiceServer) DeleteNode(context.Context, *DeleteNodeRequest) (*DeleteNodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNode not implemented")
-}
 func (UnimplementedTailscaleEphemeralExitNodesServiceServer) StartNode(context.Context, *StartNodeRequest) (*StartNodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartNode not implemented")
 }
 func (UnimplementedTailscaleEphemeralExitNodesServiceServer) StopNode(context.Context, *StopNodeRequest) (*StopNodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StopNode not implemented")
+}
+func (UnimplementedTailscaleEphemeralExitNodesServiceServer) ProvisionNode(context.Context, *ProvisionNodeRequest) (*ProvisionNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ProvisionNode not implemented")
+}
+func (UnimplementedTailscaleEphemeralExitNodesServiceServer) DeprovisionNode(context.Context, *DeprovisionNodeRequest) (*DeprovisionNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeprovisionNode not implemented")
+}
+func (UnimplementedTailscaleEphemeralExitNodesServiceServer) GetExecution(context.Context, *GetExecutionRequest) (*GetExecutionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetExecution not implemented")
 }
 func (UnimplementedTailscaleEphemeralExitNodesServiceServer) mustEmbedUnimplementedTailscaleEphemeralExitNodesServiceServer() {
 }
@@ -305,42 +319,6 @@ func _TailscaleEphemeralExitNodesService_GetNode_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TailscaleEphemeralExitNodesService_CreateNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateNodeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TailscaleEphemeralExitNodesServiceServer).CreateNode(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/client.v1.TailscaleEphemeralExitNodesService/CreateNode",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TailscaleEphemeralExitNodesServiceServer).CreateNode(ctx, req.(*CreateNodeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _TailscaleEphemeralExitNodesService_DeleteNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteNodeRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TailscaleEphemeralExitNodesServiceServer).DeleteNode(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/client.v1.TailscaleEphemeralExitNodesService/DeleteNode",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TailscaleEphemeralExitNodesServiceServer).DeleteNode(ctx, req.(*DeleteNodeRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _TailscaleEphemeralExitNodesService_StartNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StartNodeRequest)
 	if err := dec(in); err != nil {
@@ -377,6 +355,60 @@ func _TailscaleEphemeralExitNodesService_StopNode_Handler(srv interface{}, ctx c
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TailscaleEphemeralExitNodesService_ProvisionNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProvisionNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TailscaleEphemeralExitNodesServiceServer).ProvisionNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/client.v1.TailscaleEphemeralExitNodesService/ProvisionNode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TailscaleEphemeralExitNodesServiceServer).ProvisionNode(ctx, req.(*ProvisionNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TailscaleEphemeralExitNodesService_DeprovisionNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeprovisionNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TailscaleEphemeralExitNodesServiceServer).DeprovisionNode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/client.v1.TailscaleEphemeralExitNodesService/DeprovisionNode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TailscaleEphemeralExitNodesServiceServer).DeprovisionNode(ctx, req.(*DeprovisionNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TailscaleEphemeralExitNodesService_GetExecution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetExecutionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TailscaleEphemeralExitNodesServiceServer).GetExecution(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/client.v1.TailscaleEphemeralExitNodesService/GetExecution",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TailscaleEphemeralExitNodesServiceServer).GetExecution(ctx, req.(*GetExecutionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TailscaleEphemeralExitNodesService_ServiceDesc is the grpc.ServiceDesc for TailscaleEphemeralExitNodesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -409,20 +441,24 @@ var TailscaleEphemeralExitNodesService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TailscaleEphemeralExitNodesService_GetNode_Handler,
 		},
 		{
-			MethodName: "CreateNode",
-			Handler:    _TailscaleEphemeralExitNodesService_CreateNode_Handler,
-		},
-		{
-			MethodName: "DeleteNode",
-			Handler:    _TailscaleEphemeralExitNodesService_DeleteNode_Handler,
-		},
-		{
 			MethodName: "StartNode",
 			Handler:    _TailscaleEphemeralExitNodesService_StartNode_Handler,
 		},
 		{
 			MethodName: "StopNode",
 			Handler:    _TailscaleEphemeralExitNodesService_StopNode_Handler,
+		},
+		{
+			MethodName: "ProvisionNode",
+			Handler:    _TailscaleEphemeralExitNodesService_ProvisionNode_Handler,
+		},
+		{
+			MethodName: "DeprovisionNode",
+			Handler:    _TailscaleEphemeralExitNodesService_DeprovisionNode_Handler,
+		},
+		{
+			MethodName: "GetExecution",
+			Handler:    _TailscaleEphemeralExitNodesService_GetExecution_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -15,14 +15,15 @@ service TailscaleEphemeralExitNodesService {
     
     rpc GetNode(GetNodeRequest) returns(GetNodeResponse) {}
 
-    rpc CreateNode(CreateNodeRequest) returns(CreateNodeResponse) {}
-
-    rpc DeleteNode(DeleteNodeRequest) returns(DeleteNodeResponse) {}
-
     rpc StartNode(StartNodeRequest) returns(StartNodeResponse) {}
 
     rpc StopNode(StopNodeRequest) returns(StopNodeResponse) {}
 
+    rpc ProvisionNode(ProvisionNodeRequest) returns(ProvisionNodeResponse) {}
+
+    rpc DeprovisionNode(DeprovisionNodeRequest) returns(DeprovisionNodeResponse) {}
+
+    rpc GetExecution(GetExecutionRequest) returns(GetExecutionResponse) {}
 }
 
 message HealthCheckRequest {}
@@ -90,23 +91,6 @@ message GetNodeResponse {
     NodeSummary node = 1;
 }
 
-message CreateNodeRequest {
-    string provider_id = 1;
-    string region = 2;
-}
-
-message CreateNodeResponse {
-    NodeSummary ephemeral_exit_node = 1;
-}
-
-message DeleteNodeRequest {
-    string id = 1;
-}
-
-message DeleteNodeResponse {
-    bool success = 1;
-}
-
 message StartNodeRequest {
     string id = 1;
 }
@@ -121,4 +105,53 @@ message StopNodeRequest {
 
 message StopNodeResponse {
     bool success = 1;
+}
+
+message ProvisionNodeRequest {
+    string provider_id = 1;
+    string location = 2;
+}
+
+message ProvisionNodeResponse {
+    string execution_id = 1;
+}
+
+message DeprovisionNodeRequest {
+    string id = 1;
+}
+
+message DeprovisionNodeResponse {
+    string execution_id = 1;
+}
+
+enum ExecutionStatus {
+    EXECUTION_STATUS_UNKNOWN_UNSPECIFIED = 0;
+    EXECUTION_STATUS_PENDING = 1;
+    EXECUTION_STATUS_RUNNING = 2;
+    EXECUTION_STATUS_COMPLETED = 3;
+    EXECUTION_STATUS_FAILED = 4;
+}
+
+enum WorkflowName {
+    WORKFLOW_NAME_UNKNOWN_UNSPECIFIED = 0;
+    WORKFLOW_NAME_PROVISION_NODE = 1;
+    WORKFLOW_NAME_DEPROVISION_NODE = 2;
+}
+
+message ExecutionSummary {
+    string id = 1;
+    WorkflowName workflow_name = 2;
+    ExecutionStatus status = 3;
+    string created_at = 4;
+    string updated_at = 5;
+    string finished_at = 6;
+}
+
+
+message GetExecutionRequest {
+    string execution_id = 1;
+}
+
+message GetExecutionResponse {
+    ExecutionSummary execution = 1;
 }

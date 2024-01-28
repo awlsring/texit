@@ -7,6 +7,7 @@ import (
 
 type Handler struct {
 	nodeSvc     service.Node
+	workSvc     service.Workflow
 	providerSvc service.Provider
 	teen.UnimplementedTailscaleEphemeralExitNodesServiceServer
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/config"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/service/node"
 	provSvc "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/service/provider"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/service/workflow"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
@@ -89,11 +90,14 @@ func main() {
 	providerGateways, err := loadProviderGateways(cfg.Providers)
 	panicOnErr(err)
 
+	log.Info().Msg("Initializing workflow service")
+	workflowSvc := workflow.NewService(nodeRepo, tailnetGateway, providerGateways)
+
 	log.Info().Msg("Initializing provider service")
 	providerSvc := initProviderService(cfg.Providers)
 
 	log.Info().Msg("Initializing node service")
-	nodeSvc := node.NewService(nodeRepo, tailnetGateway, providerGateways)
+	nodeSvc := node.NewService(nodeRepo, workflowSvc, providerGateways)
 
 	log.Info().Msg("Froming gRPC handler")
 	hdl := handler.New(nodeSvc, providerSvc)
