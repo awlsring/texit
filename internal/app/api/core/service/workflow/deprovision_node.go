@@ -39,6 +39,14 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 			return
 		}
 
+		log.Debug().Msg("Getting tailnet gateway")
+		tailnetGw, err := s.getTailnetGateway(ctx, n.Tailnet)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to get tailnet gateway")
+			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			return
+		}
+
 		log.Debug().Msgf("Deleting node from platform: %s", platformGw)
 		err = platformGw.DeleteNode(ctx, n)
 		if err != nil {
@@ -48,7 +56,7 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 		}
 
 		log.Debug().Msgf("Deleting node from tailnet")
-		err = s.tailnetGw.DeleteDevice(ctx, n.TailnetIdentifier)
+		err = tailnetGw.DeleteDevice(ctx, n.TailnetIdentifier)
 		if err != nil {
 			log.Warn().Err(err).Msg("Failed to delete node from tailnet, continuing...")
 		}

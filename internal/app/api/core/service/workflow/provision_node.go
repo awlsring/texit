@@ -10,7 +10,7 @@ import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 )
 
-func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider provider.Identifier, location provider.Location) (workflow.ExecutionIdentifier, error) {
+func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider provider.Identifier, location provider.Location, tn tailnet.Identifier) (workflow.ExecutionIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating node")
 
@@ -31,8 +31,16 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		log.Debug().Msg("Forming tailnet identifier")
 		tailId := tailnet.FormDeviceIdentifier(location.String(), id.String())
 
+		log.Debug().Msg("Getting tailnet gateway")
+		tailnetGw, err := s.getTailnetGateway(ctx, tn)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to get tailnet gateway")
+			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			return
+		}
+
 		log.Debug().Msg("Creating preauth key for node")
-		preauthKey, err := s.tailnetGw.CreatePreauthKey(ctx)
+		preauthKey, err := tailnetGw.CreatePreauthKey(ctx)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to create preauth key")
 			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
@@ -56,7 +64,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		}
 
 		log.Debug().Msg("Enabling as exit node")
-		err = s.tailnetGw.EnableExitNode(ctx, tailId)
+		err = tailnetGw.EnableExitNode(ctx, tailId)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to enable exit node")
 		}

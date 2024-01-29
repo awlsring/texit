@@ -8,13 +8,11 @@ import (
 )
 
 var (
-	ErrUnknownProvider         = errors.New("unknown provider")
-	ErrMulitpleDefaultProvider = errors.New("multiple default providers")
-	ErrNoProviders             = errors.New("no providers")
+	ErrUnknownProvider = errors.New("unknown provider")
+	ErrNoProviders     = errors.New("no providers")
 )
 
 type Provider interface {
-	Default(context.Context) (*provider.Provider, error)
 	Describe(context.Context, provider.Identifier) (*provider.Provider, error)
 	List(context.Context) ([]*provider.Provider, error)
 }

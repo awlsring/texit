@@ -124,11 +124,6 @@ func New(hdl *handler.Handler) *CLI {
 				Name: "provider",
 				Subcommands: []*cli.Command{
 					{
-						Name:   "default",
-						Usage:  "Gets the default provider",
-						Action: hdl.GetDefaultProvider,
-					},
-					{
 						Name:   "describe",
 						Usage:  "Describes a provider",
 						Action: hdl.GetProvider,

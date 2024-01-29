@@ -15,10 +15,12 @@ import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/config"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/service/node"
 	provSvc "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/service/provider"
+	tailnetSvc "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/service/tailnet"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/core/service/workflow"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/headscale/v0.22.3/client"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -36,7 +38,7 @@ func panicOnErr(err error) {
 	}
 }
 
-func loadProviderGateways(providers []*config.ProviderConfig) (map[string]gateway.Platform, error) {
+func initProviderGateways(providers []*config.ProviderConfig) map[string]gateway.Platform {
 	gateways := make(map[string]gateway.Platform)
 	for _, provider := range providers {
 		switch provider.Type {
@@ -44,10 +46,25 @@ func loadProviderGateways(providers []*config.ProviderConfig) (map[string]gatewa
 			p := platform_aws_ecs.New(provider.AccessKey, provider.SecretKey)
 			gateways[provider.Name] = p
 		default:
-			return nil, nil
+			return nil
 		}
 	}
-	return gateways, nil
+	return gateways
+}
+
+func initTailnetGateways(cfg []*config.TailnetConfig) map[string]gateway.Tailnet {
+	gateways := make(map[string]gateway.Tailnet)
+	for _, t := range cfg {
+		switch t.Type {
+		case config.TailnetTypeTailscale:
+			gateways[t.Tailnet] = initTailscaleGateway(t)
+		case config.TailnetTypeHeadscale:
+			gateways[t.Tailnet] = initHeadscaleGateway(t)
+		default:
+			return nil
+		}
+	}
+	return gateways
 }
 
 func initProviderService(providers []*config.ProviderConfig) service.Provider {
@@ -62,20 +79,24 @@ func initProviderService(providers []*config.ProviderConfig) service.Provider {
 			Platform: typ,
 		})
 	}
-	svc, err := provSvc.NewService(provs)
-	panicOnErr(err)
+	svc := provSvc.NewService(provs)
 	return svc
 }
 
-func initTailnetGateway(cfg *config.TailnetConfig) gateway.Tailnet {
-	switch cfg.Type {
-	case config.TailnetTypeTailscale:
-		return initTailscaleGateway(cfg)
-	case config.TailnetTypeHeadscale:
-		return initHeadscaleGateway(cfg)
-	default:
-		panic("invalid tailnet type")
+func initTailnetService(tailnets []*config.TailnetConfig) service.Tailnet {
+	provs := []*tailnet.Tailnet{}
+	for _, t := range tailnets {
+		name, err := tailnet.IdentifierFromString(t.Tailnet)
+		panicOnErr(err)
+		typ, err := tailnet.TypeFromString(t.Type.String())
+		panicOnErr(err)
+		provs = append(provs, &tailnet.Tailnet{
+			Name: name,
+			Type: typ,
+		})
 	}
+	svc := tailnetSvc.NewService(provs)
+	return svc
 }
 
 func initTailscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {
@@ -116,23 +137,24 @@ func main() {
 	panicOnErr(err)
 
 	log.Info().Msg("Initializing tailnet gateway")
-	tailnetGateway := initTailnetGateway(cfg.Tailnet)
+	tailnetGateways := initTailnetGateways(cfg.Tailnets)
 
 	log.Info().Msg("Initializing provider gateways")
-	providerGateways, err := loadProviderGateways(cfg.Providers)
-	panicOnErr(err)
+	providerGateways := initProviderGateways(cfg.Providers)
 
 	log.Info().Msg("Initializing workflow service")
-	workflowSvc := workflow.NewService(nodeRepo, tailnetGateway, providerGateways)
+	workflowSvc := workflow.NewService(nodeRepo, tailnetGateways, providerGateways)
 
 	log.Info().Msg("Initializing provider service")
 	providerSvc := initProviderService(cfg.Providers)
+
+	tailnetSvc := initTailnetService(cfg.Tailnets)
 
 	log.Info().Msg("Initializing node service")
 	nodeSvc := node.NewService(nodeRepo, workflowSvc, providerGateways)
 
 	log.Info().Msg("Froming gRPC handler")
-	hdl := handler.New(nodeSvc, workflowSvc, providerSvc)
+	hdl := handler.New(nodeSvc, workflowSvc, providerSvc, tailnetSvc)
 
 	log.Info().Msg("Creating gRPC server")
 	srv, err := grpc.NewServer(hdl, grpc.WithLogLevel(zerolog.DebugLevel))

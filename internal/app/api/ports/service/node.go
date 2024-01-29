@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	ErrUnknownPlatform = errors.New("unknown platform")
+	ErrUnknownTailnetId = errors.New("unknown tailnet")
+	ErrUnknownPlatform  = errors.New("unknown platform")
 )
 
 type Node interface {

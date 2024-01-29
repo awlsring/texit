@@ -11,7 +11,7 @@ func SummaryToProvider(sum *v1.ProviderSummary) (*provider.Provider, error) {
 		return nil, err
 	}
 
-	t, err := provider.TypeFromString(sum.Platform)
+	t, err := provider.TypeFromString(sum.Type.String())
 	if err != nil {
 		return nil, err
 	}

@@ -9,6 +9,7 @@ import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/repository"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/workflow"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	"github.com/pkg/errors"
@@ -16,17 +17,17 @@ import (
 
 type Service struct {
 	nodeRepo    repository.Node
-	tailnetGw   gateway.Tailnet
+	tailnetGws  map[string]gateway.Tailnet
 	platformGws map[string]gateway.Platform
 
 	executions map[string]*workflow.Execution
 	mu         sync.Mutex
 }
 
-func NewService(nodeRepo repository.Node, tail gateway.Tailnet, platformGws map[string]gateway.Platform) service.Workflow {
+func NewService(nodeRepo repository.Node, tails map[string]gateway.Tailnet, platformGws map[string]gateway.Platform) service.Workflow {
 	return &Service{
 		nodeRepo:    nodeRepo,
-		tailnetGw:   tail,
+		tailnetGws:  tails,
 		platformGws: platformGws,
 		executions:  make(map[string]*workflow.Execution),
 	}
@@ -39,6 +40,17 @@ func (s *Service) getPlatformGateway(ctx context.Context, id provider.Identifier
 	if !ok {
 		log.Error().Msgf("Unknown platform: %s", id)
 		return nil, errors.Wrap(service.ErrUnknownPlatform, id.String())
+	}
+	return gw, nil
+}
+
+func (s *Service) getTailnetGateway(ctx context.Context, id tailnet.Identifier) (gateway.Tailnet, error) {
+	log := logger.FromContext(ctx)
+	log.Debug().Msgf("Getting tailnet gateway: %s", id)
+	gw, ok := s.tailnetGws[id.String()]
+	if !ok {
+		log.Error().Msgf("Unknown tailnet: %s", id)
+		return nil, errors.Wrap(service.ErrUnknownTailnetId, id.String())
 	}
 	return gw, nil
 }

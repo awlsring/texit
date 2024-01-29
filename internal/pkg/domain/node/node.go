@@ -14,6 +14,8 @@ type Node struct {
 	PlatformIdentifier PlatformIdentifier
 	// The provider the node belong to.
 	ProviderIdentifier provider.Identifier
+	// The tailnet the node belongs to.
+	Tailnet tailnet.Identifier
 	// The identifier of the node on the tailnet
 	TailnetIdentifier tailnet.DeviceIdentifier
 	//TODO: Add tailnet

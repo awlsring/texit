@@ -9,7 +9,9 @@ service TailscaleEphemeralExitNodesService {
 
     rpc GetProvider(GetProviderRequest) returns(GetProviderResponse) {}
 
-    rpc GetDefaultProvider(GetDefaultProviderRequest) returns(GetDefaultProviderResponse) {}
+    rpc ListTailnets(ListTailnetsRequest) returns(ListTailnetsResponse) {}
+
+    rpc GetTailnet(GetTailnetRequest) returns(GetTailnetResponse) {}
 
     rpc ListNodes(ListNodesRequest) returns(ListNodesResponse) {}
     
@@ -32,9 +34,14 @@ message HealthCheckResponse {
     bool health = 1;
 }
 
+enum Provider {
+    PROVIDER_UNKNOWN_UNSPECIFIED = 0;
+    PROVIDER_AWS_ECS = 1;
+}
+
 message ProviderSummary {
     string id = 1;
-    string platform = 2;
+    Provider type = 2;
 }
 
 message ListProvidersRequest {}
@@ -43,18 +50,37 @@ message ListProvidersResponse {
     repeated ProviderSummary providers = 1;
 }
 
-message GetDefaultProviderRequest {}
-
-message GetDefaultProviderResponse {
-    ProviderSummary provider = 1;
-}
-
 message GetProviderRequest {
     string id = 1;
 }
 
 message GetProviderResponse {
     ProviderSummary provider = 1;
+}
+
+enum Tailnet {
+    TAILNET_UNKNOWN_UNSPECIFIED = 0;
+    TAILNET_TAILSCALE = 1;
+    TAILNET_HEADSCALE = 2;
+}
+
+message TailnetSummary {
+    string tailnet = 1;
+    Tailnet type = 2;
+}
+
+message ListTailnetsRequest {}
+
+message ListTailnetsResponse {
+    repeated TailnetSummary tailnets = 1;
+}
+
+message GetTailnetRequest {
+    string id = 1;
+}
+
+message GetTailnetResponse {
+    TailnetSummary tailnet = 1;
 }
 
 enum NodeStatus {
@@ -68,12 +94,13 @@ enum NodeStatus {
 
 message NodeSummary {
     string id = 1;
-    string provider_id = 2;
+    string provider = 2;
     string platform_id = 3;
     string tailnet_id = 4;
-    string location = 5;
-    string created_at = 6;
-    string updated_at = 7;
+    string tailnet = 5;
+    string location = 6;
+    string created_at = 7;
+    string updated_at = 8;
 }
 
 message ListNodesRequest {}
@@ -108,7 +135,8 @@ message StopNodeResponse {
 
 message ProvisionNodeRequest {
     string provider_id = 1;
-    string location = 2;
+    string tailnet_id = 2;
+    string location = 3;
 }
 
 message ProvisionNodeResponse {

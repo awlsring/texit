@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
 )
@@ -19,10 +20,23 @@ func (h *Handler) ProvisionNode(ctx context.Context, req *teen.ProvisionNodeRequ
 		return nil, err
 	}
 
+	tnId, err := tailnet.IdentifierFromString(req.GetTailnetId())
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse tailnet identifier")
+		return nil, err
+	}
+
 	log.Debug().Msg("Describing provider")
 	prov, err := h.providerSvc.Describe(ctx, provId)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to describe provider")
+		return nil, err
+	}
+
+	log.Debug().Msg("Describing tailnet")
+	tail, err := h.tailnetSvc.Describe(ctx, tnId)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to describe tailnet")
 		return nil, err
 	}
 
@@ -34,7 +48,7 @@ func (h *Handler) ProvisionNode(ctx context.Context, req *teen.ProvisionNodeRequ
 	}
 
 	log.Debug().Msg("Launching provision node workflow")
-	exId, err := h.workSvc.LaunchProvisionNodeWorkflow(ctx, provId, loc)
+	exId, err := h.workSvc.LaunchProvisionNodeWorkflow(ctx, prov.Name, loc, tail.Name)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to launch provision node workflow")
 		return nil, err

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -8,7 +9,7 @@ import (
 
 type Config struct {
 	Server    *ServerConfig     `yaml:"server"`
-	Tailnet   *TailnetConfig    `yaml:"tailscale"`
+	Tailnets  []*TailnetConfig  `yaml:"tailnets"`
 	Database  *DatabaseConfig   `yaml:"database"`
 	Providers []*ProviderConfig `yaml:"providers"`
 }
@@ -26,11 +27,6 @@ func LoadFromFile(path string) (*Config, error) {
 		return nil, err
 	}
 
-	err = cfg.Tailnet.Validate()
-	if err != nil {
-		return nil, err
-	}
-
 	err = cfg.Database.Validate()
 	if err != nil {
 		return nil, err
@@ -41,6 +37,19 @@ func LoadFromFile(path string) (*Config, error) {
 		return nil, err
 	}
 
+	if len(cfg.Tailnets) == 0 {
+		return nil, errors.New("no tailnets configured")
+	}
+	for _, t := range cfg.Tailnets {
+		err = t.Validate()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if len(cfg.Providers) == 0 {
+		return nil, errors.New("no providers configured")
+	}
 	for _, p := range cfg.Providers {
 		err = p.Validate()
 		if err != nil {

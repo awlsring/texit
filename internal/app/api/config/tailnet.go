@@ -8,6 +8,10 @@ const (
 	TailnetTypeHeadscale TailnetType = "headscale"
 )
 
+func (t TailnetType) String() string {
+	return string(t)
+}
+
 var (
 	ErrMissingTailnetType   = errors.New("missing tailnet type")
 	ErrMissingTailnet       = errors.New("missing tailnet")

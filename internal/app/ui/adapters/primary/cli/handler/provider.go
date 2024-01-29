@@ -22,15 +22,6 @@ func (h *Handler) GetProvider(c *cli.Context) error {
 	return nil
 }
 
-func (h *Handler) GetDefaultProvider(ctx *cli.Context) error {
-	prov, err := h.apiSvc.GetDefaultProvider(context.Background())
-	if err != nil {
-		return err
-	}
-	fmt.Printf("Default provider - Name: %s | Platform: %s", prov.Name, prov.Platform.String())
-	return nil
-}
-
 func (h *Handler) ListProviders(ctx *cli.Context) error {
 	provs, err := h.apiSvc.ListProviders(context.Background())
 	if err != nil {

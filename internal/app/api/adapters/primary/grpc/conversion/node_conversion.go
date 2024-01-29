@@ -10,9 +10,10 @@ import (
 func NodeToSummary(node *node.Node) *teen.NodeSummary {
 	return &teen.NodeSummary{
 		Id:         node.Identifier.String(),
-		ProviderId: node.ProviderIdentifier.String(),
+		Provider:   node.ProviderIdentifier.String(),
 		PlatformId: node.PlatformIdentifier.String(),
 		TailnetId:  node.TailnetIdentifier.String(),
+		Tailnet:    node.Tailnet.String(),
 		Location:   node.Location.String(),
 		CreatedAt:  node.CreatedAt.Format(time.RFC3339Nano),
 		UpdatedAt:  node.UpdatedAt.Format(time.RFC3339Nano),

@@ -26,7 +26,7 @@ func SummaryToNode(s *v1.NodeSummary) (*node.Node, error) {
 		return nil, err
 	}
 
-	provId, err := provider.IdentifierFromString(s.ProviderId)
+	provId, err := provider.IdentifierFromString(s.Provider)
 	if err != nil {
 		return nil, err
 	}
