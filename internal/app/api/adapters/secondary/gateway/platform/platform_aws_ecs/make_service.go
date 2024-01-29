@@ -151,6 +151,12 @@ func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client 
 			},
 		},
 		TaskDefinition: aws.String(taskDefinition(tid)),
+		Tags: []types.Tag{
+			{
+				Key:   aws.String("created-by"),
+				Value: aws.String("tailscale-cloud-exit-nodes"),
+			},
+		},
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create ECS service")

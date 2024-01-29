@@ -55,6 +55,12 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 			return
 		}
 
+		log.Debug().Msg("Enabling as exit node")
+		err = s.tailnetGw.EnableExitNode(ctx, tailId)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to enable exit node")
+		}
+
 		log.Debug().Msg("Froming node entry")
 		n := &node.Node{
 			Identifier:         id,
