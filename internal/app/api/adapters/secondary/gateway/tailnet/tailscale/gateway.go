@@ -47,6 +47,7 @@ func (g *TailscaleGateway) CreatePreauthKey(ctx context.Context) (tailnet.Preaut
 	log.Info().Msg("creating preauth key")
 	resp, err := g.client.CreateKey(ctx, caps)
 	if err != nil {
+		log.Error().Err(err).Msg("failed to create preauth key")
 		return "", err
 	}
 
@@ -60,6 +61,7 @@ func (g *TailscaleGateway) DeletePreauthKey(ctx context.Context, key tailnet.Pre
 	log.Info().Msg("deleting preauth key")
 	err := g.client.DeleteKey(ctx, key.String())
 	if err != nil {
+		log.Error().Err(err).Msg("failed to delete preauth key")
 		return err
 	}
 
@@ -67,12 +69,44 @@ func (g *TailscaleGateway) DeletePreauthKey(ctx context.Context, key tailnet.Pre
 	return nil
 }
 
-func (g *TailscaleGateway) DeleteDevice(ctx context.Context, id tailnet.DeviceIdentifier) error {
+func (g *TailscaleGateway) getDeviceId(ctx context.Context, tid tailnet.DeviceIdentifier) (string, error) {
 	log := logger.FromContext(ctx)
+	log.Debug().Msgf("getting device id for %s", tid.String())
 
-	log.Info().Msg("deleting device")
-	err := g.client.DeleteDevice(ctx, id.String())
+	log.Debug().Msg("listing devices")
+	devices, err := g.client.Devices(ctx)
 	if err != nil {
+		log.Error().Err(err).Msg("failed to list devices")
+		return "", err
+	}
+
+	log.Debug().Msg("searching for device")
+	for _, device := range devices {
+		if device.Hostname == tid.String() {
+			log.Debug().Msgf("device found. id: %s", device.ID)
+			return device.ID, nil
+		}
+	}
+
+	log.Error().Msgf("device %s not found", tid.String())
+	return "", nil
+}
+
+func (g *TailscaleGateway) DeleteDevice(ctx context.Context, tid tailnet.DeviceIdentifier) error {
+	log := logger.FromContext(ctx)
+	log.Info().Msgf("Deleting device %s", tid.String())
+
+	log.Debug().Msg("getting device id")
+	id, err := g.getDeviceId(ctx, tid)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to get device id")
+		return err
+	}
+
+	log.Debug().Msg("deleting device")
+	err = g.client.DeleteDevice(ctx, id)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to delete device")
 		return err
 	}
 

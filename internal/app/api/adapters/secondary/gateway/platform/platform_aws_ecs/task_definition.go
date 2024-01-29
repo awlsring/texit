@@ -2,6 +2,7 @@ package platform_aws_ecs
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
@@ -18,23 +19,28 @@ const (
 	defaultCpuAmount       = "256"
 	defaultMemoryAmount    = "512"
 	keyTsAuthkey           = "TS_AUTHKEY"
+	keyTsStateDir          = "TS_STATE_DIR"
 	keyTsHostname          = "TS_HOSTNAME"
+	keyTsTailscaledArgs    = "TS_TAILSCALED_EXTRA_ARGS"
 	keyTsExtraArgs         = "TS_EXTRA_ARGS"
 	valueAdvertiseExitNode = "--advertise-exit-node"
 	keyTsAcceptDns         = "TS_ACCEPT_DNS"
 	keyTsUserspaceRoutes   = "TS_USERSPACE"
 )
 
-func (g *PlatformAwsEcsGateway) createTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceIdentifier, authkey tailnet.PreauthKey) error {
+func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceIdentifier, authkey tailnet.PreauthKey, execRole, taskRole, param string) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Creating new ECS task definition")
 	_, err := client.RegisterTaskDefinition(ctx, &ecs.RegisterTaskDefinitionInput{
+		ExecutionRoleArn: aws.String(execRole),
+		TaskRoleArn:      aws.String(taskRole),
 		ContainerDefinitions: []types.ContainerDefinition{
 			{
 				Name:      aws.String(defaultName),
 				Image:     aws.String(image),
 				Essential: aws.Bool(true),
+
 				Environment: []types.KeyValuePair{
 					{
 						Name:  aws.String(keyTsAuthkey),
@@ -55,6 +61,10 @@ func (g *PlatformAwsEcsGateway) createTaskDefinition(ctx context.Context, client
 					{
 						Name:  aws.String(keyTsUserspaceRoutes),
 						Value: aws.String("true"),
+					},
+					{
+						Name:  aws.String(keyTsTailscaledArgs),
+						Value: aws.String(fmt.Sprintf("--state=%s", param)),
 					},
 				},
 			},
@@ -87,5 +97,30 @@ func (g *PlatformAwsEcsGateway) createTaskDefinition(ctx context.Context, client
 	}
 
 	log.Debug().Msg("Created ECS task definition")
+	return nil
+}
+
+func deleteTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceIdentifier) error {
+	log := logger.FromContext(ctx)
+
+	log.Debug().Msg("Deregistering ECS task definition")
+	_, err := client.DeregisterTaskDefinition(ctx, &ecs.DeregisterTaskDefinitionInput{
+		TaskDefinition: aws.String(taskDefinition(tid)),
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to delete ECS task definition")
+		return err
+	}
+
+	log.Debug().Msg("Deleting ECS task definition")
+	_, err = client.DeleteTaskDefinitions(ctx, &ecs.DeleteTaskDefinitionsInput{
+		TaskDefinitions: []string{fmt.Sprintf("%s:1", tid.String())},
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to delete ECS task definition")
+		return err
+	}
+
+	log.Debug().Msg("Deleted ECS task definition")
 	return nil
 }

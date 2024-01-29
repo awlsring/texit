@@ -11,7 +11,7 @@ func (r *SqliteNodeRepository) Delete(ctx context.Context, id node.Identifier) e
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Deleting node from sqlite database")
 
-	query := "DELETE FROM nodes WHERE id = $1"
+	query := "DELETE FROM nodes WHERE identifier = $1"
 	log.Debug().Msgf("Query: %s", query)
 	_, err := r.db.ExecContext(ctx, query, id.String())
 	if err != nil {

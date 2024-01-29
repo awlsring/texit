@@ -2,8 +2,13 @@ package gateway
 
 import (
 	"context"
+	"errors"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
+)
+
+var (
+	ErrUnknownDevice = errors.New("unknown device")
 )
 
 type Tailnet interface {

@@ -19,11 +19,11 @@ import (
 const (
 	activeCount            = 1
 	inactiveCount          = 0
-	servicePollMaxInterval = 10
-	servicePollBackoff     = 10 * time.Second
+	servicePollMaxInterval = 40
+	servicePollBackoff     = 2 * time.Second
 	serviceStatusActive    = "ACTIVE"
-	taskPollBackoff        = 10 * time.Second
-	taskPollMaxInterval    = 10
+	taskPollBackoff        = 2 * time.Second
+	taskPollMaxInterval    = 40
 	taskStatusActive       = "RUNNING"
 )
 
@@ -112,7 +112,7 @@ func getDefaultSecurityGroupId(ctx context.Context, client interfaces.Ec2Client)
 	return *resp.SecurityGroups[0].GroupId, nil
 }
 
-func (g *PlatformAwsEcsGateway) makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client interfaces.Ec2Client, tid tailnet.DeviceIdentifier) error {
+func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client interfaces.Ec2Client, tid tailnet.DeviceIdentifier) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Making ECS service")
 

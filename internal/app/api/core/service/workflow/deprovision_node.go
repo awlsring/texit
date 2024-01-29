@@ -50,8 +50,7 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 		log.Debug().Msgf("Deleting node from tailnet")
 		err = s.tailnetGw.DeleteDevice(ctx, n.TailnetIdentifier)
 		if err != nil {
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
-			return
+			log.Warn().Err(err).Msg("Failed to delete node from tailnet, continuing...")
 		}
 
 		log.Debug().Msg("Deleting node from repository")

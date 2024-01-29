@@ -15,8 +15,10 @@ const (
 
 type PlatformAwsEcsGateway struct {
 	// account  interfaces.AwsAccountClient
+	ssmCache *cache.Cache // TODO: consolidate these caches into one
 	ecsCache *cache.Cache
 	ec2Cache *cache.Cache
+	iamCache *cache.Cache
 	creds    *credentials.StaticCredentialsProvider
 }
 
@@ -24,9 +26,13 @@ func New(accessKey, secretKey string) gateway.Platform {
 	creds := credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")
 	ecsCache := cache.New(defaultExpiration, defaultCleanUpInterval)
 	ec2Cache := cache.New(defaultExpiration, defaultCleanUpInterval)
+	ssmCache := cache.New(defaultExpiration, defaultCleanUpInterval)
+	iamCache := cache.New(defaultExpiration, defaultCleanUpInterval)
 
 	return &PlatformAwsEcsGateway{
 		// account:  acc,
+		iamCache: iamCache,
+		ssmCache: ssmCache,
 		ecsCache: ecsCache,
 		ec2Cache: ec2Cache,
 		creds:    &creds,

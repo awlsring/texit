@@ -21,10 +21,10 @@ const (
 	clusterPollMaxInterval  = 10
 )
 
-func (g *PlatformAwsEcsGateway) makeCluster(ctx context.Context, client interfaces.EcsClient) error {
+func makeCluster(ctx context.Context, client interfaces.EcsClient) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Checking if ECS cluster exists")
-	exists, err := g.checkIfClusterExists(ctx, client)
+	exists, err := checkIfClusterExists(ctx, client)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to check if cluster exists")
 		return err
@@ -35,14 +35,14 @@ func (g *PlatformAwsEcsGateway) makeCluster(ctx context.Context, client interfac
 	}
 
 	log.Debug().Msg("Cluster does not exist, creating")
-	err = g.createNewCluster(ctx, client)
+	err = createNewCluster(ctx, client)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create cluster")
 		return err
 	}
 
 	log.Debug().Msg("Polling cluster till it is created")
-	err = g.pollClusterTillCreated(ctx, client)
+	err = pollClusterTillCreated(ctx, client)
 	if err != nil {
 		log.Error().Err(err).Msg("error while polling cluster")
 		return err
@@ -52,7 +52,7 @@ func (g *PlatformAwsEcsGateway) makeCluster(ctx context.Context, client interfac
 	return nil
 }
 
-func (g *PlatformAwsEcsGateway) createNewCluster(ctx context.Context, client interfaces.EcsClient) error {
+func createNewCluster(ctx context.Context, client interfaces.EcsClient) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Creating new ECS cluster")
@@ -82,7 +82,7 @@ func (g *PlatformAwsEcsGateway) createNewCluster(ctx context.Context, client int
 	return nil
 }
 
-func (g *PlatformAwsEcsGateway) pollClusterTillCreated(ctx context.Context, client interfaces.EcsClient) error {
+func pollClusterTillCreated(ctx context.Context, client interfaces.EcsClient) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Polling ECS cluster till it is created")
@@ -117,7 +117,7 @@ func (g *PlatformAwsEcsGateway) pollClusterTillCreated(ctx context.Context, clie
 	}
 }
 
-func (g *PlatformAwsEcsGateway) checkIfClusterExists(ctx context.Context, client interfaces.EcsClient) (bool, error) {
+func checkIfClusterExists(ctx context.Context, client interfaces.EcsClient) (bool, error) {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Describing ECS clusters")
