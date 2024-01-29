@@ -76,6 +76,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 			ProviderIdentifier: provider,
 			Location:           location,
 			PreauthKey:         preauthKey,
+			Tailnet:            tn,
 			TailnetIdentifier:  tailId,
 		}
 
