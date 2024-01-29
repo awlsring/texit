@@ -9,6 +9,5 @@ func ProviderToSummary(provider *provider.Provider) *teen.ProviderSummary {
 	return &teen.ProviderSummary{
 		Id:       provider.Name.String(),
 		Platform: provider.Platform.String(),
-		Default:  provider.Default,
 	}
 }

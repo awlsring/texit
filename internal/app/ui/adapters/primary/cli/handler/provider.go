@@ -18,7 +18,7 @@ func (h *Handler) GetProvider(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("Provider - Name: %s | Platform: %s | Default: %v", prov.Name, prov.Platform.String(), prov.Default)
+	fmt.Printf("Provider - Name: %s | Platform: %s", prov.Name, prov.Platform.String())
 	return nil
 }
 
@@ -45,7 +45,7 @@ func (h *Handler) ListProviders(ctx *cli.Context) error {
 	fmt.Printf("Providers: %d\n", len(provs))
 	fmt.Println("==========================")
 	for _, prov := range provs {
-		fmt.Printf("Provider - Name: %s | Platform: %s | Default: %v", prov.Name, prov.Platform.String(), prov.Default)
+		fmt.Printf("Provider - Name: %s | Platform: %s", prov.Name, prov.Platform.String())
 	}
 	return nil
 }

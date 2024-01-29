@@ -20,17 +20,9 @@ func NewService(providers []*provider.Provider) (service.Provider, error) {
 		return nil, service.ErrNoProviders
 	}
 
-	if len(providers) == 1 {
-		s.de = providers[0]
-		s.de.Default = true
-	}
-
 	provMap := make(map[provider.Identifier]*provider.Provider)
 	for _, p := range providers {
 		provMap[p.Name] = p
-		if p.Default {
-			s.de = p
-		}
 	}
 
 	s.provMap = provMap

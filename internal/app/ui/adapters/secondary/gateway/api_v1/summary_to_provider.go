@@ -18,7 +18,6 @@ func SummaryToProvider(sum *v1.ProviderSummary) (*provider.Provider, error) {
 
 	return &provider.Provider{
 		Name:     name,
-		Default:  sum.Default,
 		Platform: t,
 	}, nil
 }

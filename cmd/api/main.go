@@ -60,7 +60,6 @@ func initProviderService(providers []*config.ProviderConfig) service.Provider {
 		provs = append(provs, &provider.Provider{
 			Name:     name,
 			Platform: typ,
-			Default:  p.Default,
 		})
 	}
 	svc, err := provSvc.NewService(provs)

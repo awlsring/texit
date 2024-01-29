@@ -28,8 +28,6 @@ type ProviderConfig struct {
 	SecretKey string `yaml:"secretKey"`
 	// The name of the provider.
 	Name string `yaml:"name"`
-	// Whether this provider is the default provider.
-	Default bool `yaml:"default"`
 }
 
 func (c *ProviderConfig) Validate() error {

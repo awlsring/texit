@@ -34,8 +34,7 @@ message HealthCheckResponse {
 
 message ProviderSummary {
     string id = 1;
-    bool default = 2;
-    string platform = 3;
+    string platform = 2;
 }
 
 message ListProvidersRequest {}
