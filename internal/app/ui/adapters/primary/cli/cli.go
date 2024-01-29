@@ -54,6 +54,12 @@ func New(hdl *handler.Handler) *CLI {
 								Required: true,
 							},
 							&cli.StringFlag{
+								Name:     flag.Tailnet,
+								Aliases:  []string{"t"},
+								Usage:    "The tailnet to add the node to",
+								Required: true,
+							},
+							&cli.StringFlag{
 								Name:     flag.ProviderLocation,
 								Aliases:  []string{"l"},
 								Usage:    "The location to provision the node in",

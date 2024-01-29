@@ -27,7 +27,7 @@ type TailnetConfig struct {
 	Tailnet string `yaml:"tailnet"`
 	// The api token to communicate with the tailnet
 	ApiKey string `yaml:"apiKey"`
-	// Required for Headscale The user to register exist nodes for.
+	// The user to register exist nodes for.
 	User string
 }
 
@@ -42,7 +42,7 @@ func (c *TailnetConfig) Validate() error {
 		return ErrMissingTailnetApiKey
 	}
 
-	if c.Type == TailnetTypeHeadscale && c.User == "" {
+	if c.User == "" {
 		return ErrMissingHeadscaleUser
 	}
 

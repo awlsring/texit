@@ -7,6 +7,7 @@ import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli/flag"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 )
@@ -57,7 +58,13 @@ func (h *Handler) ProvisionNode(c *cli.Context) error {
 
 	location := provider.Location(c.String(flag.ProviderLocation))
 
-	exId, err := h.apiSvc.ProvisionNode(context.Background(), prov, location)
+	tn, err := tailnet.IdentifierFromString(c.String(flag.Tailnet))
+	if err != nil {
+		e := errors.Wrap(err, "failed to parse tailnet name")
+		return e
+	}
+
+	exId, err := h.apiSvc.ProvisionNode(context.Background(), prov, location, tn)
 	if err != nil {
 		return err
 	}

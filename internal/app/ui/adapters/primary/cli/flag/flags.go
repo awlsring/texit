@@ -5,5 +5,6 @@ const (
 	ProviderName     = "name"
 	Provider         = "provider"
 	ProviderLocation = "location"
+	Tailnet          = "tailnet"
 	ExecutionId      = "id"
 )

@@ -15,6 +15,7 @@ type Handler struct {
 
 func New(node service.Node, work service.Workflow, prov service.Provider, tail service.Tailnet) teen.TailscaleEphemeralExitNodesServiceServer {
 	return &Handler{
+		tailnetSvc:  tail,
 		nodeSvc:     node,
 		workSvc:     work,
 		providerSvc: prov,

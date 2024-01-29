@@ -104,7 +104,7 @@ func initTailscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {
 	ts, err := tailscale.NewClient(cfg.ApiKey, cfg.Tailnet)
 	panicOnErr(err)
 	log.Info().Msg("Initializing tailscale gateway")
-	return tailscale_gateway.New(ts)
+	return tailscale_gateway.New(cfg.User, ts)
 }
 
 func initHeadscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {

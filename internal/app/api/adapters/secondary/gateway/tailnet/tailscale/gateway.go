@@ -16,11 +16,13 @@ const (
 )
 
 type TailscaleGateway struct {
+	user   string
 	client *tailscale.Client
 }
 
-func New(client *tailscale.Client) gateway.Tailnet {
+func New(user string, client *tailscale.Client) gateway.Tailnet {
 	return &TailscaleGateway{
+		user:   user,
 		client: client,
 	}
 }
@@ -69,6 +71,13 @@ func (g *TailscaleGateway) EnableExitNode(ctx context.Context, tid tailnet.Devic
 	id, err := g.findDeviceId(ctx, tid)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to get device id")
+		return err
+	}
+
+	log.Debug().Msg("updating acl")
+	err = g.updateAcl(ctx)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to update acl")
 		return err
 	}
 

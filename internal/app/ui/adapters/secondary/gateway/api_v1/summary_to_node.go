@@ -31,6 +31,11 @@ func SummaryToNode(s *v1.NodeSummary) (*node.Node, error) {
 		return nil, err
 	}
 
+	tn, err := tailnet.IdentifierFromString(s.TailnetId)
+	if err != nil {
+		return nil, err
+	}
+
 	platId, err := node.PlatformIdentifierFromString(s.PlatformId)
 	if err != nil {
 		return nil, err
@@ -56,6 +61,7 @@ func SummaryToNode(s *v1.NodeSummary) (*node.Node, error) {
 		ProviderIdentifier: provId,
 		PlatformIdentifier: platId,
 		TailnetIdentifier:  tailId,
+		Tailnet:            tn,
 		Location:           provider.Location(s.Location),
 		CreatedAt:          created,
 		UpdatedAt:          updated,
