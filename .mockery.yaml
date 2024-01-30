@@ -1,0 +1,10 @@
+with-expecter: true
+all: true
+outpkg: mocks
+dir: internal/pkg/mocks
+mockname: Mock{{.InterfaceName}}_{{.PackageName}}
+packages:
+  github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway:
+  github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/repository:
+  github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service:
+  github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/interfaces:

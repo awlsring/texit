@@ -10,6 +10,12 @@ HEADSCALE_22_GEN := $(GEN_DIR)/headscale/v0.22.3
 
 all: build
 
+test:
+	go test -v ./...
+
+vet:
+	go vet ./...
+
 codegen:
 	@echo "Cleaning up"
 	rm -rf $(GEN_DIR)
@@ -19,7 +25,7 @@ codegen:
 	mkdir -p $(HEADSCALE_22_GEN)
 	swagger generate client -f $(HEADSCALE_22_MODEL) -A headscale -t $(HEADSCALE_22_GEN)
 
-build: codegen lint
+build: codegen vet lint test
 	@echo "Tidying up"
 	go mod tidy
 	@echo "Building api"
