@@ -23,7 +23,8 @@ func TestDelete(t *testing.T) {
 	defer db.Close()
 
 	r := &SqliteNodeRepository{db: db}
-	r.initTables(ctx)
+	err = r.initTables(ctx)
+	assert.NoError(t, err)
 
 	testNode := &node.Node{
 		Identifier:         node.Identifier("test-id"),

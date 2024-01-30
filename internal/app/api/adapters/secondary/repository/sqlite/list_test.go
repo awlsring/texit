@@ -22,7 +22,8 @@ func TestList(t *testing.T) {
 	defer db.Close()
 
 	r := &SqliteNodeRepository{db: db}
-	r.initTables(ctx)
+	err = r.initTables(ctx)
+	assert.NoError(t, err)
 
 	testNodes := []*node.Node{
 		{
@@ -61,7 +62,8 @@ func TestListEmpty(t *testing.T) {
 	defer db.Close()
 
 	r := &SqliteNodeRepository{db: db}
-	r.initTables(ctx)
+	err = r.initTables(ctx)
+	assert.NoError(t, err)
 
 	result, err := r.List(ctx)
 
