@@ -20,7 +20,7 @@ func (s *Service) Start(ctx context.Context, id node.Identifier) error {
 	}
 
 	log.Debug().Msg("Getting platform gateway")
-	platformGw, err := s.getPlatformGateway(ctx, n.ProviderIdentifier)
+	platformGw, err := s.getPlatformGateway(ctx, n.Provider)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to get platform gateway")
 		return errors.Wrap(err, "failed to get platform gateway")

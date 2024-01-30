@@ -15,7 +15,3 @@ func DeviceIdentifierFromString(id string) (DeviceIdentifier, error) {
 	}
 	return DeviceIdentifier(identifier), nil
 }
-
-func FormDeviceIdentifier(location string, id string) DeviceIdentifier {
-	return DeviceIdentifier(location + "-" + id)
-}

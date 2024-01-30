@@ -19,8 +19,8 @@ func (s *Service) Status(ctx context.Context, id node.Identifier) (node.Status, 
 		return node.StatusUnknown, errors.Wrap(err, "failed to get node")
 	}
 
-	log.Debug().Msgf("Getting platform gateway: %s", n.ProviderIdentifier)
-	platform, err := s.getPlatformGateway(ctx, n.ProviderIdentifier)
+	log.Debug().Msgf("Getting platform gateway: %s", n.Provider)
+	platform, err := s.getPlatformGateway(ctx, n.Provider)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to get platform gateway")
 		return node.StatusUnknown, errors.Wrap(err, "failed to get platform gateway")

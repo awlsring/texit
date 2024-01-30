@@ -27,7 +27,7 @@ const (
 	taskStatusActive       = "RUNNING"
 )
 
-func taskDefinition(tid tailnet.DeviceIdentifier) string {
+func taskDefinition(tid tailnet.DeviceName) string {
 	return fmt.Sprintf("%s:1", tid.String())
 }
 
@@ -112,7 +112,7 @@ func getDefaultSecurityGroupId(ctx context.Context, client interfaces.Ec2Client)
 	return *resp.SecurityGroups[0].GroupId, nil
 }
 
-func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client interfaces.Ec2Client, tid tailnet.DeviceIdentifier) error {
+func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client interfaces.Ec2Client, tid tailnet.DeviceName) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Making ECS service")
 
@@ -156,6 +156,10 @@ func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client 
 				Key:   aws.String("created-by"),
 				Value: aws.String("tailscale-cloud-exit-nodes"),
 			},
+			{
+				Key:   aws.String("ephemeral"),
+				Value: aws.String("true"),
+			},
 		},
 	})
 	if err != nil {
@@ -185,7 +189,7 @@ func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client 
 	return nil
 }
 
-func getLaunchedTask(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceIdentifier) (string, error) {
+func getLaunchedTask(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceName) (string, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Getting launched ECS task")
 
@@ -243,7 +247,7 @@ func pollTillTaskIsActive(ctx context.Context, client interfaces.EcsClient, task
 	return errors.New("ECS task not active within wait time")
 }
 
-func pollServiceTillCreated(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceIdentifier) error {
+func pollServiceTillCreated(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceName) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Polling ECS service till it is created")

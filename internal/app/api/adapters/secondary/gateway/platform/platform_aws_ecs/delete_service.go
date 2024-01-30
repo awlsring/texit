@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 )
 
-func deleteService(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceIdentifier) error {
+func deleteService(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceName) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Deleting service")
 

@@ -2,6 +2,7 @@ package workflow
 
 import (
 	"context"
+	"time"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
@@ -10,9 +11,13 @@ import (
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
 )
 
-func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider provider.Identifier, location provider.Location, tn tailnet.Identifier) (workflow.ExecutionIdentifier, error) {
+const (
+	postCreationWaitTime = 5 * time.Second
+)
+
+func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider provider.Identifier, location provider.Location, tn tailnet.Identifier, ephemeral bool) (workflow.ExecutionIdentifier, error) {
 	log := logger.FromContext(ctx)
-	log.Debug().Msg("Creating node")
+	log.Debug().Msgf("Creating node on provider %s in location %s for tailnet %s", provider, location, tn)
 
 	exId := workflow.FormExecutionIdentifier(workflow.WorkflowNameProvisionNode)
 
@@ -29,7 +34,8 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		log.Debug().Msgf("New node id: %s", id)
 
 		log.Debug().Msg("Forming tailnet identifier")
-		tailId := tailnet.FormDeviceIdentifier(location.String(), id.String())
+		tailName := tailnet.FormDeviceName(location.String(), id.String())
+		log.Debug().Msgf("New tailnet device name: %s", tailName)
 
 		log.Debug().Msg("Getting tailnet gateway")
 		tailnetGw, err := s.getTailnetGateway(ctx, tn)
@@ -40,7 +46,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		}
 
 		log.Debug().Msg("Creating preauth key for node")
-		preauthKey, err := tailnetGw.CreatePreauthKey(ctx)
+		preauthKey, err := tailnetGw.CreatePreauthKey(ctx, ephemeral)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to create preauth key")
 			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
@@ -56,15 +62,26 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		}
 
 		log.Debug().Msg("Creating node on platform")
-		platId, err := platformGw.CreateNode(ctx, id, tailId, provider, location, preauthKey)
+		platId, err := platformGw.CreateNode(ctx, id, tailName, provider, location, preauthKey)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to create node")
 			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
 			return
 		}
 
+		log.Debug().Msgf("Sleeping for %s to wait for device registration on tailnet", postCreationWaitTime)
+		time.Sleep(postCreationWaitTime)
+
+		log.Debug().Msg("Getting the tailnet device id")
+		tid, err := tailnetGw.GetDeviceId(ctx, tailName)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to get tailnet device id")
+			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			return
+		}
+
 		log.Debug().Msg("Enabling as exit node")
-		err = tailnetGw.EnableExitNode(ctx, tailId)
+		err = tailnetGw.EnableExitNode(ctx, tid)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to enable exit node")
 		}
@@ -73,11 +90,13 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		n := &node.Node{
 			Identifier:         id,
 			PlatformIdentifier: platId,
-			ProviderIdentifier: provider,
+			Provider:           provider,
 			Location:           location,
 			PreauthKey:         preauthKey,
 			Tailnet:            tn,
-			TailnetIdentifier:  tailId,
+			TailnetIdentifier:  tid,
+			Ephemeral:          ephemeral,
+			TailnetName:        tailName,
 		}
 
 		log.Debug().Msg("Creating node in repository")
@@ -88,7 +107,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 			return
 		}
 
-		log.Debug().Msg("Node created")
+		log.Debug().Msgf("Node created, id: %s", id)
 		s.closeWorkflow(ctx, execution, workflow.StatusComplete)
 	}()
 

@@ -97,10 +97,12 @@ message NodeSummary {
     string provider = 2;
     string platform_id = 3;
     string tailnet_id = 4;
-    string tailnet = 5;
-    string location = 6;
-    string created_at = 7;
-    string updated_at = 8;
+    string tailnet_name = 5;
+    string tailnet = 6;
+    string location = 7;
+    bool ephemeral = 8;
+    string created_at = 9;
+    string updated_at = 10;
 }
 
 message ListNodesRequest {}
@@ -137,6 +139,7 @@ message ProvisionNodeRequest {
     string provider_id = 1;
     string tailnet_id = 2;
     string location = 3;
+    bool ephemeral = 4;
 }
 
 message ProvisionNodeResponse {

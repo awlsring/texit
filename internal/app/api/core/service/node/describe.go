@@ -19,6 +19,6 @@ func (s *Service) Describe(ctx context.Context, id node.Identifier) (*node.Node,
 		return nil, errors.Wrap(err, "failed to get node")
 	}
 
-	log.Debug().Msgf("Returning node: %s", n)
+	log.Debug().Msgf("Returning node: %s", n.Identifier)
 	return n, nil
 }

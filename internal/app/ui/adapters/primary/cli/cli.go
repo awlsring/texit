@@ -65,6 +65,11 @@ func New(hdl *handler.Handler) *CLI {
 								Usage:    "The location to provision the node in",
 								Required: true,
 							},
+							&cli.BoolFlag{
+								Name:    flag.EphemeralNode,
+								Aliases: []string{"e"},
+								Usage:   "Whether or not the node should be ephemeral",
+							},
 						},
 					},
 					{

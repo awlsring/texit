@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (g *HeadscaleGateway) CreatePreauthKey(ctx context.Context) (tailnet.PreauthKey, error) {
+func (g *HeadscaleGateway) CreatePreauthKey(ctx context.Context, ephemeral bool) (tailnet.PreauthKey, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("creating headscale preauth key")
 
@@ -22,7 +22,7 @@ func (g *HeadscaleGateway) CreatePreauthKey(ctx context.Context) (tailnet.Preaut
 	body := &models.V1CreatePreAuthKeyRequest{
 		User:       g.user,
 		Reusable:   false,
-		Ephemeral:  false,
+		Ephemeral:  ephemeral,
 		Expiration: strfmt.DateTime(time.Now().Add(oneYearExpiration)),
 	}
 	request.SetBody(body)

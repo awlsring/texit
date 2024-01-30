@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
-func makeStateParameter(ctx context.Context, client interfaces.SsmClient, tid tailnet.DeviceIdentifier) (string, error) {
+func makeStateParameter(ctx context.Context, client interfaces.SsmClient, tid tailnet.DeviceName) (string, error) {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Creating state parameter")
@@ -44,7 +44,7 @@ func makeStateParameter(ctx context.Context, client interfaces.SsmClient, tid ta
 	return *resp.Parameter.ARN, nil
 }
 
-func deleteStateParameter(ctx context.Context, client interfaces.SsmClient, tid tailnet.DeviceIdentifier) error {
+func deleteStateParameter(ctx context.Context, client interfaces.SsmClient, tid tailnet.DeviceName) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Deleting state parameter")
 

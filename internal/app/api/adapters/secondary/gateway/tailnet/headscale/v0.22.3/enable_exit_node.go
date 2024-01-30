@@ -23,7 +23,7 @@ func (g *HeadscaleGateway) getRoutesForDevice(ctx context.Context, tid tailnet.D
 	log.Debug().Msg("selecting routes exposed by device")
 	targetRoutes := []string{}
 	for _, route := range resp.Payload.Routes {
-		if route.Machine.Name == tid.String() {
+		if route.Machine.ID == tid.String() {
 			log.Debug().Msgf("route %s exposed by device %s", route.ID, tid.String())
 			targetRoutes = append(targetRoutes, route.ID)
 		}
@@ -55,12 +55,12 @@ func (g *HeadscaleGateway) enableRoutes(ctx context.Context, routes []string) er
 	return nil
 }
 
-func (g *HeadscaleGateway) EnableExitNode(ctx context.Context, deviceIdentifier tailnet.DeviceIdentifier) error {
+func (g *HeadscaleGateway) EnableExitNode(ctx context.Context, id tailnet.DeviceIdentifier) error {
 	log := logger.FromContext(ctx)
 	log.Info().Msg("enabling exit node")
 
 	log.Debug().Msg("forming get routes request")
-	routes, err := g.getRoutesForDevice(ctx, deviceIdentifier)
+	routes, err := g.getRoutesForDevice(ctx, id)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to enable exit node")
 		return err

@@ -20,7 +20,7 @@ func (s *Service) Stop(ctx context.Context, id node.Identifier) error {
 	}
 
 	log.Debug().Msg("Getting platform gateway")
-	platformGw, err := s.getPlatformGateway(ctx, n.ProviderIdentifier)
+	platformGw, err := s.getPlatformGateway(ctx, n.Provider)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to get platform gateway")
 		return errors.Wrap(err, "failed to get platform gateway")
@@ -31,6 +31,15 @@ func (s *Service) Stop(ctx context.Context, id node.Identifier) error {
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to stop node")
 		return errors.Wrap(err, "failed to stop node")
+	}
+
+	if n.Ephemeral {
+		log.Debug().Msg("Node is ephemeral, deprovisioning")
+		_, err = s.workSvc.LaunchDeprovisionNodeWorkflow(ctx, n.Identifier)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to launch deprovision node workflow")
+			return errors.Wrap(err, "failed to launch deprovision node workflow")
+		}
 	}
 
 	log.Debug().Msg("Node stopped")

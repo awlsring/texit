@@ -28,7 +28,7 @@ const (
 	keyTsUserspaceRoutes   = "TS_USERSPACE"
 )
 
-func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceIdentifier, authkey tailnet.PreauthKey, execRole, taskRole, param string) error {
+func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceName, authkey tailnet.PreauthKey, execRole, taskRole, param string) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Creating new ECS task definition")
@@ -78,6 +78,10 @@ func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid 
 				Key:   aws.String("created-at"),
 				Value: aws.String(time.Now().Format(time.RFC3339Nano)),
 			},
+			{
+				Key:   aws.String("ephemeral"),
+				Value: aws.String("true"),
+			},
 		},
 		Family:      aws.String(tid.String()),
 		Cpu:         aws.String(defaultCpuAmount),
@@ -100,7 +104,7 @@ func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid 
 	return nil
 }
 
-func deleteTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceIdentifier) error {
+func deleteTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceName) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Deregistering ECS task definition")

@@ -14,5 +14,5 @@ type Platform interface {
 	DeleteNode(context.Context, *node.Node) error
 	StartNode(context.Context, *node.Node) error
 	StopNode(context.Context, *node.Node) error
-	CreateNode(context.Context, node.Identifier, tailnet.DeviceIdentifier, provider.Identifier, provider.Location, tailnet.PreauthKey) (node.PlatformIdentifier, error)
+	CreateNode(context.Context, node.Identifier, tailnet.DeviceName, provider.Identifier, provider.Location, tailnet.PreauthKey) (node.PlatformIdentifier, error)
 }

@@ -9,12 +9,13 @@ import (
 	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
 )
 
-func (g *ApiGateway) ProvisionNode(ctx context.Context, prov provider.Identifier, loc provider.Location, tn tailnet.Identifier) (workflow.ExecutionIdentifier, error) {
+func (g *ApiGateway) ProvisionNode(ctx context.Context, prov provider.Identifier, loc provider.Location, tn tailnet.Identifier, eph bool) (workflow.ExecutionIdentifier, error) {
 	ctx = g.setAuthInContext(ctx)
 	req := &v1.ProvisionNodeRequest{
 		ProviderId: prov.String(),
 		Location:   loc.String(),
 		TailnetId:  tn.String(),
+		Ephemeral:  eph,
 	}
 
 	resp, err := g.client.ProvisionNode(ctx, req)

@@ -84,7 +84,7 @@ func makeExecutionRole(ctx context.Context, client interfaces.IamClient) (string
 	return *resp.Role.Arn, nil
 }
 
-func makeTaskRoleName(tid tailnet.DeviceIdentifier) string {
+func makeTaskRoleName(tid tailnet.DeviceName) string {
 	return taskRoleNamePrefix + "-" + tid.String()
 }
 
@@ -106,7 +106,7 @@ func makeTaskPolicy(parameter string) string {
 }`, parameter)
 }
 
-func deleteTaskRole(ctx context.Context, client interfaces.IamClient, tid tailnet.DeviceIdentifier) error {
+func deleteTaskRole(ctx context.Context, client interfaces.IamClient, tid tailnet.DeviceName) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Deleting task role")
 
@@ -156,7 +156,7 @@ func deleteTaskRole(ctx context.Context, client interfaces.IamClient, tid tailne
 	return nil
 }
 
-func makeTaskRole(ctx context.Context, client interfaces.IamClient, tid tailnet.DeviceIdentifier, parameter string) (string, error) {
+func makeTaskRole(ctx context.Context, client interfaces.IamClient, tid tailnet.DeviceName, parameter string) (string, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Making task role")
 

@@ -27,7 +27,7 @@ func (h *Handler) ListNodes(c *cli.Context) error {
 	fmt.Printf("Nodes: %d\n", len(nodes))
 	fmt.Println("==========================")
 	for _, n := range nodes {
-		fmt.Printf("Node - Id: %s | Provider: %s | Location: %s\n", n.Identifier.String(), n.ProviderIdentifier.String(), n.Location.String())
+		fmt.Printf("Node - Id: %s | Provider: %s | Location: %s\n", n.Identifier.String(), n.Provider.String(), n.Location.String())
 	}
 	return nil
 }
@@ -45,7 +45,7 @@ func (h *Handler) DescribeNode(c *cli.Context) error {
 		return e
 	}
 
-	fmt.Printf("Node - Id: %s | Provider: %s | Location: %s\n", n.Identifier.String(), n.ProviderIdentifier.String(), n.Location.String())
+	fmt.Printf("Node - Id: %s | Provider: %s | Location: %s\n", n.Identifier.String(), n.Provider.String(), n.Location.String())
 	return nil
 }
 
@@ -57,6 +57,7 @@ func (h *Handler) ProvisionNode(c *cli.Context) error {
 	}
 
 	location := provider.Location(c.String(flag.ProviderLocation))
+	ephemeral := c.Bool(flag.EphemeralNode)
 
 	tn, err := tailnet.IdentifierFromString(c.String(flag.Tailnet))
 	if err != nil {
@@ -64,7 +65,7 @@ func (h *Handler) ProvisionNode(c *cli.Context) error {
 		return e
 	}
 
-	exId, err := h.apiSvc.ProvisionNode(context.Background(), prov, location, tn)
+	exId, err := h.apiSvc.ProvisionNode(context.Background(), prov, location, tn, ephemeral)
 	if err != nil {
 		return err
 	}

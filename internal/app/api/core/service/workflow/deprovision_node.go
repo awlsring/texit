@@ -31,8 +31,8 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 			return
 		}
 
-		log.Debug().Msgf("Getting platform gateway: %s", n.ProviderIdentifier)
-		platformGw, err := s.getPlatformGateway(ctx, n.ProviderIdentifier)
+		log.Debug().Msgf("Getting platform gateway: %s", n.Provider)
+		platformGw, err := s.getPlatformGateway(ctx, n.Provider)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get platform gateway")
 			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
@@ -47,7 +47,7 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 			return
 		}
 
-		log.Debug().Msgf("Deleting node from platform: %s", platformGw)
+		log.Debug().Msgf("Deleting node from platform")
 		err = platformGw.DeleteNode(ctx, n)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to delete node")

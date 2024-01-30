@@ -14,9 +14,11 @@ func (r *SqliteNodeRepository) initTables(ctx context.Context) error {
 			platform_identifier TEXT NOT NULL,
 			provider_identifier TEXT NOT NULL,
 			tailnet_identifier TEXT NOT NULL,
+			tailnet_device_name TEXT NOT NULL,
 			tailnet TEXT NOT NULL,
 			location TEXT NOT NULL,
 			preauth_key TEXT NOT NULL,
+			ephemeral BOOLEAN NOT NULL,
 			created_at TIMESTAMP NOT NULL,
 			updated_at TIMESTAMP NOT NULL
 		);`

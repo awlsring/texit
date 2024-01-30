@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 )
 
-func scaleService(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceIdentifier, desiredCount int32) error {
+func scaleService(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceName, desiredCount int32) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Scaling service")
 

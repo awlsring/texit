@@ -46,5 +46,5 @@ func awsLocation(loc string) (Location, error) {
 			return Location(loc), nil
 		}
 	}
-	return "", nil
+	return "", ErrUnknownLocation
 }

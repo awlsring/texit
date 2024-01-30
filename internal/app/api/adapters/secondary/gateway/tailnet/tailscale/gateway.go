@@ -2,7 +2,6 @@ package tailscale_gateway
 
 import (
 	"context"
-	"time"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
@@ -27,7 +26,7 @@ func New(user string, client *tailscale.Client) gateway.Tailnet {
 	}
 }
 
-func (g *TailscaleGateway) CreatePreauthKey(ctx context.Context) (tailnet.PreauthKey, error) {
+func (g *TailscaleGateway) CreatePreauthKey(ctx context.Context, ephemeral bool) (tailnet.PreauthKey, error) {
 	log := logger.FromContext(ctx)
 
 	caps := tailscale.KeyCapabilities{
@@ -46,7 +45,7 @@ func (g *TailscaleGateway) CreatePreauthKey(ctx context.Context) (tailnet.Preaut
 				Preauthorized bool     `json:"preauthorized"`
 			}{
 				Reusable:      false,
-				Ephemeral:     false,
+				Ephemeral:     ephemeral,
 				Preauthorized: true,
 			},
 		},
@@ -67,22 +66,15 @@ func (g *TailscaleGateway) EnableExitNode(ctx context.Context, tid tailnet.Devic
 	log := logger.FromContext(ctx)
 	log.Info().Msgf("enabling exit node for %s", tid.String())
 
-	log.Debug().Msg("getting device id")
-	id, err := g.findDeviceId(ctx, tid)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to get device id")
-		return err
-	}
-
 	log.Debug().Msg("updating acl")
-	err = g.updateAcl(ctx)
+	err := g.updateAcl(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to update acl")
 		return err
 	}
 
 	log.Debug().Msg("setting device tags")
-	err = g.client.SetDeviceTags(ctx, id, []string{tagCloudExitNode})
+	err = g.client.SetDeviceTags(ctx, tid.String(), []string{tagCloudExitNode})
 	if err != nil {
 		log.Error().Err(err).Msg("failed to enable exit node")
 		return err
@@ -106,27 +98,9 @@ func (g *TailscaleGateway) DeletePreauthKey(ctx context.Context, key tailnet.Pre
 	return nil
 }
 
-func (g *TailscaleGateway) findDeviceId(ctx context.Context, tid tailnet.DeviceIdentifier) (string, error) {
+func (g *TailscaleGateway) GetDeviceId(ctx context.Context, tid tailnet.DeviceName) (tailnet.DeviceIdentifier, error) {
 	log := logger.FromContext(ctx)
-	log.Debug().Msgf("finding device id for %s", tid.String())
-
-	for i := 0; i < 3; i++ {
-		id, err := g.getDeviceId(ctx, tid)
-		if err == nil {
-			return id, nil
-		}
-
-		log.Warn().Err(err).Msg("failed to get device id, retrying...")
-		time.Sleep(time.Second * time.Duration((i+1)*2))
-	}
-
-	log.Error().Msgf("failed to get device id for %s", tid.String())
-	return "", errors.Wrap(gateway.ErrUnknownDevice, tid.String())
-}
-
-func (g *TailscaleGateway) getDeviceId(ctx context.Context, tid tailnet.DeviceIdentifier) (string, error) {
-	log := logger.FromContext(ctx)
-	log.Debug().Msgf("getting device id for %s", tid.String())
+	log.Debug().Msgf("getting device id for device with name %s", tid.String())
 
 	log.Debug().Msg("listing devices")
 	devices, err := g.client.Devices(ctx)
@@ -139,7 +113,12 @@ func (g *TailscaleGateway) getDeviceId(ctx context.Context, tid tailnet.DeviceId
 	for _, device := range devices {
 		if device.Hostname == tid.String() {
 			log.Debug().Msgf("device found. id: %s", device.ID)
-			return device.ID, nil
+			deviceId, err := tailnet.DeviceIdentifierFromString(device.ID)
+			if err != nil {
+				log.Error().Err(err).Msg("failed to parse device id")
+				return "", err
+			}
+			return deviceId, nil
 		}
 	}
 
@@ -151,15 +130,8 @@ func (g *TailscaleGateway) DeleteDevice(ctx context.Context, tid tailnet.DeviceI
 	log := logger.FromContext(ctx)
 	log.Info().Msgf("Deleting device %s", tid.String())
 
-	log.Debug().Msg("getting device id")
-	id, err := g.findDeviceId(ctx, tid)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to get device id")
-		return err
-	}
-
 	log.Debug().Msg("deleting device")
-	err = g.client.DeleteDevice(ctx, id)
+	err := g.client.DeleteDevice(ctx, tid.String())
 	if err != nil {
 		log.Error().Err(err).Msg("failed to delete device")
 		return err

@@ -13,7 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
-func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifier, tid tailnet.DeviceIdentifier, pid provider.Identifier, loc provider.Location, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
+func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifier, tid tailnet.DeviceName, pid provider.Identifier, loc provider.Location, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating node on ECS")
 
