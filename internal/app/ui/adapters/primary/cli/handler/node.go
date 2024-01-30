@@ -27,7 +27,7 @@ func (h *Handler) ListNodes(c *cli.Context) error {
 	fmt.Printf("Nodes: %d\n", len(nodes))
 	fmt.Println("==========================")
 	for _, n := range nodes {
-		fmt.Printf("Node - Id: %s | Provider: %s | Location: %s\n", n.Identifier.String(), n.Provider.String(), n.Location.String())
+		fmt.Printf("Node - Id: %s | Provider: %s | Location: %s | Tailnet: %s | TailnetName: %s | TailnetId: %s\n", n.Identifier.String(), n.Provider.String(), n.Location.String(), n.Tailnet.String(), n.TailnetName, n.TailnetIdentifier.String())
 	}
 	return nil
 }
@@ -45,7 +45,24 @@ func (h *Handler) DescribeNode(c *cli.Context) error {
 		return e
 	}
 
-	fmt.Printf("Node - Id: %s | Provider: %s | Location: %s\n", n.Identifier.String(), n.Provider.String(), n.Location.String())
+	fmt.Printf("Node - Id: %s | Provider: %s | Location: %s | Tailnet: %s | TailnetName: %s | TailnetId: %s\n", n.Identifier.String(), n.Provider.String(), n.Location.String(), n.Tailnet.String(), n.TailnetName.String(), n.TailnetIdentifier.String())
+	return nil
+}
+
+func (h *Handler) GetNodeStatus(c *cli.Context) error {
+	id, err := node.IdentifierFromString(c.String(flag.NodeId))
+	if err != nil {
+		e := errors.Wrap(err, "failed to parse node id")
+		return e
+	}
+
+	status, err := h.apiSvc.GetNodeStatus(context.Background(), id)
+	if err != nil {
+		e := errors.Wrap(err, "failed to get node status")
+		return e
+	}
+
+	fmt.Printf("Node - Id: %s | Status: %s\n", id.String(), status.String())
 	return nil
 }
 

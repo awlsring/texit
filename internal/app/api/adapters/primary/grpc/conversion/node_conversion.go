@@ -7,12 +7,27 @@ import (
 	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
 )
 
+func TranslateNodeStatus(status node.Status) teen.NodeStatus {
+	switch status {
+	case node.StatusRunning:
+		return teen.NodeStatus_NODE_STATUS_RUNNING
+	case node.StatusStarting:
+		return teen.NodeStatus_NODE_STATUS_STARTING
+	case node.StatusStopped:
+		return teen.NodeStatus_NODE_STATUS_STOPPED
+	case node.StatusStopping:
+		return teen.NodeStatus_NODE_STATUS_STOPPING
+	default:
+		return teen.NodeStatus_NODE_STATUS_UNKNOWN_UNSPECIFIED
+	}
+}
+
 func NodeToSummary(node *node.Node) *teen.NodeSummary {
 	return &teen.NodeSummary{
 		Id:          node.Identifier.String(),
 		Provider:    node.Provider.String(),
 		PlatformId:  node.PlatformIdentifier.String(),
-		TailnetId:   node.TailnetName.String(),
+		TailnetId:   node.TailnetIdentifier.String(),
 		Tailnet:     node.Tailnet.String(),
 		TailnetName: node.TailnetName.String(),
 		Location:    node.Location.String(),

@@ -17,6 +17,8 @@ service TailscaleEphemeralExitNodesService {
     
     rpc GetNode(GetNodeRequest) returns(GetNodeResponse) {}
 
+    rpc GetNodeStatus(GetNodeStatusRequest) returns(GetNodeStatusResponse) {}
+
     rpc StartNode(StartNodeRequest) returns(StartNodeResponse) {}
 
     rpc StopNode(StopNodeRequest) returns(StopNodeResponse) {}
@@ -89,7 +91,6 @@ enum NodeStatus {
     NODE_STATUS_RUNNING = 2;
     NODE_STATUS_STOPPING = 3;
     NODE_STATUS_STOPPED = 4;
-    NODE_STATUS_ERROR = 5;
 }
 
 message NodeSummary {
@@ -103,6 +104,14 @@ message NodeSummary {
     bool ephemeral = 8;
     string created_at = 9;
     string updated_at = 10;
+}
+
+message GetNodeStatusRequest {
+    string id = 1;
+}
+
+message GetNodeStatusResponse {
+    NodeStatus status = 1;
 }
 
 message ListNodesRequest {}

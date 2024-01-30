@@ -12,9 +12,13 @@ import (
 func TranslateNodeStatus(s v1.NodeStatus) node.Status {
 	switch s {
 	case v1.NodeStatus_NODE_STATUS_RUNNING:
-		return node.StatusActive
-	case v1.NodeStatus_NODE_STATUS_STOPPED, v1.NodeStatus_NODE_STATUS_STOPPING:
-		return node.StatusInactive
+		return node.StatusRunning
+	case v1.NodeStatus_NODE_STATUS_STARTING:
+		return node.StatusStarting
+	case v1.NodeStatus_NODE_STATUS_STOPPED:
+		return node.StatusStopped
+	case v1.NodeStatus_NODE_STATUS_STOPPING:
+		return node.StatusStopping
 	default:
 		return node.StatusUnknown
 	}
@@ -31,7 +35,7 @@ func SummaryToNode(s *v1.NodeSummary) (*node.Node, error) {
 		return nil, err
 	}
 
-	tn, err := tailnet.IdentifierFromString(s.TailnetId)
+	tn, err := tailnet.IdentifierFromString(s.Tailnet)
 	if err != nil {
 		return nil, err
 	}

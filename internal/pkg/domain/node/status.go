@@ -1,13 +1,19 @@
 package node
 
-import "github.com/pkg/errors"
+import (
+	"strings"
+
+	"github.com/pkg/errors"
+)
 
 type Status int
 
 const (
 	StatusUnknown Status = iota
-	StatusActive
-	StatusInactive
+	StatusRunning
+	StatusStarting
+	StatusStopping
+	StatusStopped
 )
 
 var (
@@ -16,22 +22,30 @@ var (
 
 func (s Status) String() string {
 	switch s {
-	case StatusActive:
-		return "active"
-	case StatusInactive:
-		return "inactive"
+	case StatusRunning:
+		return "running"
+	case StatusStarting:
+		return "starting"
+	case StatusStopping:
+		return "stopping"
+	case StatusStopped:
+		return "stopped"
 	default:
 		return "unknown"
 	}
 }
 
 func StatusFromString(s string) (Status, error) {
-	switch s {
-	case "active":
-		return StatusActive, nil
-	case "inactive":
-		return StatusInactive, nil
+	switch strings.ToLower(s) {
+	case "running":
+		return StatusRunning, nil
+	case "starting":
+		return StatusStarting, nil
+	case "stopping":
+		return StatusStopping, nil
+	case "stopped":
+		return StatusStopped, nil
 	default:
-		return StatusUnknown, errors.Wrap(ErrUnknownStatus, s)
+		return StatusUnknown, ErrUnknownStatus
 	}
 }

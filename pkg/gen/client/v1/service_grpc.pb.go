@@ -29,6 +29,7 @@ type TailscaleEphemeralExitNodesServiceClient interface {
 	GetTailnet(ctx context.Context, in *GetTailnetRequest, opts ...grpc.CallOption) (*GetTailnetResponse, error)
 	ListNodes(ctx context.Context, in *ListNodesRequest, opts ...grpc.CallOption) (*ListNodesResponse, error)
 	GetNode(ctx context.Context, in *GetNodeRequest, opts ...grpc.CallOption) (*GetNodeResponse, error)
+	GetNodeStatus(ctx context.Context, in *GetNodeStatusRequest, opts ...grpc.CallOption) (*GetNodeStatusResponse, error)
 	StartNode(ctx context.Context, in *StartNodeRequest, opts ...grpc.CallOption) (*StartNodeResponse, error)
 	StopNode(ctx context.Context, in *StopNodeRequest, opts ...grpc.CallOption) (*StopNodeResponse, error)
 	ProvisionNode(ctx context.Context, in *ProvisionNodeRequest, opts ...grpc.CallOption) (*ProvisionNodeResponse, error)
@@ -107,6 +108,15 @@ func (c *tailscaleEphemeralExitNodesServiceClient) GetNode(ctx context.Context, 
 	return out, nil
 }
 
+func (c *tailscaleEphemeralExitNodesServiceClient) GetNodeStatus(ctx context.Context, in *GetNodeStatusRequest, opts ...grpc.CallOption) (*GetNodeStatusResponse, error) {
+	out := new(GetNodeStatusResponse)
+	err := c.cc.Invoke(ctx, "/client.v1.TailscaleEphemeralExitNodesService/GetNodeStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tailscaleEphemeralExitNodesServiceClient) StartNode(ctx context.Context, in *StartNodeRequest, opts ...grpc.CallOption) (*StartNodeResponse, error) {
 	out := new(StartNodeResponse)
 	err := c.cc.Invoke(ctx, "/client.v1.TailscaleEphemeralExitNodesService/StartNode", in, out, opts...)
@@ -163,6 +173,7 @@ type TailscaleEphemeralExitNodesServiceServer interface {
 	GetTailnet(context.Context, *GetTailnetRequest) (*GetTailnetResponse, error)
 	ListNodes(context.Context, *ListNodesRequest) (*ListNodesResponse, error)
 	GetNode(context.Context, *GetNodeRequest) (*GetNodeResponse, error)
+	GetNodeStatus(context.Context, *GetNodeStatusRequest) (*GetNodeStatusResponse, error)
 	StartNode(context.Context, *StartNodeRequest) (*StartNodeResponse, error)
 	StopNode(context.Context, *StopNodeRequest) (*StopNodeResponse, error)
 	ProvisionNode(context.Context, *ProvisionNodeRequest) (*ProvisionNodeResponse, error)
@@ -195,6 +206,9 @@ func (UnimplementedTailscaleEphemeralExitNodesServiceServer) ListNodes(context.C
 }
 func (UnimplementedTailscaleEphemeralExitNodesServiceServer) GetNode(context.Context, *GetNodeRequest) (*GetNodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNode not implemented")
+}
+func (UnimplementedTailscaleEphemeralExitNodesServiceServer) GetNodeStatus(context.Context, *GetNodeStatusRequest) (*GetNodeStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNodeStatus not implemented")
 }
 func (UnimplementedTailscaleEphemeralExitNodesServiceServer) StartNode(context.Context, *StartNodeRequest) (*StartNodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartNode not implemented")
@@ -351,6 +365,24 @@ func _TailscaleEphemeralExitNodesService_GetNode_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TailscaleEphemeralExitNodesService_GetNodeStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNodeStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TailscaleEphemeralExitNodesServiceServer).GetNodeStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/client.v1.TailscaleEphemeralExitNodesService/GetNodeStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TailscaleEphemeralExitNodesServiceServer).GetNodeStatus(ctx, req.(*GetNodeStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TailscaleEphemeralExitNodesService_StartNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StartNodeRequest)
 	if err := dec(in); err != nil {
@@ -475,6 +507,10 @@ var TailscaleEphemeralExitNodesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetNode",
 			Handler:    _TailscaleEphemeralExitNodesService_GetNode_Handler,
+		},
+		{
+			MethodName: "GetNodeStatus",
+			Handler:    _TailscaleEphemeralExitNodesService_GetNodeStatus_Handler,
 		},
 		{
 			MethodName: "StartNode",

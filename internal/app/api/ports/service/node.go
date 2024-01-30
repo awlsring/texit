@@ -13,9 +13,6 @@ var (
 )
 
 type Node interface {
-	// Create(context.Context, provider.Identifier, provider.Location, tailnet.Identifier, bool) (*node.Node, error)
-	// Delete(ctx context.Context, id node.Identifier) error
-
 	Start(ctx context.Context, id node.Identifier) error
 	Stop(ctx context.Context, id node.Identifier) error
 	Status(ctx context.Context, id node.Identifier) (node.Status, error)

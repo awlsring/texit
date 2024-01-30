@@ -43,6 +43,19 @@ func New(hdl *handler.Handler) *CLI {
 						},
 					},
 					{
+						Name:        "status",
+						Description: "Describes the status of an exit node",
+						Action:      hdl.GetNodeStatus,
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     flag.NodeId,
+								Aliases:  []string{"i"},
+								Usage:    "The id of the node to get the status of",
+								Required: true,
+							},
+						},
+					},
+					{
 						Name:        "provision",
 						Description: "Provision a new exit node on given provider in a given location",
 						Action:      hdl.ProvisionNode,

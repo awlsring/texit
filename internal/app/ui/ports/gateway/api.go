@@ -11,6 +11,7 @@ import (
 
 type Api interface {
 	GetNode(context.Context, node.Identifier) (*node.Node, error)
+	GetNodeStatus(context.Context, node.Identifier) (node.Status, error)
 	ListNodes(context.Context) ([]*node.Node, error)
 	ProvisionNode(context.Context, provider.Identifier, provider.Location, tailnet.Identifier, bool) (workflow.ExecutionIdentifier, error)
 	DeprovisionNode(context.Context, node.Identifier) (workflow.ExecutionIdentifier, error)

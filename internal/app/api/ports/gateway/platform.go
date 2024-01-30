@@ -2,14 +2,18 @@ package gateway
 
 import (
 	"context"
+	"errors"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
 )
 
+var (
+	ErrUnknownNode = errors.New("unknown node")
+)
+
 type Platform interface {
-	DescribeNode(context.Context, *node.Node) (*node.Node, error)
 	GetStatus(context.Context, *node.Node) (node.Status, error)
 	DeleteNode(context.Context, *node.Node) error
 	StartNode(context.Context, *node.Node) error
