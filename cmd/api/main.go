@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"net"
 	"net/url"
 	"os"
 	"os/signal"
@@ -27,10 +28,12 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
+	"tailscale.com/tsnet"
 
 	"github.com/tailscale/tailscale-client-go/tailscale"
 )
+
+var log zerolog.Logger
 
 func panicOnErr(err error) {
 	if err != nil {
@@ -118,11 +121,53 @@ func initHeadscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {
 	return headscale_v0_22_3_gateway.New(cfg.User, client.HeadscaleService)
 }
 
+func initListener(cfg *config.ServerConfig) net.Listener {
+	if cfg.Tailnet != nil {
+		log.Info().Msg("Creating tailnet listener")
+		return initTailnetListener(cfg)
+	}
+	log.Info().Msg("Creating normal net listener")
+	l, err := net.Listen("tcp", cfg.Address)
+	panicOnErr(err)
+	return l
+}
+
+func initTailnetListener(cfg *config.ServerConfig) net.Listener {
+	s := new(tsnet.Server)
+	s.Hostname = cfg.Tailnet.Hostname
+	s.AuthKey = cfg.Tailnet.AuthKey
+	s.RunWebClient = true
+	tailog := log.With().Timestamp().Str("process", "tsnet").Str("tailname", s.Hostname).Logger()
+	s.Logf = func(format string, args ...interface{}) {
+		tailog.Debug().Msgf(format, args...)
+	}
+	if cfg.Tailnet.StateDir != "" {
+		s.Dir = cfg.Tailnet.StateDir
+	}
+
+	if cfg.Tailnet.ControlUrl != "" {
+		log.Info().Msg("using headscale control server")
+		s.ControlURL = cfg.Tailnet.ControlUrl
+	}
+
+	// if cfg.Tailnet.Tls {
+	// 	log.Info().Msg("starting tailnet listener with TLS")
+	// 	l, err := s.ListenTLS("tcp", cfg.Address)
+	// 	panicOnErr(err)
+	// 	return l
+	// }
+
+	log.Info().Msg("listener will start without TLS")
+	l, err := s.Listen("tcp", cfg.Address)
+	panicOnErr(err)
+	return l
+}
+
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	ctx = logger.InitContextLogger(ctx, zerolog.DebugLevel)
-	log := logger.FromContext(ctx)
+	log = logger.FromContext(ctx)
 	log.Info().Msg("Initializing")
 
 	log.Info().Msg("Loading config")
@@ -156,8 +201,11 @@ func main() {
 	log.Info().Msg("Froming gRPC handler")
 	hdl := handler.New(nodeSvc, workflowSvc, providerSvc, tailnetSvc)
 
+	log.Info().Msg("Initializing net listener")
+	lis := initListener(cfg.Server)
+
 	log.Info().Msg("Creating gRPC server")
-	srv, err := grpc.NewServer(hdl, grpc.WithLogLevel(zerolog.DebugLevel))
+	srv, err := grpc.NewServer(lis, hdl, grpc.WithLogLevel(zerolog.DebugLevel))
 	panicOnErr(err)
 
 	log.Info().Msg("Starting gRPC server")

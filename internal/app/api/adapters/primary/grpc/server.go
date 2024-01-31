@@ -12,27 +12,22 @@ import (
 )
 
 const (
-	defaultNetwork   = "tcp"
-	defaultAddress   = ":7032"
 	defaultStaticKey = "set-me"
 	defaultLogLevel  = zerolog.InfoLevel
 )
 
 type GrpcServer struct {
-	network  string
-	address  string
 	apiKey   string
 	logLevel zerolog.Level
 	srv      *grpc.Server
 	listener net.Listener
 }
 
-func NewServer(hdl teen.TailscaleEphemeralExitNodesServiceServer, opts ...ServerOpt) (*GrpcServer, error) {
+func NewServer(lis net.Listener, hdl teen.TailscaleEphemeralExitNodesServiceServer, opts ...ServerOpt) (*GrpcServer, error) {
 	s := &GrpcServer{
-		network:  defaultNetwork,
-		address:  defaultAddress,
 		apiKey:   defaultStaticKey,
 		logLevel: defaultLogLevel,
+		listener: lis,
 	}
 
 	for _, opt := range opts {
@@ -44,12 +39,6 @@ func NewServer(hdl teen.TailscaleEphemeralExitNodesServiceServer, opts ...Server
 	}
 	s.srv = grpc.NewServer(grpcOpts...)
 	teen.RegisterTailscaleEphemeralExitNodesServiceServer(s.srv, hdl)
-	lis, err := net.Listen(s.network, s.address)
-	if err != nil {
-		return nil, err
-	}
-	s.listener = lis
-
 	return s, nil
 }
 
