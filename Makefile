@@ -25,7 +25,10 @@ codegen:
 	mkdir -p $(HEADSCALE_22_GEN)
 	swagger generate client -f $(HEADSCALE_22_MODEL) -A headscale -t $(HEADSCALE_22_GEN)
 
-build: codegen vet lint test
+mockgen:
+	mockery
+
+build: codegen mockgen vet lint test
 	@echo "Tidying up"
 	go mod tidy
 	@echo "Building api"
