@@ -19,6 +19,10 @@ vet:
 codegen:
 	@echo "Cleaning up"
 	rm -rf $(GEN_DIR)
+	@echo "Building the text model"
+	cd ${SRC_DIR}/model/texit && smithy format model && smithy build
+	@echo "Generating the Texit Server and Client"
+	go run github.com/ogen-go/ogen/cmd/ogen --target pkg/gen/texit -package texit --clean model/texit/build/smithy/openapi/openapi/Texit.openapi.json
 	@echo "Generating GRPC"
 	buf generate $(MODEL_DIR)
 	@echo "Generating Headscale Client for v0.22.3"

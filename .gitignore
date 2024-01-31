@@ -11,3 +11,4 @@ go.work
 /build
 *config.yaml
 *.db
+**/build
