@@ -13,7 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
-func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifier, tid tailnet.DeviceName, pid provider.Identifier, loc provider.Location, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
+func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifier, tid tailnet.DeviceName, pid *provider.Provider, loc provider.Location, tn *tailnet.Tailnet, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating node on ECS")
 
@@ -68,7 +68,7 @@ func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifie
 	}
 
 	log.Debug().Msg("Creating task definition")
-	err = createTaskDefinition(ctx, ecsClient, tid, key, execRole, taskRole, param)
+	err = createTaskDefinition(ctx, ecsClient, tn, tid, key, execRole, taskRole, param)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create task definition")
 		return "", err

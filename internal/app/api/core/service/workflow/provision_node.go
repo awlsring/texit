@@ -15,9 +15,9 @@ const (
 	postCreationWaitTime = 5 * time.Second
 )
 
-func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider provider.Identifier, location provider.Location, tn tailnet.Identifier, ephemeral bool) (workflow.ExecutionIdentifier, error) {
+func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provider.Provider, location provider.Location, tn *tailnet.Tailnet, ephemeral bool) (workflow.ExecutionIdentifier, error) {
 	log := logger.FromContext(ctx)
-	log.Debug().Msgf("Creating node on provider %s in location %s for tailnet %s", provider, location, tn)
+	log.Debug().Msgf("Creating node on provider %s in location %s for tailnet %s", prov.Name.String(), location, tn)
 
 	exId := workflow.FormExecutionIdentifier(workflow.WorkflowNameProvisionNode)
 
@@ -38,7 +38,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		log.Debug().Msgf("New tailnet device name: %s", tailName)
 
 		log.Debug().Msg("Getting tailnet gateway")
-		tailnetGw, err := s.getTailnetGateway(ctx, tn)
+		tailnetGw, err := s.getTailnetGateway(ctx, tn.Name)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get tailnet gateway")
 			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
@@ -54,7 +54,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		}
 
 		log.Debug().Msg("Getting platfrom gateway")
-		platformGw, err := s.getPlatformGateway(ctx, provider)
+		platformGw, err := s.getPlatformGateway(ctx, prov.Name)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get platform gateway")
 			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
@@ -62,7 +62,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		}
 
 		log.Debug().Msg("Creating node on platform")
-		platId, err := platformGw.CreateNode(ctx, id, tailName, provider, location, preauthKey)
+		platId, err := platformGw.CreateNode(ctx, id, tailName, prov, location, tn, preauthKey)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to create node")
 			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
@@ -90,10 +90,10 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, provider prov
 		n := &node.Node{
 			Identifier:         id,
 			PlatformIdentifier: platId,
-			Provider:           provider,
+			Provider:           prov.Name,
 			Location:           location,
 			PreauthKey:         preauthKey,
-			Tailnet:            tn,
+			Tailnet:            tn.Name,
 			TailnetIdentifier:  tid,
 			Ephemeral:          ephemeral,
 			TailnetName:        tailName,

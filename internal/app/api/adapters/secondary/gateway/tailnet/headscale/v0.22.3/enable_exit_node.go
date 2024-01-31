@@ -2,6 +2,7 @@ package headscale_v0_22_3_gateway
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
 	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
@@ -23,19 +24,23 @@ func (g *HeadscaleGateway) getRoutesForDevice(ctx context.Context, tid tailnet.D
 	log.Debug().Msg("selecting routes exposed by device")
 	targetRoutes := []string{}
 	for _, route := range resp.Payload.Routes {
-		if route.Machine.Name == tid.String() {
+		if route.Machine.ID == tid.String() {
 			log.Debug().Msgf("route %s exposed by device %s", route.ID, tid.String())
 			targetRoutes = append(targetRoutes, route.ID)
 		}
 	}
+	if len(targetRoutes) == 0 {
+		log.Debug().Msg("no routes exposed by device")
+		return nil, fmt.Errorf("no routes exposed by device")
+	}
 
-	log.Debug().Msg("routes selected")
+	log.Debug().Msgf("routes selected: %v", targetRoutes)
 	return targetRoutes, nil
 }
 
 func (g *HeadscaleGateway) enableRoutes(ctx context.Context, routes []string) error {
 	log := logger.FromContext(ctx)
-	log.Debug().Msg("enabling routes")
+	log.Debug().Msgf("enabling %d routes", len(routes))
 
 	for _, route := range routes {
 		log.Debug().Msgf("forming enable route request for route %s", route)
@@ -59,7 +64,7 @@ func (g *HeadscaleGateway) EnableExitNode(ctx context.Context, id tailnet.Device
 	log := logger.FromContext(ctx)
 	log.Info().Msg("enabling exit node")
 
-	log.Debug().Msg("forming get routes request")
+	log.Debug().Msg("getting devices routes")
 	routes, err := g.getRoutesForDevice(ctx, id)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to enable exit node")

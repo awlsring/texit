@@ -15,7 +15,7 @@ var (
 )
 
 type Workflow interface {
-	LaunchProvisionNodeWorkflow(context.Context, provider.Identifier, provider.Location, tailnet.Identifier, bool) (workflow.ExecutionIdentifier, error)
+	LaunchProvisionNodeWorkflow(context.Context, *provider.Provider, provider.Location, *tailnet.Tailnet, bool) (workflow.ExecutionIdentifier, error)
 	LaunchDeprovisionNodeWorkflow(context.Context, node.Identifier) (workflow.ExecutionIdentifier, error)
 	GetExecution(context.Context, workflow.ExecutionIdentifier) (*workflow.Execution, error)
 }

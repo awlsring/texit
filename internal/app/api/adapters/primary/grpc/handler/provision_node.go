@@ -48,7 +48,7 @@ func (h *Handler) ProvisionNode(ctx context.Context, req *teen.ProvisionNodeRequ
 	}
 
 	log.Debug().Msg("Launching provision node workflow")
-	exId, err := h.workSvc.LaunchProvisionNodeWorkflow(ctx, prov.Name, loc, tail.Name, req.GetEphemeral())
+	exId, err := h.workSvc.LaunchProvisionNodeWorkflow(ctx, prov, loc, tail, req.GetEphemeral())
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to launch provision node workflow")
 		return nil, err
