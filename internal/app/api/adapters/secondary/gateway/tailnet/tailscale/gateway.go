@@ -1,8 +1,8 @@
 package tailscale_gateway
 
 import (
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/interfaces"
+	"github.com/awlsring/texit/internal/app/api/ports/gateway"
+	"github.com/awlsring/texit/internal/pkg/interfaces"
 )
 
 const (

@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 )
 
 var (

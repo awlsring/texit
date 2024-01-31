@@ -5,10 +5,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/mocks"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/headscale/v0.22.3/client/headscale_service"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/headscale/v0.22.3/models"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/mocks"
+	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client/headscale_service"
+	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

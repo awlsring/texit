@@ -3,9 +3,9 @@ package platform_aws_ecs
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/interfaces"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/interfaces"
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 )

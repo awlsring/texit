@@ -3,9 +3,9 @@ package headscale_v0_22_3_gateway
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/headscale/v0.22.3/client/headscale_service"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/logger"
+	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client/headscale_service"
 )
 
 func (g *HeadscaleGateway) DeleteDevice(ctx context.Context, id tailnet.DeviceIdentifier) error {

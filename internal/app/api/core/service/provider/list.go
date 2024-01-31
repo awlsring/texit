@@ -3,8 +3,8 @@ package provider
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
+	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
 func (s *Service) List(ctx context.Context) ([]*provider.Provider, error) {

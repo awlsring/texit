@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 )
 
 var (

@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/mocks"
+	"github.com/awlsring/texit/internal/app/api/ports/gateway"
+	"github.com/awlsring/texit/internal/app/api/ports/service"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
+	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )

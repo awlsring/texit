@@ -3,7 +3,7 @@ package platform_aws_ecs
 import (
 	"testing"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -3,9 +3,9 @@ package handler
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
-	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/logger"
+	teen "github.com/awlsring/texit/pkg/gen/client/v1"
 )
 
 func (h *Handler) DeprovisionNode(ctx context.Context, req *teen.DeprovisionNodeRequest) (*teen.DeprovisionNodeResponse, error) {

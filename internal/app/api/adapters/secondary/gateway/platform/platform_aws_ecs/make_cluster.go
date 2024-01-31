@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/interfaces"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/interfaces"
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 	"github.com/aws/aws-sdk-go-v2/service/ecs/types"
@@ -15,7 +15,7 @@ import (
 
 const (
 	fargateCapacityProvider = "FARGATE"
-	clusterName             = "tailscale-cloud-exit-nodes"
+	clusterName             = "texit"
 	clusterActive           = "ACTIVE"
 	clusterPollBackoff      = 10 * time.Second
 	clusterPollMaxInterval  = 10
@@ -67,7 +67,7 @@ func createNewCluster(ctx context.Context, client interfaces.EcsClient) error {
 		Tags: []types.Tag{
 			{
 				Key:   aws.String("created-by"),
-				Value: aws.String("tailscale-cloud-exit-nodes"),
+				Value: aws.String("texit"),
 			},
 			{
 				Key:   aws.String("created-at"),

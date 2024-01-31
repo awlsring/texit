@@ -15,7 +15,7 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/headscale/v0.22.3/models"
+	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/models"
 )
 
 // NewHeadscaleServiceExpirePreAuthKeyParams creates a new HeadscaleServiceExpirePreAuthKeyParams object,

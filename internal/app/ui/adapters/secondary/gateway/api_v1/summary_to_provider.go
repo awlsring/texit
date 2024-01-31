@@ -1,8 +1,8 @@
 package apiv1
 
 import (
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
-	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
+	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
 )
 
 func TranslateProviderType(p v1.Provider) provider.Type {

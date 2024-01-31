@@ -3,7 +3,7 @@ package interceptor
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/rs/zerolog"
 	"google.golang.org/grpc"
 )

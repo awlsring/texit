@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
 )
 
 var (

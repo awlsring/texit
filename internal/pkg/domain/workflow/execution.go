@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/values"
+	"github.com/awlsring/texit/internal/pkg/values"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )

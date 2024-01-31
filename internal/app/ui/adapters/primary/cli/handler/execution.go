@@ -3,8 +3,8 @@ package handler
 import (
 	"fmt"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli/flag"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/workflow"
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/flag"
+	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 )

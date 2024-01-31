@@ -3,9 +3,9 @@ package workflow
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/workflow"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/domain/workflow"
+	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
 func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Identifier) (workflow.ExecutionIdentifier, error) {

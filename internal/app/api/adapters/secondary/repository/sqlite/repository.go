@@ -3,8 +3,8 @@ package sqlite_node_repository
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/repository"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/interfaces"
+	"github.com/awlsring/texit/internal/app/api/ports/repository"
+	"github.com/awlsring/texit/internal/pkg/interfaces"
 	_ "github.com/mattn/go-sqlite3"
 )
 

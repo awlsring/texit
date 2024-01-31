@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli/flag"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli/handler"
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/flag"
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/handler"
 	"github.com/urfave/cli/v2"
 )
 

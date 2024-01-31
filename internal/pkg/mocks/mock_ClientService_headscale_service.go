@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	headscale_service "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/headscale/v0.22.3/client/headscale_service"
+	headscale_service "github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client/headscale_service"
 	mock "github.com/stretchr/testify/mock"
 
 	runtime "github.com/go-openapi/runtime"

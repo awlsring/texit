@@ -3,8 +3,8 @@ package apiv1
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/ports/gateway"
-	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
+	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
 	"google.golang.org/grpc/metadata"
 )
 

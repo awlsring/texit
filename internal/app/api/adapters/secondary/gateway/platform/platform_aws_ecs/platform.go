@@ -3,7 +3,7 @@ package platform_aws_ecs
 import (
 	"time"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
+	"github.com/awlsring/texit/internal/app/api/ports/gateway"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/patrickmn/go-cache"
 )

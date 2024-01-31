@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/mocks"
+	"github.com/awlsring/texit/internal/app/api/ports/gateway"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

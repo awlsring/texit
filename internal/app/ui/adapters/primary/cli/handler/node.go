@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli/flag"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/flag"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 )

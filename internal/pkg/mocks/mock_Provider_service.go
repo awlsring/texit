@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	provider "github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	provider "github.com/awlsring/texit/internal/pkg/domain/provider"
 	mock "github.com/stretchr/testify/mock"
 )
 

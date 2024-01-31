@@ -1,6 +1,6 @@
 syntax = "proto3";
 package client.v1;
-option  go_package = "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1";
+option  go_package = "github.com/awlsring/texit/pkg/gen/client/v1";
 
 service TailscaleEphemeralExitNodesService {
     rpc HealthCheck(HealthCheckRequest) returns(HealthCheckResponse) {}

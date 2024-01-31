@@ -1,8 +1,8 @@
 package tailnet
 
 import (
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/app/api/ports/service"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 )
 
 type Service struct {

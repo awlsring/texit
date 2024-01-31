@@ -1,4 +1,4 @@
-module github.com/awlsring/tailscale-cloud-exit-nodes
+module github.com/awlsring/texit
 
 go 1.21.5
 

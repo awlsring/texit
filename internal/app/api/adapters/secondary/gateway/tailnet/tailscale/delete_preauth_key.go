@@ -3,8 +3,8 @@ package tailscale_gateway
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
 func (g *TailscaleGateway) DeletePreauthKey(ctx context.Context, key tailnet.PreauthKey) error {

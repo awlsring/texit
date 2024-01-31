@@ -3,10 +3,10 @@ package handler
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/primary/grpc/conversion"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/workflow"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
-	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	"github.com/awlsring/texit/internal/app/api/adapters/primary/grpc/conversion"
+	"github.com/awlsring/texit/internal/pkg/domain/workflow"
+	"github.com/awlsring/texit/internal/pkg/logger"
+	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
 )
 
 func (h *Handler) GetExecution(ctx context.Context, req *v1.GetExecutionRequest) (*v1.GetExecutionResponse, error) {

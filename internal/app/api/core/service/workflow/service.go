@@ -5,13 +5,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/repository"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/workflow"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/app/api/ports/gateway"
+	"github.com/awlsring/texit/internal/app/api/ports/repository"
+	"github.com/awlsring/texit/internal/app/api/ports/service"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/domain/workflow"
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/pkg/errors"
 )
 

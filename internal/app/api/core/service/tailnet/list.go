@@ -3,8 +3,8 @@ package tailnet
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
 func (s *Service) List(ctx context.Context) ([]*tailnet.Tailnet, error) {

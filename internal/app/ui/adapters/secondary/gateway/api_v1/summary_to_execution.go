@@ -3,8 +3,8 @@ package apiv1
 import (
 	"time"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/workflow"
-	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	"github.com/awlsring/texit/internal/pkg/domain/workflow"
+	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
 )
 
 func TranslateWorkflowName(n v1.WorkflowName) workflow.WorkflowName {

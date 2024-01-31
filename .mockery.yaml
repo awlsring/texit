@@ -5,8 +5,8 @@ dir: internal/pkg/mocks
 mockname: Mock{{.InterfaceName}}_{{.PackageName}}
 filename: "mock_{{.InterfaceName}}_{{.PackageName}}.go"
 packages:
-  github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/gateway:
-  github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/repository:
-  github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service:
-  github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/interfaces:
-  github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/headscale/v0.22.3/client/headscale_service:
+  github.com/awlsring/texit/internal/app/api/ports/gateway:
+  github.com/awlsring/texit/internal/app/api/ports/repository:
+  github.com/awlsring/texit/internal/app/api/ports/service:
+  github.com/awlsring/texit/internal/pkg/interfaces:
+  github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client/headscale_service:

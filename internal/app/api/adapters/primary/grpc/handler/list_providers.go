@@ -3,9 +3,9 @@ package handler
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/adapters/primary/grpc/conversion"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
-	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	"github.com/awlsring/texit/internal/app/api/adapters/primary/grpc/conversion"
+	"github.com/awlsring/texit/internal/pkg/logger"
+	teen "github.com/awlsring/texit/pkg/gen/client/v1"
 )
 
 func (h *Handler) ListProviders(ctx context.Context, _ *teen.ListProvidersRequest) (*teen.ListProvidersResponse, error) {

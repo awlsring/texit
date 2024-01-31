@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/stretchr/testify/assert"
 )
 

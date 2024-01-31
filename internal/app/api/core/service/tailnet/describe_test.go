@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/service"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/app/api/ports/service"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )

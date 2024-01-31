@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli/flag"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/flag"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/urfave/cli/v2"
 )
 

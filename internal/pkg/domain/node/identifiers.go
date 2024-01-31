@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/values"
+	"github.com/awlsring/texit/internal/pkg/values"
 )
 
 const charset = "abcdefghijklmnopqrstuvwxyz" +

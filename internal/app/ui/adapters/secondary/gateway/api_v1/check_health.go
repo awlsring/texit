@@ -3,7 +3,7 @@ package apiv1
 import (
 	"context"
 
-	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
 )
 
 func (g *ApiGateway) HealthCheck(ctx context.Context) error {

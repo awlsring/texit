@@ -3,8 +3,8 @@ package sqlite_node_repository
 import (
 	"context"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
 func (r *SqliteNodeRepository) Create(ctx context.Context, node *node.Node) error {

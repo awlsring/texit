@@ -1,7 +1,7 @@
 package tailnet
 
 import (
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/values"
+	"github.com/awlsring/texit/internal/pkg/values"
 	"github.com/pkg/errors"
 )
 

@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/api/ports/repository"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/node"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/app/api/ports/repository"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/pkg/errors"
 )
 

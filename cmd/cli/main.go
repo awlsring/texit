@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/primary/cli/handler"
-	apiv1 "github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/adapters/secondary/gateway/api_v1"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/config"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/core/service/api"
-	v1 "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli"
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/handler"
+	apiv1 "github.com/awlsring/texit/internal/app/ui/adapters/secondary/gateway/api_v1"
+	"github.com/awlsring/texit/internal/app/ui/config"
+	"github.com/awlsring/texit/internal/app/ui/core/service/api"
+	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/tailnet"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/interfaces"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/interfaces"
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 
@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	taskRoleNamePrefix          = "tailscale-cloud-exit-nodes-task-role"
-	executionRoleName           = "tailscale-cloud-exit-nodes-execution-role"
+	taskRoleNamePrefix          = "texit-task-role"
+	executionRoleName           = "texit-execution-role"
 	manageExecutionTaskPolicy   = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 	ecsAssumeRolePolicyDocument = `{
 		"Version": "2012-10-17",
@@ -60,7 +60,7 @@ func makeExecutionRole(ctx context.Context, client interfaces.IamClient) (string
 		Tags: []types.Tag{
 			{
 				Key:   aws.String("created-by"),
-				Value: aws.String("tailscale-cloud-exit-nodes"),
+				Value: aws.String("texit"),
 			},
 		},
 	})
@@ -169,7 +169,7 @@ func makeTaskRole(ctx context.Context, client interfaces.IamClient, tid tailnet.
 		Tags: []types.Tag{
 			{
 				Key:   aws.String("created-by"),
-				Value: aws.String("tailscale-cloud-exit-nodes"),
+				Value: aws.String("texit"),
 			},
 		},
 	})

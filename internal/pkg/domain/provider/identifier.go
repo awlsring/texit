@@ -1,6 +1,6 @@
 package provider
 
-import "github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/values"
+import "github.com/awlsring/texit/internal/pkg/values"
 
 type Identifier string
 

@@ -1,8 +1,8 @@
 package api
 
 import (
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/ports/gateway"
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/app/ui/ports/service"
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
+	"github.com/awlsring/texit/internal/app/ui/ports/service"
 )
 
 type Service struct {

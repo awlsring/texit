@@ -12,7 +12,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/headscale/v0.22.3/models"
+	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/models"
 )
 
 // HeadscaleServiceExpirePreAuthKeyReader is a Reader for the HeadscaleServiceExpirePreAuthKey structure.

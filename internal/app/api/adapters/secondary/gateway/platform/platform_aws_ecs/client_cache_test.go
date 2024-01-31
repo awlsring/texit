@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/patrickmn/go-cache"

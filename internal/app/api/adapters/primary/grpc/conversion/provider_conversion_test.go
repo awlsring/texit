@@ -1,12 +1,12 @@
-// FILEPATH: /Users/awlsring/Code/tailscale-cloud-exit-nodes/internal/app/api/adapters/primary/grpc/conversion/provider_conversion_test.go
+// FILEPATH: /Users/awlsring/Code/texit/internal/app/api/adapters/primary/grpc/conversion/provider_conversion_test.go
 
 package conversion
 
 import (
 	"testing"
 
-	"github.com/awlsring/tailscale-cloud-exit-nodes/internal/pkg/domain/provider"
-	teen "github.com/awlsring/tailscale-cloud-exit-nodes/pkg/gen/client/v1"
+	"github.com/awlsring/texit/internal/pkg/domain/provider"
+	teen "github.com/awlsring/texit/pkg/gen/client/v1"
 	"github.com/stretchr/testify/assert"
 )
 
