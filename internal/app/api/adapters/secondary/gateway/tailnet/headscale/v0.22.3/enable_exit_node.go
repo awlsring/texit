@@ -23,7 +23,7 @@ func (g *HeadscaleGateway) getRoutesForDevice(ctx context.Context, tid tailnet.D
 	log.Debug().Msg("selecting routes exposed by device")
 	targetRoutes := []string{}
 	for _, route := range resp.Payload.Routes {
-		if route.Machine.ID == tid.String() {
+		if route.Machine.Name == tid.String() {
 			log.Debug().Msgf("route %s exposed by device %s", route.ID, tid.String())
 			targetRoutes = append(targetRoutes, route.ID)
 		}
