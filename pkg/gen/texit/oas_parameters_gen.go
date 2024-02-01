@@ -425,6 +425,88 @@ func decodeGetExecutionParams(args [1]string, argsEscaped bool, r *http.Request)
 	return params, nil
 }
 
+// GetNodeStatusParams is parameters of GetNodeStatus operation.
+type GetNodeStatusParams struct {
+	// A node's identifier.
+	Identifier string
+}
+
+func unpackGetNodeStatusParams(packed middleware.Parameters) (params GetNodeStatusParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "identifier",
+			In:   "path",
+		}
+		params.Identifier = packed[key].(string)
+	}
+	return params
+}
+
+func decodeGetNodeStatusParams(args [1]string, argsEscaped bool, r *http.Request) (params GetNodeStatusParams, _ error) {
+	// Decode path: identifier.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "identifier",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.Identifier = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+			if err := func() error {
+				if err := (validate.String{
+					MinLength:    8,
+					MinLengthSet: true,
+					MaxLength:    8,
+					MaxLengthSet: true,
+					Email:        false,
+					Hostname:     false,
+					Regex:        nil,
+				}).Validate(string(params.Identifier)); err != nil {
+					return errors.Wrap(err, "string")
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "identifier",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
 // StartNodeParams is parameters of StartNode operation.
 type StartNodeParams struct {
 	// A node's identifier.

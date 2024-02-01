@@ -7,8 +7,9 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/awlsring/texit/internal/app/api/adapters/primary/grpc"
-	"github.com/awlsring/texit/internal/app/api/adapters/primary/grpc/handler"
+	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen"
+	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/auth"
+	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/handler"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ecs"
 	headscale_v0_22_3_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/headscale/v0.22.3"
 	tailscale_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/tailscale"
@@ -150,12 +151,12 @@ func initTailnetListener(cfg *config.ServerConfig) net.Listener {
 		s.ControlURL = cfg.Tailnet.ControlUrl
 	}
 
-	// if cfg.Tailnet.Tls {
-	// 	log.Info().Msg("starting tailnet listener with TLS")
-	// 	l, err := s.ListenTLS("tcp", cfg.Address)
-	// 	panicOnErr(err)
-	// 	return l
-	// }
+	if cfg.Tailnet.Tls {
+		log.Info().Msg("starting tailnet listener with TLS")
+		l, err := s.ListenTLS("tcp", cfg.Address)
+		panicOnErr(err)
+		return l
+	}
 
 	log.Info().Msg("listener will start without TLS")
 	l, err := s.Listen("tcp", cfg.Address)
@@ -198,17 +199,19 @@ func main() {
 	log.Info().Msg("Initializing node service")
 	nodeSvc := node.NewService(nodeRepo, workflowSvc, providerGateways)
 
-	log.Info().Msg("Froming gRPC handler")
+	log.Info().Msg("Froming ogen handler")
 	hdl := handler.New(nodeSvc, workflowSvc, providerSvc, tailnetSvc)
 
 	log.Info().Msg("Initializing net listener")
 	lis := initListener(cfg.Server)
 
-	log.Info().Msg("Creating gRPC server")
-	srv, err := grpc.NewServer(lis, hdl, grpc.WithLogLevel(zerolog.DebugLevel))
-	panicOnErr(err)
+	log.Info().Msg("Initializing security handler")
+	sec := auth.NewSecurityHandler([]string{"changeme"})
 
-	log.Info().Msg("Starting gRPC server")
+	log.Info().Msg("Creating ogen server")
+	srv := ogen.NewServer(lis, hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(zerolog.DebugLevel))
+
+	log.Info().Msg("Starting server")
 	go func() {
 		panicOnErr(srv.Start(ctx))
 	}()

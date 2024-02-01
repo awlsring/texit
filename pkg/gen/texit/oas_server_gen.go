@@ -38,6 +38,12 @@ type Handler interface {
 	//
 	// GET /execution/{identifier}
 	GetExecution(ctx context.Context, params GetExecutionParams) (GetExecutionRes, error)
+	// GetNodeStatus implements GetNodeStatus operation.
+	//
+	// Get the status of an node.
+	//
+	// GET /node/{identifier}/status
+	GetNodeStatus(ctx context.Context, params GetNodeStatusParams) (GetNodeStatusRes, error)
 	// Health implements Health operation.
 	//
 	// GET /health

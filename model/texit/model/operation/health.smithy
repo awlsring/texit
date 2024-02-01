@@ -6,7 +6,9 @@ namespace awlsring.texit.api
 @http(method: "GET", uri: "/health", code: 200)
 operation Health {
     input := {}
+
     output := {
+        @required
         healthy: Boolean
     }
 }

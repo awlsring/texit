@@ -23,7 +23,7 @@ func (id ExecutionIdentifier) String() string {
 func ExecutionIdentifierFromString(id string) (ExecutionIdentifier, error) {
 	identifier, err := values.NonNullString[ExecutionIdentifier](id)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	return ExecutionIdentifier(identifier), nil
 }

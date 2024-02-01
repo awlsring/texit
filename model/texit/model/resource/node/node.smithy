@@ -12,7 +12,7 @@ resource Node {
     list: ListNodes
     create: ProvisionNode
     delete: DeprovisionNode
-    operations: [StartNode, StopNode]
+    operations: [StartNode, StopNode, GetNodeStatus]
 }
 
 @documentation("The status of a node.")
@@ -31,22 +31,30 @@ structure NodeSummary {
     @required
     provider: ProviderName
 
+    @required
     location: ProviderLocation
 
+    @required
     providerNodeIdentifier: ProviderNodeIdentifier
 
+    @required
     tailnet: TailnetName
 
+    @required
     tailnetDeviceName: TailnetDeviceName
 
+    @required
     TailnetDeviceIdentifier: TailnetDeviceIdentifier
 
+    @required
     @documentation("If a node is ephemeral.")
     ephemeral: Boolean
 
+    @required
     @documentation("When a node was created.")
     created: Timestamp
 
+    @required
     @documentation("When a node was last updated.")
     updated: Timestamp
 }

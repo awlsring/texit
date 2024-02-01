@@ -58,6 +58,15 @@ func (UnimplementedHandler) GetExecution(ctx context.Context, params GetExecutio
 	return r, ht.ErrNotImplemented
 }
 
+// GetNodeStatus implements GetNodeStatus operation.
+//
+// Get the status of an node.
+//
+// GET /node/{identifier}/status
+func (UnimplementedHandler) GetNodeStatus(ctx context.Context, params GetNodeStatusParams) (r GetNodeStatusRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // Health implements Health operation.
 //
 // GET /health

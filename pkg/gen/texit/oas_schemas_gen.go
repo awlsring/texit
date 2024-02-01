@@ -141,11 +141,18 @@ func (s *ExecutionStatus) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/ExecutionSummary
 type ExecutionSummary struct {
-	Status    ExecutionStatus `json:"status"`
-	Workflow  WorkflowName    `json:"workflow"`
-	StartedAt float64         `json:"startedAt"`
-	EndedAt   OptFloat64      `json:"endedAt"`
-	Result    OptString       `json:"result"`
+	// A node's identifier.
+	Identifier string          `json:"identifier"`
+	Status     ExecutionStatus `json:"status"`
+	Workflow   WorkflowName    `json:"workflow"`
+	StartedAt  float64         `json:"startedAt"`
+	EndedAt    OptFloat64      `json:"endedAt"`
+	Result     OptString       `json:"result"`
+}
+
+// GetIdentifier returns the value of Identifier.
+func (s *ExecutionSummary) GetIdentifier() string {
+	return s.Identifier
 }
 
 // GetStatus returns the value of Status.
@@ -171,6 +178,11 @@ func (s *ExecutionSummary) GetEndedAt() OptFloat64 {
 // GetResult returns the value of Result.
 func (s *ExecutionSummary) GetResult() OptString {
 	return s.Result
+}
+
+// SetIdentifier sets the value of Identifier.
+func (s *ExecutionSummary) SetIdentifier(val string) {
+	s.Identifier = val
 }
 
 // SetStatus sets the value of Status.
@@ -215,18 +227,35 @@ func (s *GetExecutionResponseContent) SetSummary(val ExecutionSummary) {
 
 func (*GetExecutionResponseContent) getExecutionRes() {}
 
+// Ref: #/components/schemas/GetNodeStatusResponseContent
+type GetNodeStatusResponseContent struct {
+	Status NodeStatus `json:"status"`
+}
+
+// GetStatus returns the value of Status.
+func (s *GetNodeStatusResponseContent) GetStatus() NodeStatus {
+	return s.Status
+}
+
+// SetStatus sets the value of Status.
+func (s *GetNodeStatusResponseContent) SetStatus(val NodeStatus) {
+	s.Status = val
+}
+
+func (*GetNodeStatusResponseContent) getNodeStatusRes() {}
+
 // Ref: #/components/schemas/HealthResponseContent
 type HealthResponseContent struct {
-	Healthy OptBool `json:"healthy"`
+	Healthy bool `json:"healthy"`
 }
 
 // GetHealthy returns the value of Healthy.
-func (s *HealthResponseContent) GetHealthy() OptBool {
+func (s *HealthResponseContent) GetHealthy() bool {
 	return s.Healthy
 }
 
 // SetHealthy sets the value of Healthy.
-func (s *HealthResponseContent) SetHealthy(val OptBool) {
+func (s *HealthResponseContent) SetHealthy(val bool) {
 	s.Healthy = val
 }
 
@@ -294,6 +323,70 @@ func (s *ListTailnetsResponseContent) SetSummaries(val []TailnetSummary) {
 	s.Summaries = val
 }
 
+// The status of a node.
+// Ref: #/components/schemas/NodeStatus
+type NodeStatus string
+
+const (
+	NodeStatusStarting NodeStatus = "starting"
+	NodeStatusRunning  NodeStatus = "running"
+	NodeStatusStopping NodeStatus = "stopping"
+	NodeStatusStopped  NodeStatus = "stopped"
+	NodeStatusUnknown  NodeStatus = "unknown"
+)
+
+// AllValues returns all NodeStatus values.
+func (NodeStatus) AllValues() []NodeStatus {
+	return []NodeStatus{
+		NodeStatusStarting,
+		NodeStatusRunning,
+		NodeStatusStopping,
+		NodeStatusStopped,
+		NodeStatusUnknown,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s NodeStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case NodeStatusStarting:
+		return []byte(s), nil
+	case NodeStatusRunning:
+		return []byte(s), nil
+	case NodeStatusStopping:
+		return []byte(s), nil
+	case NodeStatusStopped:
+		return []byte(s), nil
+	case NodeStatusUnknown:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *NodeStatus) UnmarshalText(data []byte) error {
+	switch NodeStatus(data) {
+	case NodeStatusStarting:
+		*s = NodeStatusStarting
+		return nil
+	case NodeStatusRunning:
+		*s = NodeStatusRunning
+		return nil
+	case NodeStatusStopping:
+		*s = NodeStatusStopping
+		return nil
+	case NodeStatusStopped:
+		*s = NodeStatusStopped
+		return nil
+	case NodeStatusUnknown:
+		*s = NodeStatusUnknown
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // Ref: #/components/schemas/NodeSummary
 type NodeSummary struct {
 	// A node's identifier.
@@ -301,21 +394,21 @@ type NodeSummary struct {
 	// The name of the provider.
 	Provider string `json:"provider"`
 	// A location provided by a provider.
-	Location OptString `json:"location"`
+	Location string `json:"location"`
 	// The identifier of the node resource in the provider.
-	ProviderNodeIdentifier OptString `json:"providerNodeIdentifier"`
+	ProviderNodeIdentifier string `json:"providerNodeIdentifier"`
 	// .
-	Tailnet OptString `json:"tailnet"`
+	Tailnet string `json:"tailnet"`
 	// The name of a tailnet device.
-	TailnetDeviceName OptString `json:"tailnetDeviceName"`
+	TailnetDeviceName string `json:"tailnetDeviceName"`
 	// The identifier of a tailnet device.
-	TailnetDeviceIdentifier OptString `json:"TailnetDeviceIdentifier"`
+	TailnetDeviceIdentifier string `json:"TailnetDeviceIdentifier"`
 	// If a node is ephemeral.
-	Ephemeral OptBool `json:"ephemeral"`
+	Ephemeral bool `json:"ephemeral"`
 	// When a node was created.
-	Created OptFloat64 `json:"created"`
+	Created float64 `json:"created"`
 	// When a node was last updated.
-	Updated OptFloat64 `json:"updated"`
+	Updated float64 `json:"updated"`
 }
 
 // GetIdentifier returns the value of Identifier.
@@ -329,42 +422,42 @@ func (s *NodeSummary) GetProvider() string {
 }
 
 // GetLocation returns the value of Location.
-func (s *NodeSummary) GetLocation() OptString {
+func (s *NodeSummary) GetLocation() string {
 	return s.Location
 }
 
 // GetProviderNodeIdentifier returns the value of ProviderNodeIdentifier.
-func (s *NodeSummary) GetProviderNodeIdentifier() OptString {
+func (s *NodeSummary) GetProviderNodeIdentifier() string {
 	return s.ProviderNodeIdentifier
 }
 
 // GetTailnet returns the value of Tailnet.
-func (s *NodeSummary) GetTailnet() OptString {
+func (s *NodeSummary) GetTailnet() string {
 	return s.Tailnet
 }
 
 // GetTailnetDeviceName returns the value of TailnetDeviceName.
-func (s *NodeSummary) GetTailnetDeviceName() OptString {
+func (s *NodeSummary) GetTailnetDeviceName() string {
 	return s.TailnetDeviceName
 }
 
 // GetTailnetDeviceIdentifier returns the value of TailnetDeviceIdentifier.
-func (s *NodeSummary) GetTailnetDeviceIdentifier() OptString {
+func (s *NodeSummary) GetTailnetDeviceIdentifier() string {
 	return s.TailnetDeviceIdentifier
 }
 
 // GetEphemeral returns the value of Ephemeral.
-func (s *NodeSummary) GetEphemeral() OptBool {
+func (s *NodeSummary) GetEphemeral() bool {
 	return s.Ephemeral
 }
 
 // GetCreated returns the value of Created.
-func (s *NodeSummary) GetCreated() OptFloat64 {
+func (s *NodeSummary) GetCreated() float64 {
 	return s.Created
 }
 
 // GetUpdated returns the value of Updated.
-func (s *NodeSummary) GetUpdated() OptFloat64 {
+func (s *NodeSummary) GetUpdated() float64 {
 	return s.Updated
 }
 
@@ -379,42 +472,42 @@ func (s *NodeSummary) SetProvider(val string) {
 }
 
 // SetLocation sets the value of Location.
-func (s *NodeSummary) SetLocation(val OptString) {
+func (s *NodeSummary) SetLocation(val string) {
 	s.Location = val
 }
 
 // SetProviderNodeIdentifier sets the value of ProviderNodeIdentifier.
-func (s *NodeSummary) SetProviderNodeIdentifier(val OptString) {
+func (s *NodeSummary) SetProviderNodeIdentifier(val string) {
 	s.ProviderNodeIdentifier = val
 }
 
 // SetTailnet sets the value of Tailnet.
-func (s *NodeSummary) SetTailnet(val OptString) {
+func (s *NodeSummary) SetTailnet(val string) {
 	s.Tailnet = val
 }
 
 // SetTailnetDeviceName sets the value of TailnetDeviceName.
-func (s *NodeSummary) SetTailnetDeviceName(val OptString) {
+func (s *NodeSummary) SetTailnetDeviceName(val string) {
 	s.TailnetDeviceName = val
 }
 
 // SetTailnetDeviceIdentifier sets the value of TailnetDeviceIdentifier.
-func (s *NodeSummary) SetTailnetDeviceIdentifier(val OptString) {
+func (s *NodeSummary) SetTailnetDeviceIdentifier(val string) {
 	s.TailnetDeviceIdentifier = val
 }
 
 // SetEphemeral sets the value of Ephemeral.
-func (s *NodeSummary) SetEphemeral(val OptBool) {
+func (s *NodeSummary) SetEphemeral(val bool) {
 	s.Ephemeral = val
 }
 
 // SetCreated sets the value of Created.
-func (s *NodeSummary) SetCreated(val OptFloat64) {
+func (s *NodeSummary) SetCreated(val float64) {
 	s.Created = val
 }
 
 // SetUpdated sets the value of Updated.
-func (s *NodeSummary) SetUpdated(val OptFloat64) {
+func (s *NodeSummary) SetUpdated(val float64) {
 	s.Updated = val
 }
 
@@ -559,7 +652,8 @@ func (o OptString) Or(d string) string {
 // Ref: #/components/schemas/ProviderSummary
 type ProviderSummary struct {
 	// The name of the provider.
-	Name string `json:"name"`
+	Name string       `json:"name"`
+	Type ProviderType `json:"type"`
 }
 
 // GetName returns the value of Name.
@@ -567,9 +661,62 @@ func (s *ProviderSummary) GetName() string {
 	return s.Name
 }
 
+// GetType returns the value of Type.
+func (s *ProviderSummary) GetType() ProviderType {
+	return s.Type
+}
+
 // SetName sets the value of Name.
 func (s *ProviderSummary) SetName(val string) {
 	s.Name = val
+}
+
+// SetType sets the value of Type.
+func (s *ProviderSummary) SetType(val ProviderType) {
+	s.Type = val
+}
+
+// The type of provider.
+// Ref: #/components/schemas/ProviderType
+type ProviderType string
+
+const (
+	ProviderTypeAWSEcs  ProviderType = "aws-ecs"
+	ProviderTypeUnknown ProviderType = "unknown"
+)
+
+// AllValues returns all ProviderType values.
+func (ProviderType) AllValues() []ProviderType {
+	return []ProviderType{
+		ProviderTypeAWSEcs,
+		ProviderTypeUnknown,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ProviderType) MarshalText() ([]byte, error) {
+	switch s {
+	case ProviderTypeAWSEcs:
+		return []byte(s), nil
+	case ProviderTypeUnknown:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ProviderType) UnmarshalText(data []byte) error {
+	switch ProviderType(data) {
+	case ProviderTypeAWSEcs:
+		*s = ProviderTypeAWSEcs
+		return nil
+	case ProviderTypeUnknown:
+		*s = ProviderTypeUnknown
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // Ref: #/components/schemas/ProvisionNodeRequestContent
@@ -661,6 +808,7 @@ func (*ResourceNotFoundErrorResponseContent) describeNodeRes()     {}
 func (*ResourceNotFoundErrorResponseContent) describeProviderRes() {}
 func (*ResourceNotFoundErrorResponseContent) describeTailnetRes()  {}
 func (*ResourceNotFoundErrorResponseContent) getExecutionRes()     {}
+func (*ResourceNotFoundErrorResponseContent) getNodeStatusRes()    {}
 func (*ResourceNotFoundErrorResponseContent) listNodesRes()        {}
 func (*ResourceNotFoundErrorResponseContent) provisionNodeRes()    {}
 func (*ResourceNotFoundErrorResponseContent) startNodeRes()        {}
@@ -720,10 +868,8 @@ type TailnetSummary struct {
 	// .
 	Name string      `json:"name"`
 	Type TailnetType `json:"type"`
-	// The server address of the tailnet. This must be set for tailscale.
-	Address OptString `json:"address"`
-	// The user Texit acts as in the tailnet.
-	User OptString `json:"user"`
+	// The server address of the tailnet. This must be set for headscale tailnets.
+	ControlServer string `json:"controlServer"`
 }
 
 // GetName returns the value of Name.
@@ -736,14 +882,9 @@ func (s *TailnetSummary) GetType() TailnetType {
 	return s.Type
 }
 
-// GetAddress returns the value of Address.
-func (s *TailnetSummary) GetAddress() OptString {
-	return s.Address
-}
-
-// GetUser returns the value of User.
-func (s *TailnetSummary) GetUser() OptString {
-	return s.User
+// GetControlServer returns the value of ControlServer.
+func (s *TailnetSummary) GetControlServer() string {
+	return s.ControlServer
 }
 
 // SetName sets the value of Name.
@@ -756,14 +897,9 @@ func (s *TailnetSummary) SetType(val TailnetType) {
 	s.Type = val
 }
 
-// SetAddress sets the value of Address.
-func (s *TailnetSummary) SetAddress(val OptString) {
-	s.Address = val
-}
-
-// SetUser sets the value of User.
-func (s *TailnetSummary) SetUser(val OptString) {
-	s.User = val
+// SetControlServer sets the value of ControlServer.
+func (s *TailnetSummary) SetControlServer(val string) {
+	s.ControlServer = val
 }
 
 // Ref: #/components/schemas/TailnetType

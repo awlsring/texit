@@ -32,11 +32,9 @@ structure TailnetSummary {
     @required
     type: TailnetType
 
-    @documentation("The server address of the tailnet. This must be set for tailscale")
-    address: String
-
-    @documentation("The user Texit acts as in the tailnet.")
-    user: String
+    @required
+    @documentation("The server address of the tailnet. This must be set for headscale tailnets")
+    controlServer: String
 }
 
 list TailnetSummaries {

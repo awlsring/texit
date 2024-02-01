@@ -21,6 +21,10 @@ type GetExecutionRes interface {
 	getExecutionRes()
 }
 
+type GetNodeStatusRes interface {
+	getNodeStatusRes()
+}
+
 type ListNodesRes interface {
 	listNodesRes()
 }

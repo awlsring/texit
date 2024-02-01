@@ -29,6 +29,9 @@ enum WorkflowName {
 
 structure ExecutionSummary {
     @required
+    identifier: ExecutionIdentifier
+
+    @required
     status: ExecutionStatus
 
     @required

@@ -1,6 +1,7 @@
 package tailnet
 
 type Tailnet struct {
-	Name Identifier
-	Type Type
+	Name          Identifier
+	Type          Type
+	ControlServer ControlServer
 }

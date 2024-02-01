@@ -177,26 +177,64 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							break
 						}
 						switch elem[0] {
-						case 'a': // Prefix: "art"
+						case 'a': // Prefix: "a"
 							origElem := elem
-							if l := len("art"); len(elem) >= l && elem[0:l] == "art" {
+							if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
 							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "POST":
-									s.handleStartNodeRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "POST")
+								break
+							}
+							switch elem[0] {
+							case 'r': // Prefix: "rt"
+								origElem := elem
+								if l := len("rt"); len(elem) >= l && elem[0:l] == "rt" {
+									elem = elem[l:]
+								} else {
+									break
 								}
 
-								return
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "POST":
+										s.handleStartNodeRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "POST")
+									}
+
+									return
+								}
+
+								elem = origElem
+							case 't': // Prefix: "tus"
+								origElem := elem
+								if l := len("tus"); len(elem) >= l && elem[0:l] == "tus" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "GET":
+										s.handleGetNodeStatusRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "GET")
+									}
+
+									return
+								}
+
+								elem = origElem
 							}
 
 							elem = origElem
@@ -565,28 +603,68 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							break
 						}
 						switch elem[0] {
-						case 'a': // Prefix: "art"
+						case 'a': // Prefix: "a"
 							origElem := elem
-							if l := len("art"); len(elem) >= l && elem[0:l] == "art" {
+							if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
 							if len(elem) == 0 {
-								switch method {
-								case "POST":
-									// Leaf: StartNode
-									r.name = "StartNode"
-									r.summary = ""
-									r.operationID = "StartNode"
-									r.pathPattern = "/node/{identifier}/start"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
+								break
+							}
+							switch elem[0] {
+							case 'r': // Prefix: "rt"
+								origElem := elem
+								if l := len("rt"); len(elem) >= l && elem[0:l] == "rt" {
+									elem = elem[l:]
+								} else {
+									break
 								}
+
+								if len(elem) == 0 {
+									switch method {
+									case "POST":
+										// Leaf: StartNode
+										r.name = "StartNode"
+										r.summary = ""
+										r.operationID = "StartNode"
+										r.pathPattern = "/node/{identifier}/start"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+
+								elem = origElem
+							case 't': // Prefix: "tus"
+								origElem := elem
+								if l := len("tus"); len(elem) >= l && elem[0:l] == "tus" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									switch method {
+									case "GET":
+										// Leaf: GetNodeStatus
+										r.name = "GetNodeStatus"
+										r.summary = ""
+										r.operationID = "GetNodeStatus"
+										r.pathPattern = "/node/{identifier}/status"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
+								}
+
+								elem = origElem
 							}
 
 							elem = origElem

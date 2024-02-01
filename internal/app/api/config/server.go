@@ -21,7 +21,7 @@ type ServerTailnetConfig struct {
 	// The directory to store the state of the tailnet. If not specified, the default will be used.
 	StateDir string `yaml:"state"`
 	// Whether to use TLS for the tailnet connection
-	// Tls bool `yaml:"tls"`
+	Tls bool `yaml:"tls"`
 	// ControlUrl is the URL of the control server to use. Specify this if you are using Headscale. If not specified, the default tailscale address will be used.
 	ControlUrl string `yaml:"controlUrl"`
 }

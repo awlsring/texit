@@ -27,6 +27,9 @@ string ProviderNodeIdentifier
 structure ProviderSummary {
     @required
     name: ProviderName
+
+    @required
+    type: ProviderType
 }
 
 list ProviderSummaries {
