@@ -8,6 +8,10 @@ const (
 	DatabaseEngineSqlite3 DatabaseEngine = "sqlite3"
 )
 
+const (
+	defaultSqliteDbLocation = "/texit/texit.db"
+)
+
 var (
 	ErrMissingDatabaseHost = errors.New("missing database host")
 	ErrMissingDatabasePort = errors.New("missing database port")
@@ -30,6 +34,8 @@ type DatabaseConfig struct {
 	Password string `yaml:"password"`
 	// The name of the database
 	Database string `yaml:"database"`
+	// Location of the database file. For sqlite3 only
+	Location string `yaml:"location"`
 }
 
 func (c *DatabaseConfig) Validate() error {
@@ -38,6 +44,9 @@ func (c *DatabaseConfig) Validate() error {
 	}
 
 	if c.Engine == DatabaseEngineSqlite3 {
+		if c.Location == "" {
+			c.Location = defaultSqliteDbLocation
+		}
 		return nil
 	}
 

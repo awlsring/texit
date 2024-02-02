@@ -180,7 +180,7 @@ func main() {
 	panicOnErr(err)
 
 	log.Info().Msg("Connecting to database")
-	db, err := sqlx.Connect("sqlite3", "__deleteme.db")
+	db, err := sqlx.Connect("sqlite3", cfg.Database.Location)
 	panicOnErr(err)
 	nodeRepo := sqlite_node_repository.New(db)
 	err = nodeRepo.Init(ctx)
