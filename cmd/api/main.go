@@ -60,6 +60,10 @@ func initProviderGateways(providers []*config.ProviderConfig) map[string]gateway
 func initTailnetGateways(cfg []*config.TailnetConfig) map[string]gateway.Tailnet {
 	gateways := make(map[string]gateway.Tailnet)
 	for _, t := range cfg {
+		_, ok := gateways[t.Tailnet]
+		if ok {
+			panic("duplicate tailnet specified in config file")
+		}
 		switch t.Type {
 		case config.TailnetTypeTailscale:
 			gateways[t.Tailnet] = initTailscaleGateway(t)
@@ -95,9 +99,12 @@ func initTailnetService(tailnets []*config.TailnetConfig) service.Tailnet {
 		panicOnErr(err)
 		typ, err := tailnet.TypeFromString(t.Type.String())
 		panicOnErr(err)
+		cs, err := tailnet.ControlServerFromString(t.ControlServer)
+		panicOnErr(err)
 		provs = append(provs, &tailnet.Tailnet{
-			Name: name,
-			Type: typ,
+			Name:          name,
+			Type:          typ,
+			ControlServer: cs,
 		})
 	}
 	svc := tailnetSvc.NewService(provs)
@@ -210,7 +217,7 @@ func main() {
 	lis := initListener(cfg.Server)
 
 	log.Info().Msg("Initializing security handler")
-	sec := auth.NewSecurityHandler([]string{"changeme"})
+	sec := auth.NewSecurityHandler([]string{cfg.Server.APIKey})
 
 	log.Info().Msg("Creating ogen server")
 	srv := ogen.NewServer(lis, hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(zerolog.DebugLevel))

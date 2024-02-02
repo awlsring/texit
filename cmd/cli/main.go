@@ -27,8 +27,8 @@ func (s Sec) SmithyAPIHttpApiKeyAuth(ctx context.Context, operationName string) 
 	}, nil
 }
 
-func initClient(address string) texit.Invoker {
-	c, err := texit.NewClient(address, Sec{key: "changeme"})
+func initClient(address string, key string) texit.Invoker {
+	c, err := texit.NewClient(address, Sec{key: key})
 	panicOnErr(err)
 	return c
 }
@@ -36,7 +36,7 @@ func initClient(address string) texit.Invoker {
 func main() {
 	cfg, err := config.LoadFromFile("cli-config.yaml")
 	panicOnErr(err)
-	client := initClient(cfg.Api.Address)
+	client := initClient(cfg.Api.Address, cfg.Api.ApiKey)
 
 	apiGw := api_gateway.New(client)
 	svc := api.NewService(apiGw)

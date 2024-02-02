@@ -1,15 +1,20 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"math/rand"
+)
 
 const (
 	DefaultHostName = "texit"
-	State
 )
 
 var (
 	ErrMissingTailnetAuthKey = fmt.Errorf("missing tailnet preauth key")
 )
+
+const charset = "abcdefghijklmnopqrstuvwxyz" +
+	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 // Configuration for the server tailnet connection
 // If this is specified, the server will be started using tsnet and will join the tailnet.
@@ -38,10 +43,22 @@ func (c *ServerTailnetConfig) Validate() error {
 	return nil
 }
 
+func generateRandomApiKey() string {
+	b := make([]byte, 32)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
 // Configuration for the server
 type ServerConfig struct {
-	Address string               `yaml:"address"`
+	// The address to listen on
+	Address string `yaml:"address"`
+	// If specified, the server will join the tailnet with the config provided
 	Tailnet *ServerTailnetConfig `yaml:"tailnet"`
+	// A static key to use for the API. If not specified, one will be generated.
+	APIKey string `yaml:"apiKey"` //TODO: make this better one day
 }
 
 func (c *ServerConfig) Validate() error {
@@ -53,6 +70,10 @@ func (c *ServerConfig) Validate() error {
 		if err := c.Tailnet.Validate(); err != nil {
 			return err
 		}
+	}
+
+	if c.APIKey == "" {
+		c.APIKey = generateRandomApiKey()
 	}
 
 	return nil
