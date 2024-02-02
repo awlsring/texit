@@ -31,7 +31,7 @@ const (
 func makeExtraArgs(tn *tailnet.Tailnet) types.KeyValuePair {
 	extraArgs := valueAdvertiseExitNode
 	if tn.Type == tailnet.TypeHeadscale {
-		extraArgs = extraArgs + " --login-server=" + tn.Name.String()
+		extraArgs = extraArgs + " --login-server=" + tn.ControlServer.String()
 	}
 	return types.KeyValuePair{
 		Name:  aws.String(keyTsExtraArgs),
