@@ -1,23 +1,22 @@
-package apiv1
+package api_gateway
 
 import (
 	"context"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
-	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
+	"github.com/awlsring/texit/pkg/gen/texit"
 )
 
 func (g *ApiGateway) GetNodeStatus(ctx context.Context, id node.Identifier) (node.Status, error) {
-	ctx = g.setAuthInContext(ctx)
-	req := &v1.GetNodeStatusRequest{
-		Id: id.String(),
+	req := texit.GetNodeStatusParams{
+		Identifier: id.String(),
 	}
 	resp, err := g.client.GetNodeStatus(ctx, req)
 	if err != nil {
 		return node.StatusUnknown, err
 	}
 
-	status := TranslateNodeStatus(resp.Status)
+	status := translateNodeStatus(resp.(*texit.GetNodeStatusResponseContent).Status)
 
 	return status, nil
 }

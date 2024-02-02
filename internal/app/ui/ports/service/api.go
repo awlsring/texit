@@ -22,5 +22,9 @@ type Api interface {
 
 	GetProvider(ctx context.Context, id provider.Identifier) (*provider.Provider, error)
 	ListProviders(ctx context.Context) ([]*provider.Provider, error)
+
+	GetTailnet(ctx context.Context, id tailnet.Identifier) (*tailnet.Tailnet, error)
+	ListTailnets(ctx context.Context) ([]*tailnet.Tailnet, error)
+
 	CheckServerHealth(ctx context.Context) error
 }

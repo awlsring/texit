@@ -1,17 +1,16 @@
-package apiv1
+package api_gateway
 
 import (
 	"context"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
-	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
+	"github.com/awlsring/texit/pkg/gen/texit"
 )
 
 func (g *ApiGateway) DeprovisionNode(ctx context.Context, id node.Identifier) (workflow.ExecutionIdentifier, error) {
-	ctx = g.setAuthInContext(ctx)
-	req := &v1.DeprovisionNodeRequest{
-		Id: id.String(),
+	req := texit.DeprovisionNodeParams{
+		Identifier: id.String(),
 	}
 
 	resp, err := g.client.DeprovisionNode(ctx, req)
@@ -19,7 +18,7 @@ func (g *ApiGateway) DeprovisionNode(ctx context.Context, id node.Identifier) (w
 		return "", err
 	}
 
-	exId, err := workflow.ExecutionIdentifierFromString(resp.ExecutionId)
+	exId, err := workflow.ExecutionIdentifierFromString(resp.(*texit.DeprovisionNodeResponseContent).Execution)
 	if err != nil {
 		return "", err
 	}

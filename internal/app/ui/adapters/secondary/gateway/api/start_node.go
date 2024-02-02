@@ -1,16 +1,15 @@
-package apiv1
+package api_gateway
 
 import (
 	"context"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
-	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
+	"github.com/awlsring/texit/pkg/gen/texit"
 )
 
 func (g *ApiGateway) StartNode(ctx context.Context, id node.Identifier) error {
-	ctx = g.setAuthInContext(ctx)
-	req := &v1.StartNodeRequest{
-		Id: id.String(),
+	req := texit.StartNodeParams{
+		Identifier: id.String(),
 	}
 
 	_, err := g.client.StartNode(ctx, req)

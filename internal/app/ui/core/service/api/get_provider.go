@@ -7,5 +7,5 @@ import (
 )
 
 func (s *Service) GetProvider(ctx context.Context, identifier provider.Identifier) (*provider.Provider, error) {
-	return s.apiGw.GetProvider(ctx, identifier)
+	return s.apiGw.DescribeProvider(ctx, identifier)
 }

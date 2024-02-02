@@ -1,14 +1,14 @@
 package main
 
 import (
+	"context"
+
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/handler"
-	apiv1 "github.com/awlsring/texit/internal/app/ui/adapters/secondary/gateway/api_v1"
+	api_gateway "github.com/awlsring/texit/internal/app/ui/adapters/secondary/gateway/api"
 	"github.com/awlsring/texit/internal/app/ui/config"
 	"github.com/awlsring/texit/internal/app/ui/core/service/api"
-	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"github.com/awlsring/texit/pkg/gen/texit"
 )
 
 func panicOnErr(err error) {
@@ -17,10 +17,20 @@ func panicOnErr(err error) {
 	}
 }
 
-func initClient(address string) v1.TailscaleEphemeralExitNodesServiceClient {
-	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+type Sec struct {
+	key string
+}
+
+func (s Sec) SmithyAPIHttpApiKeyAuth(ctx context.Context, operationName string) (texit.SmithyAPIHttpApiKeyAuth, error) {
+	return texit.SmithyAPIHttpApiKeyAuth{
+		APIKey: s.key,
+	}, nil
+}
+
+func initClient(address string) texit.Invoker {
+	c, err := texit.NewClient(address, Sec{key: "changeme"})
 	panicOnErr(err)
-	return v1.NewTailscaleEphemeralExitNodesServiceClient(conn)
+	return c
 }
 
 func main() {
@@ -28,7 +38,7 @@ func main() {
 	panicOnErr(err)
 	client := initClient(cfg.Api.Address)
 
-	apiGw := apiv1.New(cfg.Api.ApiKey, client)
+	apiGw := api_gateway.New(client)
 	svc := api.NewService(apiGw)
 	hdl := handler.New(svc)
 	tool := cli.New(hdl)

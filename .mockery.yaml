@@ -10,3 +10,8 @@ packages:
   github.com/awlsring/texit/internal/app/api/ports/service:
   github.com/awlsring/texit/internal/pkg/interfaces:
   github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client/headscale_service:
+  github.com/awlsring/texit/pkg/gen/texit:
+    config:
+      all: false
+    interfaces:
+      Invoker:

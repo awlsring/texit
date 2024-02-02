@@ -1,16 +1,15 @@
-package apiv1
+package api_gateway
 
 import (
 	"context"
 
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
-	v1 "github.com/awlsring/texit/pkg/gen/client/v1"
+	"github.com/awlsring/texit/pkg/gen/texit"
 )
 
 func (g *ApiGateway) GetExecution(ctx context.Context, id workflow.ExecutionIdentifier) (*workflow.Execution, error) {
-	ctx = g.setAuthInContext(ctx)
-	req := &v1.GetExecutionRequest{
-		ExecutionId: id.String(),
+	req := texit.GetExecutionParams{
+		Identifier: id.String(),
 	}
 
 	resp, err := g.client.GetExecution(ctx, req)
@@ -18,7 +17,7 @@ func (g *ApiGateway) GetExecution(ctx context.Context, id workflow.ExecutionIden
 		return nil, err
 	}
 
-	ex, err := SummaryToExecution(resp.Execution)
+	ex, err := SummaryToExecution(resp.(*texit.GetExecutionResponseContent).Summary)
 	if err != nil {
 		return nil, err
 	}

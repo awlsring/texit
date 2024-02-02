@@ -10,7 +10,7 @@ import (
 )
 
 type Api interface {
-	GetNode(context.Context, node.Identifier) (*node.Node, error)
+	DescribeNode(context.Context, node.Identifier) (*node.Node, error)
 	GetNodeStatus(context.Context, node.Identifier) (node.Status, error)
 	ListNodes(context.Context) ([]*node.Node, error)
 	ProvisionNode(context.Context, provider.Identifier, provider.Location, tailnet.Identifier, bool) (workflow.ExecutionIdentifier, error)
@@ -20,7 +20,11 @@ type Api interface {
 
 	GetExecution(context.Context, workflow.ExecutionIdentifier) (*workflow.Execution, error)
 
-	GetProvider(ctx context.Context, id provider.Identifier) (*provider.Provider, error)
+	DescribeProvider(ctx context.Context, id provider.Identifier) (*provider.Provider, error)
 	ListProviders(ctx context.Context) ([]*provider.Provider, error)
+
+	DescribeTailnet(ctx context.Context, id tailnet.Identifier) (*tailnet.Tailnet, error)
+	ListTailnets(ctx context.Context) ([]*tailnet.Tailnet, error)
+
 	HealthCheck(ctx context.Context) error
 }
