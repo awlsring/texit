@@ -63,7 +63,6 @@ func (s *Server) Start(ctx context.Context) error {
 	go func() {
 		<-ctx.Done()
 		log.Debug().Msg("Shutting down server...")
-		s.lis.Close()
 	}()
 
 	return nil

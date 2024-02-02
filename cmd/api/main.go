@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"net"
 	"net/url"
 	"os"
@@ -151,17 +152,20 @@ func initTailnetListener(cfg *config.ServerConfig) net.Listener {
 		s.ControlURL = cfg.Tailnet.ControlUrl
 	}
 
+	panicOnErr(s.Start())
+	localClient, _ := s.LocalClient()
+
+	ln, err := s.Listen("tcp", cfg.Address)
+	panicOnErr(err)
+
 	if cfg.Tailnet.Tls {
 		log.Info().Msg("starting tailnet listener with TLS")
-		l, err := s.ListenTLS("tcp", cfg.Address)
-		panicOnErr(err)
-		return l
+		ln = tls.NewListener(ln, &tls.Config{
+			GetCertificate: localClient.GetCertificate,
+		})
 	}
 
-	log.Info().Msg("listener will start without TLS")
-	l, err := s.Listen("tcp", cfg.Address)
-	panicOnErr(err)
-	return l
+	return ln
 }
 
 func main() {
