@@ -6,6 +6,7 @@ const (
 	Provider         = "provider"
 	ProviderLocation = "location"
 	Tailnet          = "tailnet"
+	TailnetName      = "name"
 	ExecutionId      = "id"
 	EphemeralNode    = "ephemeral"
 )

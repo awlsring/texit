@@ -158,8 +158,14 @@ func SummaryToTailnet(summary texit.TailnetSummary) (*tailnet.Tailnet, error) {
 		return nil, err
 	}
 
+	cs, err := tailnet.ControlServerFromString(summary.ControlServer)
+	if err != nil {
+		return nil, err
+	}
+
 	return &tailnet.Tailnet{
-		Name: id,
-		Type: translateTailnetType(summary.Type),
+		Name:          id,
+		Type:          translateTailnetType(summary.Type),
+		ControlServer: cs,
 	}, nil
 }

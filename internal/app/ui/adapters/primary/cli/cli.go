@@ -167,6 +167,29 @@ func New(hdl *handler.Handler) *CLI {
 					},
 				},
 			},
+			{
+				Name: "tailnet",
+				Subcommands: []*cli.Command{
+					{
+						Name:   "describe",
+						Usage:  "Describes a tailnet",
+						Action: hdl.GetTailnet,
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     flag.TailnetName,
+								Aliases:  []string{"n"},
+								Usage:    "The name of the tailnet to describe",
+								Required: true,
+							},
+						},
+					},
+					{
+						Name:   "list",
+						Usage:  "Lists all tailnets",
+						Action: hdl.ListTailnets,
+					},
+				},
+			},
 		},
 	}
 

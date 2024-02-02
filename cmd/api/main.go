@@ -120,7 +120,7 @@ func initTailscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {
 }
 
 func initHeadscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {
-	u, err := url.Parse(cfg.Tailnet)
+	u, err := url.Parse(cfg.ControlServer)
 	panicOnErr(err)
 	transport := httptransport.New(u.Host, u.Path, []string{u.Scheme})
 	transport.DefaultAuthentication = httptransport.BearerToken(cfg.ApiKey)
