@@ -12,3 +12,4 @@ go.work
 *config.yaml
 *.db
 model/**/build
+dist/

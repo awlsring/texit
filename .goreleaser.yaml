@@ -1,0 +1,78 @@
+version: 1
+project_name: texit
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - id: api
+    main: ./cmd/api/main.go
+    binary: texit
+    env:
+      - CGO_ENABLED=1
+    goos:
+      - linux
+    ignore:
+      - goarch: "386"
+
+  - id: cli
+    main: ./cmd/cli/main.go
+    binary: texit-cli
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    ignore:
+      - goarch: "386"
+
+dockers:
+  - id: api
+    dockerfile: build/package/api/Dockerfile
+    image_templates:
+      - "ghcr.io/awlsring/texit:{{.Version}}-arm64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64"
+    goarch: arm64
+  - id: api
+    dockerfile: build/package/api/Dockerfile
+    image_templates:
+      - "ghcr.io/awlsring/texit:{{.Version}}-amd64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+    goarch: amd64
+
+docker_manifests:
+  - name_template: "ghcr.io/awlsring/texit:{{ .Tag }}"
+    image_templates:
+      - "ghcr.io/awlsring/texit:{{ .Tag }}-amd64"
+      - "ghcr.io/awlsring/texit:{{ .Tag }}-arm64"
+
+archives:
+  - id: api
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+  - id: cli
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_cli_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
