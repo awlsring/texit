@@ -34,9 +34,9 @@ build: codegen mockgen vet lint test
 	@echo "Tidying up"
 	go mod tidy
 	@echo "Building api"
-	go build -o $(BUILD_DIR)/api $(CMD_DIR)/api/main.go
+	go build -o $(BUILD_DIR)/bin/api $(CMD_DIR)/api/main.go
 	@echo "Building cli"
-	go build -o $(BUILD_DIR)/cli $(CMD_DIR)/cli/main.go
+	go build -o $(BUILD_DIR)/bin/cli $(CMD_DIR)/cli/main.go
 
 lint:
 	@echo "Linting go files"
