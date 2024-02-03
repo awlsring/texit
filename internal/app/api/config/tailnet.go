@@ -1,6 +1,11 @@
 package config
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"os"
+	"strings"
+)
 
 type TailnetType string // tailscale or headscale
 const (
@@ -11,6 +16,10 @@ const (
 func (t TailnetType) String() string {
 	return string(t)
 }
+
+const (
+	TailnetApiKeySuffix = "TAILNET_API_KEY"
+)
 
 var (
 	ErrMissingTailnetType            = errors.New("missing tailnet type")
@@ -34,6 +43,13 @@ type TailnetConfig struct {
 	ControlServer string `yaml:"controlServer"`
 }
 
+func tailnetSecretEnv(name, suffix string) string {
+	if strings.Contains(name, ".") {
+		name = strings.ReplaceAll(name, ".", "_")
+	}
+	return fmt.Sprintf("%s_%s", name, suffix)
+}
+
 func (c *TailnetConfig) Validate() error {
 	if c.Type == "" {
 		return ErrMissingTailnetType
@@ -42,7 +58,11 @@ func (c *TailnetConfig) Validate() error {
 		return ErrMissingTailnet
 	}
 	if c.ApiKey == "" {
-		return ErrMissingTailnetApiKey
+		key := os.Getenv(tailnetSecretEnv(c.Tailnet, TailnetApiKeySuffix))
+		if key == "" {
+			return ErrMissingTailnetApiKey
+		}
+		c.ApiKey = key
 	}
 
 	if c.User == "" {

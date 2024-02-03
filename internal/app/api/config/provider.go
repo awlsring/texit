@@ -1,6 +1,9 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 type ProviderType string
 
@@ -10,6 +13,11 @@ func (t ProviderType) String() string {
 
 const (
 	ProviderTypeAwsEcs ProviderType = "aws-ecs"
+)
+
+const (
+	AwsAccessKeyIdSuffix     = "AWS_ACCESS_KEY_ID"
+	AwsSecretAccessKeySuffix = "AWS_SECRET_ACCESS_KEY"
 )
 
 var (
@@ -30,6 +38,10 @@ type ProviderConfig struct {
 	Name string `yaml:"name"`
 }
 
+func providerSecretEnv(name, suffix string) string {
+	return fmt.Sprintf("%s_%s", name, suffix)
+}
+
 func (c *ProviderConfig) Validate() error {
 	switch c.Type {
 	case ProviderTypeAwsEcs:
@@ -40,16 +52,24 @@ func (c *ProviderConfig) Validate() error {
 }
 
 func (c *ProviderConfig) validateAwsEcs() error {
+	if c.Name == "" {
+		return ErrMissingProviderName
+	}
+
 	if c.AccessKey == "" {
-		return ErrMissingProviderAwsAccessKey
+		key := os.Getenv(providerSecretEnv(c.Name, AwsAccessKeyIdSuffix))
+		if key == "" {
+			return ErrMissingProviderAwsAccessKey
+		}
+		c.AccessKey = key
 	}
 
 	if c.SecretKey == "" {
-		return ErrMissingProviderAwsSecretKey
-	}
-
-	if c.Name == "" {
-		return ErrMissingProviderName
+		key := os.Getenv(providerSecretEnv(c.Name, AwsSecretAccessKeySuffix))
+		if key == "" {
+			return ErrMissingProviderAwsSecretKey
+		}
+		c.SecretKey = key
 	}
 
 	return nil

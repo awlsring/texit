@@ -9,7 +9,7 @@ const (
 )
 
 const (
-	defaultSqliteDbLocation = "/texit/texit.db"
+	defaultSqliteDbLocation = "/var/lib/texit/texit.db"
 )
 
 var (

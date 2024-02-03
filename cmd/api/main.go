@@ -37,10 +37,23 @@ import (
 
 var log zerolog.Logger
 
+const (
+	configEnvVar          = "CONFIG_PATH"
+	defaultConfigLocation = "/etc/texit/config.yaml"
+)
+
 func panicOnErr(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func getConfigPath() string {
+	path := os.Getenv(configEnvVar)
+	if path == "" {
+		return defaultConfigLocation
+	}
+	return path
 }
 
 func initProviderGateways(providers []*config.ProviderConfig) map[string]gateway.Platform {
@@ -183,7 +196,7 @@ func main() {
 	log.Info().Msg("Initializing")
 
 	log.Info().Msg("Loading config")
-	cfg, err := config.LoadFromFile("config.yaml")
+	cfg, err := config.LoadFromFile(getConfigPath())
 	panicOnErr(err)
 
 	log.Info().Msg("Connecting to database")

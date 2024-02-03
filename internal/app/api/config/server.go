@@ -3,10 +3,12 @@ package config
 import (
 	"fmt"
 	"math/rand"
+	"os"
 )
 
 const (
 	DefaultHostName = "texit"
+	ServerApiKeyEnv = "SERVER_API_KEY"
 )
 
 var (
@@ -73,7 +75,12 @@ func (c *ServerConfig) Validate() error {
 	}
 
 	if c.APIKey == "" {
-		c.APIKey = generateRandomApiKey()
+		key := os.Getenv(ServerApiKeyEnv)
+		if key == "" {
+			c.APIKey = generateRandomApiKey()
+		} else {
+			c.APIKey = key
+		}
 	}
 
 	return nil
