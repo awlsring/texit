@@ -45,10 +45,10 @@ dockers:
     goarch: amd64
 
 docker_manifests:
-  - name_template: "ghcr.io/awlsring/texit:{{ .Tag }}"
+  - name_template: "ghcr.io/awlsring/texit:{{.Version}}"
     image_templates:
-      - "ghcr.io/awlsring/texit:{{ .Tag }}-amd64"
-      - "ghcr.io/awlsring/texit:{{ .Tag }}-arm64"
+      - "ghcr.io/awlsring/texit:{{.Version}}-amd64"
+      - "ghcr.io/awlsring/texit:{{.Version}}-arm64"
 
 archives:
   - id: api
