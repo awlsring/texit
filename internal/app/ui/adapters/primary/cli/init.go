@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	configOverrideFlag = "TEXIT_CONFIG"
+	configOverrideFlag = "TEXIT_CLI_CONFIG"
 	defaultConfigPath  = ".texit/config.yaml"
 )
 
