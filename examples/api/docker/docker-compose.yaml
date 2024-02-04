@@ -1,0 +1,8 @@
+services:
+  api:
+    image: 7e1391ac856b
+    ports:
+      - 7032:7032
+    volumes:
+      - ./config.yaml:/etc/texit/config.yaml
+      - ./data:/var/lib/texit

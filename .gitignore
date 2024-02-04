@@ -10,7 +10,8 @@ go.work
 /cmd/tst
 /build/bin
 /build/smithy
-*config.yaml
+/config.yaml
+/cli-config.yaml
 *.db
 model/**/build
 dist/

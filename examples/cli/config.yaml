@@ -1,0 +1,5 @@
+# This file should be placed in ~/.texit/config.yaml
+# You can override location by setting the path with the EnvVar of TEXIT_CLI_CONFIG
+api:
+  address: "http://localhost:7032"
+  apiKey: asecurekeyusedtoaccesstexit
