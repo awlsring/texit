@@ -20,7 +20,7 @@ func (g *PlatformAwsEcsGateway) StartNode(ctx context.Context, node *node.Node) 
 	}
 
 	log.Debug().Msg("Scaling service to 1 replica")
-	err = scaleService(ctx, ecsClient, node.TailnetName, activeCount)
+	err = scaleService(ctx, ecsClient, node.Identifier, activeCount)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to scale service")
 		return err

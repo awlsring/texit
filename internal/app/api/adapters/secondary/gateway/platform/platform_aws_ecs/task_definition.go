@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/interfaces"
 	"github.com/awlsring/texit/internal/pkg/logger"
@@ -39,7 +40,7 @@ func makeExtraArgs(tn *tailnet.Tailnet) types.KeyValuePair {
 	}
 }
 
-func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, tn *tailnet.Tailnet, tid tailnet.DeviceName, authkey tailnet.PreauthKey, execRole, taskRole, param string) error {
+func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, id node.Identifier, tn *tailnet.Tailnet, tid tailnet.DeviceName, authkey tailnet.PreauthKey, execRole, taskRole, param string) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Creating new ECS task definition")
@@ -91,7 +92,7 @@ func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, tn *
 				Value: aws.String("true"),
 			},
 		},
-		Family:      aws.String(tid.String()),
+		Family:      aws.String(id.String()),
 		Cpu:         aws.String(defaultCpuAmount),
 		Memory:      aws.String(defaultMemoryAmount),
 		NetworkMode: types.NetworkModeAwsvpc,
@@ -112,12 +113,12 @@ func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, tn *
 	return nil
 }
 
-func deleteTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceName) error {
+func deleteTaskDefinition(ctx context.Context, client interfaces.EcsClient, id node.Identifier) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Deregistering ECS task definition")
 	_, err := client.DeregisterTaskDefinition(ctx, &ecs.DeregisterTaskDefinitionInput{
-		TaskDefinition: aws.String(taskDefinition(tid)),
+		TaskDefinition: aws.String(taskDefinition(id)),
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to delete ECS task definition")
@@ -126,7 +127,7 @@ func deleteTaskDefinition(ctx context.Context, client interfaces.EcsClient, tid 
 
 	log.Debug().Msg("Deleting ECS task definition")
 	_, err = client.DeleteTaskDefinitions(ctx, &ecs.DeleteTaskDefinitionsInput{
-		TaskDefinitions: []string{fmt.Sprintf("%s:1", tid.String())},
+		TaskDefinitions: []string{fmt.Sprintf("%s:1", id.String())},
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to delete ECS task definition")

@@ -21,8 +21,9 @@ func TestExtraArgsTailscal(t *testing.T) {
 
 func TestExtraArgsHeadscale(t *testing.T) {
 	tn := &tailnet.Tailnet{
-		Name: "https://headscale.toes.com",
-		Type: tailnet.TypeHeadscale,
+		Name:          "headscale.toes",
+		Type:          tailnet.TypeHeadscale,
+		ControlServer: tailnet.ControlServer("https://headscale.toes.com"),
 	}
 
 	predicatedString := "--advertise-exit-node --login-server=https://headscale.toes.com"

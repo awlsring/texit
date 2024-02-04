@@ -38,26 +38,26 @@ func (g *PlatformAwsEcsGateway) DeleteNode(ctx context.Context, node *node.Node)
 	}
 
 	log.Debug().Msg("Deleting service")
-	err = deleteService(ctx, ecsClient, node.TailnetName)
+	err = deleteService(ctx, ecsClient, node.Identifier)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to delete service")
 		return err
 	}
 
 	log.Debug().Msg("Deleting task definition")
-	err = deleteTaskDefinition(ctx, ecsClient, node.TailnetName)
+	err = deleteTaskDefinition(ctx, ecsClient, node.Identifier)
 	if err != nil {
 		log.Warn().Err(err).Msg("Failed to delete task definition, continuing...")
 	}
 
 	log.Debug().Msg("Deleting state parameter")
-	err = deleteStateParameter(ctx, ssmClient, node.TailnetName)
+	err = deleteStateParameter(ctx, ssmClient, node.Identifier)
 	if err != nil {
 		log.Warn().Err(err).Msg("Failed to delete state parameter, continuing...")
 	}
 
 	log.Debug().Msg("Deleting task role")
-	err = deleteTaskRole(ctx, iamClient, node.TailnetName)
+	err = deleteTaskRole(ctx, iamClient, node.Identifier)
 	if err != nil {
 		log.Warn().Err(err).Msg("Failed to delete task role, continuing...")
 	}

@@ -51,15 +51,13 @@ func (s *Service) getTailnetGateway(ctx context.Context, id tailnet.Identifier) 
 	return gw, nil
 }
 
-func (s *Service) closeWorkflow(ctx context.Context, ex workflow.ExecutionIdentifier, result workflow.Status, msgs []string) error {
+func (s *Service) closeWorkflow(ctx context.Context, ex workflow.ExecutionIdentifier, result workflow.Status, msgs []string) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msgf("Closing workflow: %s", ex.String())
 
 	err := s.excRepo.CloseExecution(ctx, ex, result, msgs)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to close workflow")
-		return nil
 	}
 
-	return nil
 }

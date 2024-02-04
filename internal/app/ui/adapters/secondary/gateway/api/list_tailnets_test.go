@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
 	"github.com/stretchr/testify/assert"
@@ -12,15 +13,18 @@ import (
 
 func TestApiGateway_ListTailnets(t *testing.T) {
 	ctx := context.Background()
+	cs := tailnet.ControlServer("test-control-server")
 
 	testSummaries := []texit.TailnetSummary{
 		{
-			Name: "test-tailnet-1",
-			Type: texit.TailnetTypeTailscale,
+			Name:          "test-tailnet-1",
+			Type:          texit.TailnetTypeTailscale,
+			ControlServer: cs.String(),
 		},
 		{
-			Name: "test-tailnet-2",
-			Type: texit.TailnetTypeTailscale,
+			Name:          "test-tailnet-2",
+			Type:          texit.TailnetTypeTailscale,
+			ControlServer: cs.String(),
 		},
 	}
 

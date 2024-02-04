@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/interfaces"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
@@ -84,8 +84,8 @@ func makeExecutionRole(ctx context.Context, client interfaces.IamClient) (string
 	return *resp.Role.Arn, nil
 }
 
-func makeTaskRoleName(tid tailnet.DeviceName) string {
-	return taskRoleNamePrefix + "-" + tid.String()
+func makeTaskRoleName(id node.Identifier) string {
+	return taskRoleNamePrefix + "-" + id.String()
 }
 
 func makeTaskPolicy(parameter string) string {
@@ -106,13 +106,13 @@ func makeTaskPolicy(parameter string) string {
 }`, parameter)
 }
 
-func deleteTaskRole(ctx context.Context, client interfaces.IamClient, tid tailnet.DeviceName) error {
+func deleteTaskRole(ctx context.Context, client interfaces.IamClient, id node.Identifier) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Deleting task role")
 
 	log.Debug().Msg("Getting attached role policies")
 	resp, err := client.ListAttachedRolePolicies(ctx, &iam.ListAttachedRolePoliciesInput{
-		RoleName: aws.String(makeTaskRoleName(tid)),
+		RoleName: aws.String(makeTaskRoleName(id)),
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list attached role policies")
@@ -123,7 +123,7 @@ func deleteTaskRole(ctx context.Context, client interfaces.IamClient, tid tailne
 	for _, policy := range resp.AttachedPolicies {
 		log.Debug().Msgf("Detaching policy %s", *policy.PolicyArn)
 		_, err := client.DetachRolePolicy(ctx, &iam.DetachRolePolicyInput{
-			RoleName:  aws.String(makeTaskRoleName(tid)),
+			RoleName:  aws.String(makeTaskRoleName(id)),
 			PolicyArn: policy.PolicyArn,
 		})
 		if err != nil {
@@ -141,7 +141,7 @@ func deleteTaskRole(ctx context.Context, client interfaces.IamClient, tid tailne
 		log.Debug().Msg("Policy deleted")
 	}
 
-	roleName := makeTaskRoleName(tid)
+	roleName := makeTaskRoleName(id)
 
 	log.Debug().Msgf("Deleting role %s", roleName)
 	_, err = client.DeleteRole(ctx, &iam.DeleteRoleInput{
@@ -156,11 +156,11 @@ func deleteTaskRole(ctx context.Context, client interfaces.IamClient, tid tailne
 	return nil
 }
 
-func makeTaskRole(ctx context.Context, client interfaces.IamClient, tid tailnet.DeviceName, parameter string) (string, error) {
+func makeTaskRole(ctx context.Context, client interfaces.IamClient, id node.Identifier, parameter string) (string, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Making task role")
 
-	roleName := makeTaskRoleName(tid)
+	roleName := makeTaskRoleName(id)
 
 	log.Debug().Msgf("Creating role %s", roleName)
 	resp, err := client.CreateRole(ctx, &iam.CreateRoleInput{

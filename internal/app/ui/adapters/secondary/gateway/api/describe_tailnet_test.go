@@ -14,6 +14,7 @@ import (
 func TestDescribeTailnet(t *testing.T) {
 	ctx := context.Background()
 	identifier, _ := tailnet.IdentifierFromString("test-tailnet")
+	cs := tailnet.ControlServer("test-control-server")
 
 	req := texit.DescribeTailnetParams{
 		Name: identifier.String(),
@@ -24,8 +25,9 @@ func TestDescribeTailnet(t *testing.T) {
 		g := ApiGateway{client: mockClient}
 		mockClient.EXPECT().DescribeTailnet(ctx, req).Return(&texit.DescribeTailnetResponseContent{
 			Summary: texit.TailnetSummary{
-				Name: identifier.String(),
-				Type: texit.TailnetTypeHeadscale,
+				Name:          identifier.String(),
+				Type:          texit.TailnetTypeHeadscale,
+				ControlServer: cs.String(),
 			},
 		}, nil)
 

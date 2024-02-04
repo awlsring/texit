@@ -18,13 +18,10 @@ func texitDir() string {
 
 func MakeTexitDir() {
 	if _, err := os.Stat(texitDir()); os.IsNotExist(err) {
-		os.MkdirAll(texitDir(), 0755)
-	}
-}
-
-func ensurePathExists(path string) {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.MkdirAll(path, 0755)
+		err := os.MkdirAll(texitDir(), 0755)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
@@ -42,7 +39,10 @@ func InitDefaultConfig() {
 	path := configPath()
 	y, _ := yaml.Marshal(cfg)
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.WriteFile(path, y, 0644)
+		err = os.WriteFile(path, y, 0644)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 

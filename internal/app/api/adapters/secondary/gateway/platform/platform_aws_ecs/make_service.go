@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/interfaces"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -27,8 +27,8 @@ const (
 	taskStatusActive       = "RUNNING"
 )
 
-func taskDefinition(tid tailnet.DeviceName) string {
-	return fmt.Sprintf("%s:1", tid.String())
+func taskDefinition(id node.Identifier) string {
+	return fmt.Sprintf("%s:1", id.String())
 }
 
 func getDefaultVpc(ctx context.Context, client interfaces.Ec2Client) (string, error) {
@@ -112,7 +112,7 @@ func getDefaultSecurityGroupId(ctx context.Context, client interfaces.Ec2Client)
 	return *resp.SecurityGroups[0].GroupId, nil
 }
 
-func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client interfaces.Ec2Client, tid tailnet.DeviceName) error {
+func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client interfaces.Ec2Client, id node.Identifier) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Making ECS service")
 
@@ -139,7 +139,7 @@ func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client 
 
 	log.Debug().Msg("Creating ECS service")
 	_, err = ecsClient.CreateService(ctx, &ecs.CreateServiceInput{
-		ServiceName:  aws.String(tid.String()),
+		ServiceName:  aws.String(id.String()),
 		Cluster:      aws.String(clusterName),
 		DesiredCount: aws.Int32(activeCount),
 		LaunchType:   types.LaunchTypeFargate,
@@ -150,7 +150,7 @@ func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client 
 				SecurityGroups: []string{sgId},
 			},
 		},
-		TaskDefinition: aws.String(taskDefinition(tid)),
+		TaskDefinition: aws.String(taskDefinition(id)),
 		Tags: []types.Tag{
 			{
 				Key:   aws.String("created-by"),
@@ -167,13 +167,13 @@ func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client 
 		return err
 	}
 
-	err = pollServiceTillCreated(ctx, ecsClient, tid)
+	err = pollServiceTillCreated(ctx, ecsClient, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to poll ECS service")
 		return err
 	}
 
-	task, err := getLaunchedTask(ctx, ecsClient, tid)
+	task, err := getLaunchedTask(ctx, ecsClient, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to get launched ECS task")
 		return err
@@ -189,14 +189,14 @@ func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client 
 	return nil
 }
 
-func getLaunchedTask(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceName) (string, error) {
+func getLaunchedTask(ctx context.Context, client interfaces.EcsClient, id node.Identifier) (string, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Getting launched ECS task")
 
 	for i := 0; i < taskPollMaxInterval; i++ {
 		resp, err := client.ListTasks(ctx, &ecs.ListTasksInput{
 			Cluster:     aws.String(clusterName),
-			ServiceName: aws.String(tid.String()),
+			ServiceName: aws.String(id.String()),
 		})
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to list ECS tasks")
@@ -247,7 +247,7 @@ func pollTillTaskIsActive(ctx context.Context, client interfaces.EcsClient, task
 	return errors.New("ECS task not active within wait time")
 }
 
-func pollServiceTillCreated(ctx context.Context, client interfaces.EcsClient, tid tailnet.DeviceName) error {
+func pollServiceTillCreated(ctx context.Context, client interfaces.EcsClient, id node.Identifier) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Polling ECS service till it is created")
@@ -255,7 +255,7 @@ func pollServiceTillCreated(ctx context.Context, client interfaces.EcsClient, ti
 		log.Debug().Msg("Polling ECS service")
 		resp, err := client.DescribeServices(ctx, &ecs.DescribeServicesInput{
 			Cluster:  aws.String(clusterName),
-			Services: []string{tid.String()},
+			Services: []string{id.String()},
 		})
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to describe ECS service")

@@ -41,7 +41,5 @@ build: codegen mockgen vet lint test
 lint:
 	@echo "Linting go files"
 	golangci-lint run --fix
-	@echo "Linting proto files"
-	cd $(MODEL_DIR) && buf lint
 
 .PHONY: all

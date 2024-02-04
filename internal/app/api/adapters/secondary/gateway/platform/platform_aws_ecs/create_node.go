@@ -13,7 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
-func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifier, tid tailnet.DeviceName, pid *provider.Provider, loc provider.Location, tn *tailnet.Tailnet, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
+func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, pid *provider.Provider, loc provider.Location, tn *tailnet.Tailnet, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating node on ECS")
 
@@ -54,21 +54,21 @@ func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifie
 	}
 
 	log.Debug().Msg("Creating SSM parameter")
-	param, err := makeStateParameter(ctx, ssmClient, tid)
+	param, err := makeStateParameter(ctx, ssmClient, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create SSM parameter")
 		return "", err
 	}
 
 	log.Debug().Msg("Creating ECS task role")
-	taskRole, err := makeTaskRole(ctx, iamClient, tid, param)
+	taskRole, err := makeTaskRole(ctx, iamClient, id, param)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create ECS task role")
 		return "", err
 	}
 
 	log.Debug().Msg("Creating task definition")
-	err = createTaskDefinition(ctx, ecsClient, tn, tid, key, execRole, taskRole, param)
+	err = createTaskDefinition(ctx, ecsClient, id, tn, tid, key, execRole, taskRole, param)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create task definition")
 		return "", err
@@ -82,12 +82,12 @@ func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, _ node.Identifie
 	}
 
 	log.Debug().Msg("Creating service")
-	err = makeService(ctx, ecsClient, ec2Client, tid)
+	err = makeService(ctx, ecsClient, ec2Client, id)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create service")
 		return "", err
 	}
 
 	log.Debug().Msg("Node created")
-	return node.PlatformIdentifier(tid.String()), nil
+	return node.PlatformIdentifier(id.String()), nil
 }
