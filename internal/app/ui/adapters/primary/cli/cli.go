@@ -165,6 +165,19 @@ func New(hdl *handler.Handler) *CLI {
 						Usage:  "Lists all providers",
 						Action: hdl.ListProviders,
 					},
+					{
+						Name:   "init",
+						Usage:  "Help command to initialize a provider for use with Texit",
+						Action: hdl.ProviderInit,
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     flag.ProviderType,
+								Aliases:  []string{"t"},
+								Usage:    "The type of provider to initialize",
+								Required: true,
+							},
+						},
+					},
 				},
 			},
 			{
