@@ -201,6 +201,19 @@ func New(hdl *handler.Handler) *CLI {
 						Usage:  "Lists all tailnets",
 						Action: hdl.ListTailnets,
 					},
+					{
+						Name:   "init",
+						Usage:  "Help command to initialize a tailnet for use with Texit",
+						Action: hdl.TailnetInit,
+						Flags: []cli.Flag{
+							&cli.StringFlag{
+								Name:     flag.TailnetType,
+								Aliases:  []string{"t"},
+								Usage:    "The type of tailnet to initialize",
+								Required: true,
+							},
+						},
+					},
 				},
 			},
 		},

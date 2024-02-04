@@ -8,6 +8,7 @@ const (
 	ProviderType     = "type"
 	Tailnet          = "tailnet"
 	TailnetName      = "name"
+	TailnetType      = "type"
 	ExecutionId      = "id"
 	EphemeralNode    = "ephemeral"
 )
