@@ -14,7 +14,8 @@ import (
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ecs"
 	headscale_v0_22_3_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/headscale/v0.22.3"
 	tailscale_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/tailscale"
-	sqlite_node_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/sqlite"
+	sqlite_execution_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/execution/sqlite"
+	sqlite_node_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/node/sqlite"
 	"github.com/awlsring/texit/internal/app/api/config"
 	"github.com/awlsring/texit/internal/app/api/core/service/node"
 	provSvc "github.com/awlsring/texit/internal/app/api/core/service/provider"
@@ -30,9 +31,9 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
-	"tailscale.com/tsnet"
-
 	"github.com/tailscale/tailscale-client-go/tailscale"
+	_ "modernc.org/sqlite"
+	"tailscale.com/tsnet"
 )
 
 var log zerolog.Logger
@@ -200,10 +201,14 @@ func main() {
 	panicOnErr(err)
 
 	log.Info().Msg("Connecting to database")
-	db, err := sqlx.Connect("sqlite3", cfg.Database.Location)
+	db, err := sqlx.Connect("sqlite", cfg.Database.Location)
 	panicOnErr(err)
 	nodeRepo := sqlite_node_repository.New(db)
 	err = nodeRepo.Init(ctx)
+	panicOnErr(err)
+
+	excRepo := sqlite_execution_repository.New(db)
+	err = excRepo.Init(ctx)
 	panicOnErr(err)
 
 	log.Info().Msg("Initializing tailnet gateway")
@@ -213,7 +218,7 @@ func main() {
 	providerGateways := initProviderGateways(cfg.Providers)
 
 	log.Info().Msg("Initializing workflow service")
-	workflowSvc := workflow.NewService(nodeRepo, tailnetGateways, providerGateways)
+	workflowSvc := workflow.NewService(nodeRepo, excRepo, tailnetGateways, providerGateways)
 
 	log.Info().Msg("Initializing provider service")
 	providerSvc := initProviderService(cfg.Providers)

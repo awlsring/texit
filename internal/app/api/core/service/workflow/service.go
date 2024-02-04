@@ -2,8 +2,6 @@ package workflow
 
 import (
 	"context"
-	"sync"
-	"time"
 
 	"github.com/awlsring/texit/internal/app/api/ports/gateway"
 	"github.com/awlsring/texit/internal/app/api/ports/repository"
@@ -17,19 +15,17 @@ import (
 
 type Service struct {
 	nodeRepo    repository.Node
+	excRepo     repository.Execution
 	tailnetGws  map[string]gateway.Tailnet
 	platformGws map[string]gateway.Platform
-
-	executions map[string]*workflow.Execution
-	mu         sync.Mutex
 }
 
-func NewService(nodeRepo repository.Node, tails map[string]gateway.Tailnet, platformGws map[string]gateway.Platform) service.Workflow {
+func NewService(nodeRepo repository.Node, excRepo repository.Execution, tails map[string]gateway.Tailnet, platformGws map[string]gateway.Platform) service.Workflow {
 	return &Service{
 		nodeRepo:    nodeRepo,
+		excRepo:     excRepo,
 		tailnetGws:  tails,
 		platformGws: platformGws,
-		executions:  make(map[string]*workflow.Execution),
 	}
 }
 
@@ -55,14 +51,15 @@ func (s *Service) getTailnetGateway(ctx context.Context, id tailnet.Identifier) 
 	return gw, nil
 }
 
-func (s *Service) closeWorkflow(ctx context.Context, ex *workflow.Execution, result workflow.Status) {
+func (s *Service) closeWorkflow(ctx context.Context, ex workflow.ExecutionIdentifier, result workflow.Status, msgs []string) error {
 	log := logger.FromContext(ctx)
-	log.Debug().Msgf("Closing workflow: %s", ex.Identifier.String())
+	log.Debug().Msgf("Closing workflow: %s", ex.String())
 
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	now := time.Now()
-	ex.Updated = now
-	ex.Finished = &now
-	ex.Status = result
+	err := s.excRepo.CloseExecution(ctx, ex, result, msgs)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to close workflow")
+		return nil
+	}
+
+	return nil
 }

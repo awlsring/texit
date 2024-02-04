@@ -2,21 +2,23 @@ package sqlite_node_repository
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
+	"github.com/awlsring/texit/internal/app/api/ports/repository"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
+	_ "modernc.org/sqlite"
 )
 
-func TestDelete(t *testing.T) {
+func TestGet(t *testing.T) {
 	ctx := context.Background()
 
-	db, err := sqlx.Connect("sqlite3", ":memory:")
+	db, err := sqlx.Connect("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
@@ -42,15 +44,27 @@ func TestDelete(t *testing.T) {
 
 	err = r.Create(ctx, testNode)
 	assert.NoError(t, err)
-	var count int
-	err = db.Get(&count, "SELECT COUNT(*) FROM nodes WHERE identifier = ?", testNode.Identifier.String())
-	assert.NoError(t, err)
-	assert.Equal(t, 1, count)
 
-	err = r.Delete(ctx, testNode.Identifier)
+	retrievedNode, err := r.Get(ctx, testNode.Identifier)
+	assert.NoError(t, err)
+	assert.NotNil(t, retrievedNode)
+	assert.Equal(t, testNode.Identifier, retrievedNode.Identifier)
+}
+
+func TestGet_NotFound(t *testing.T) {
+	ctx := context.Background()
+
+	db, err := sqlx.Connect("sqlite", ":memory:")
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	r := &SqliteNodeRepository{db: db}
+	err = r.initTables(ctx)
 	assert.NoError(t, err)
 
-	err = db.Get(&count, "SELECT COUNT(*) FROM nodes WHERE identifier = ?", testNode.Identifier.String())
-	assert.NoError(t, err)
-	assert.Equal(t, 0, count)
+	_, err = r.Get(ctx, node.Identifier("non-existent-id"))
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, repository.ErrNodeNotFound))
 }

@@ -9,14 +9,14 @@ import (
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
+	_ "modernc.org/sqlite"
 )
 
-func TestCreate(t *testing.T) {
+func TestDelete(t *testing.T) {
 	ctx := context.Background()
 
-	db, err := sqlx.Connect("sqlite3", ":memory:")
+	db, err := sqlx.Connect("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
@@ -41,11 +41,16 @@ func TestCreate(t *testing.T) {
 	}
 
 	err = r.Create(ctx, testNode)
-
 	assert.NoError(t, err)
-
 	var count int
 	err = db.Get(&count, "SELECT COUNT(*) FROM nodes WHERE identifier = ?", testNode.Identifier.String())
 	assert.NoError(t, err)
 	assert.Equal(t, 1, count)
+
+	err = r.Delete(ctx, testNode.Identifier)
+	assert.NoError(t, err)
+
+	err = db.Get(&count, "SELECT COUNT(*) FROM nodes WHERE identifier = ?", testNode.Identifier.String())
+	assert.NoError(t, err)
+	assert.Equal(t, 0, count)
 }

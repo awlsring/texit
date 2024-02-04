@@ -4,7 +4,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/api/ports/repository"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
+	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,14 +14,16 @@ func TestGetExecution(t *testing.T) {
 	ctx := context.Background()
 	id := workflow.ExecutionIdentifier("test-execution")
 
+	mockRepo := mocks.NewMockExecution_repository(t)
+
 	s := &Service{
-		executions: map[string]*workflow.Execution{
-			id.String(): {
-				Identifier: id,
-				Status:     workflow.StatusComplete,
-			},
-		},
+		excRepo: mockRepo,
 	}
+
+	mockRepo.EXPECT().GetExecution(ctx, id).Return(&workflow.Execution{
+		Identifier: id,
+		Status:     workflow.StatusComplete,
+	}, nil)
 
 	exec, err := s.GetExecution(ctx, id)
 
@@ -33,9 +37,13 @@ func TestGetExecutionNotFound(t *testing.T) {
 	ctx := context.Background()
 	id := workflow.ExecutionIdentifier("test-execution")
 
+	mockRepo := mocks.NewMockExecution_repository(t)
+
 	s := &Service{
-		executions: map[string]*workflow.Execution{},
+		excRepo: mockRepo,
 	}
+
+	mockRepo.EXPECT().GetExecution(ctx, id).Return(nil, repository.ErrExecutionNotFound)
 
 	exec, err := s.GetExecution(ctx, id)
 

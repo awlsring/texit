@@ -14,10 +14,15 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 
 	exId := workflow.FormExecutionIdentifier(workflow.WorkflowNameDeprovisionNode)
 
-	s.mu.Lock()
+	log.Debug().Msgf("Creating execution: %s", exId)
 	execution := workflow.NewExecution(exId, workflow.WorkflowNameDeprovisionNode)
-	s.executions[exId.String()] = execution
-	s.mu.Unlock()
+
+	log.Debug().Msgf("Adding execution to database")
+	err := s.excRepo.CreateExecution(ctx, execution)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to create execution")
+		return "", err
+	}
 
 	go func() {
 		ctx = logger.InitContextLogger(context.Background(), log.GetLevel()) // TODO: Make workflow context logger
@@ -27,7 +32,7 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 		n, err := s.nodeRepo.Get(ctx, id)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get node")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to get node", err.Error()})
 			return
 		}
 
@@ -35,7 +40,7 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 		platformGw, err := s.getPlatformGateway(ctx, n.Provider)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get platform gateway")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to get platform gateway", err.Error()})
 			return
 		}
 
@@ -43,7 +48,7 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 		tailnetGw, err := s.getTailnetGateway(ctx, n.Tailnet)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get tailnet gateway")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to get tailnet gateway", err.Error()})
 			return
 		}
 
@@ -51,7 +56,7 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 		err = platformGw.DeleteNode(ctx, n)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to delete node")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to delete node", err.Error()})
 			return
 		}
 
@@ -65,12 +70,12 @@ func (s *Service) LaunchDeprovisionNodeWorkflow(ctx context.Context, id node.Ide
 		err = s.nodeRepo.Delete(ctx, id)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to delete node")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to delete node", err.Error()})
 			return
 		}
 
 		log.Debug().Msg("Node deleted")
-		s.closeWorkflow(ctx, execution, workflow.StatusComplete)
+		s.closeWorkflow(ctx, exId, workflow.StatusComplete, nil)
 	}()
 
 	return exId, nil

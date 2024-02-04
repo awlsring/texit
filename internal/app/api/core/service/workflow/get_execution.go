@@ -3,7 +3,6 @@ package workflow
 import (
 	"context"
 
-	"github.com/awlsring/texit/internal/app/api/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/pkg/errors"
@@ -13,14 +12,11 @@ func (s *Service) GetExecution(ctx context.Context, id workflow.ExecutionIdentif
 	log := logger.FromContext(ctx)
 	log.Debug().Msgf("Getting execution: %s", id)
 
-	log.Debug().Msg("Getting execution from local map")
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	exec, ok := s.executions[id.String()]
-	if !ok {
-		log.Warn().Msgf("Unknown execution: %s", id)
-		log.Debug().Msgf("Known executions: %v", s.executions)
-		return nil, errors.Wrap(service.ErrExecutionNotFound, id.String())
+	log.Debug().Msg("Getting execution from repo")
+	exec, err := s.excRepo.GetExecution(ctx, id)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to get execution from repo")
+		return nil, errors.Wrap(err, "failed to get execution")
 	}
 
 	log.Debug().Msg("Execution found, returning")

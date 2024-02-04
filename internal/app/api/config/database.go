@@ -5,7 +5,7 @@ import "errors"
 type DatabaseEngine string
 
 const (
-	DatabaseEngineSqlite3 DatabaseEngine = "sqlite3"
+	DatabaseEngineSqlite DatabaseEngine = "sqlite"
 )
 
 const (
@@ -34,16 +34,16 @@ type DatabaseConfig struct {
 	Password string `yaml:"password"`
 	// The name of the database
 	Database string `yaml:"database"`
-	// Location of the database file. For sqlite3 only
+	// Location of the database file. For sqlite only
 	Location string `yaml:"location"`
 }
 
 func (c *DatabaseConfig) Validate() error {
 	if c.Engine == "" {
-		c.Engine = DatabaseEngineSqlite3
+		c.Engine = DatabaseEngineSqlite
 	}
 
-	if c.Engine == DatabaseEngineSqlite3 {
+	if c.Engine == DatabaseEngineSqlite {
 		if c.Location == "" {
 			c.Location = defaultSqliteDbLocation
 		}

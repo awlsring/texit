@@ -1,4 +1,4 @@
 FROM scratch
-COPY texit /usr/bin/local/texit
+COPY texit /usr/local/bin/texit
 EXPOSE 7032
 CMD ["texit"]

@@ -15,7 +15,7 @@ import (
 func TestList(t *testing.T) {
 	ctx := context.Background()
 
-	db, err := sqlx.Connect("sqlite3", ":memory:")
+	db, err := sqlx.Connect("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
@@ -55,7 +55,7 @@ func TestList(t *testing.T) {
 func TestListEmpty(t *testing.T) {
 	ctx := context.Background()
 
-	db, err := sqlx.Connect("sqlite3", ":memory:")
+	db, err := sqlx.Connect("sqlite", ":memory:")
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}

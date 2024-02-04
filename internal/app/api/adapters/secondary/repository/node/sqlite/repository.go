@@ -5,7 +5,7 @@ import (
 
 	"github.com/awlsring/texit/internal/app/api/ports/repository"
 	"github.com/awlsring/texit/internal/pkg/interfaces"
-	_ "github.com/mattn/go-sqlite3"
+	_ "modernc.org/sqlite"
 )
 
 type SqliteNodeRepository struct {

@@ -21,10 +21,15 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 
 	exId := workflow.FormExecutionIdentifier(workflow.WorkflowNameProvisionNode)
 
-	s.mu.Lock()
+	log.Debug().Msgf("Creating execution: %s", exId)
 	execution := workflow.NewExecution(exId, workflow.WorkflowNameProvisionNode)
-	s.executions[exId.String()] = execution
-	s.mu.Unlock()
+
+	log.Debug().Msgf("Adding execution to database")
+	err := s.excRepo.CreateExecution(ctx, execution)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to create execution")
+		return "", err
+	}
 
 	go func() {
 		ctx = logger.InitContextLogger(context.Background(), log.GetLevel()) // TODO: Make workflow context logger
@@ -41,7 +46,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 		tailnetGw, err := s.getTailnetGateway(ctx, tn.Name)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get tailnet gateway")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, execution.Identifier, workflow.StatusFailed, []string{"Failed to get tailnet gateway", err.Error()})
 			return
 		}
 
@@ -49,7 +54,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 		preauthKey, err := tailnetGw.CreatePreauthKey(ctx, ephemeral)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to create preauth key")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to create preauth key", err.Error()})
 			return
 		}
 
@@ -57,7 +62,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 		platformGw, err := s.getPlatformGateway(ctx, prov.Name)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get platform gateway")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to get platform gateway", err.Error()})
 			return
 		}
 
@@ -65,7 +70,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 		platId, err := platformGw.CreateNode(ctx, id, tailName, prov, location, tn, preauthKey)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to create node")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to create node", err.Error()})
 			return
 		}
 
@@ -76,7 +81,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 		tid, err := tailnetGw.GetDeviceId(ctx, tailName)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to get tailnet device id")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to get tailnet device id", err.Error()})
 			return
 		}
 
@@ -103,12 +108,12 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 		err = s.nodeRepo.Create(ctx, n)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to create node")
-			s.closeWorkflow(ctx, execution, workflow.StatusFailed)
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to create node", err.Error()})
 			return
 		}
 
 		log.Debug().Msgf("Node created, id: %s", id)
-		s.closeWorkflow(ctx, execution, workflow.StatusComplete)
+		s.closeWorkflow(ctx, exId, workflow.StatusComplete, nil)
 	}()
 
 	return exId, nil

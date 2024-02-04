@@ -112,6 +112,7 @@ type Execution struct {
 	Created    time.Time
 	Updated    time.Time
 	Finished   *time.Time
+	Results    []string
 }
 
 func NewExecution(id ExecutionIdentifier, workflow WorkflowName) *Execution {

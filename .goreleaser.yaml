@@ -10,7 +10,7 @@ builds:
     main: ./cmd/api/main.go
     binary: texit
     env:
-      - CGO_ENABLED=1
+      - CGO_ENABLED=0
     goos:
       - linux
     ignore:
@@ -27,7 +27,7 @@ builds:
       - goarch: "386"
 
 dockers:
-  - id: api
+  - id: api-arm64
     dockerfile: build/package/api/Dockerfile
     image_templates:
       - "ghcr.io/awlsring/texit:{{.Version}}-arm64"
@@ -35,7 +35,7 @@ dockers:
     build_flag_templates:
       - "--platform=linux/arm64"
     goarch: arm64
-  - id: api
+  - id: api-amd64
     dockerfile: build/package/api/Dockerfile
     image_templates:
       - "ghcr.io/awlsring/texit:{{.Version}}-amd64"
