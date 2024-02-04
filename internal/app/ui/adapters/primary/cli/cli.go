@@ -15,6 +15,9 @@ type CLI struct {
 
 func New(hdl *handler.Handler) *CLI {
 	app := &cli.App{
+		Name:        "texit",
+		Usage:       "Texit allows for creating and managing exit nodes on a cloud provider.",
+		Description: "Texit allows for creating and managing exit nodes on a cloud provider.",
 		Commands: []*cli.Command{
 			{
 				Name:   "health",
@@ -22,7 +25,8 @@ func New(hdl *handler.Handler) *CLI {
 				Action: hdl.HealthCheck,
 			},
 			{
-				Name: "node",
+				Name:  "node",
+				Usage: "Perform operations on exit nodes",
 				Subcommands: []*cli.Command{
 					{
 						Name:        "list",
@@ -137,7 +141,8 @@ func New(hdl *handler.Handler) *CLI {
 				},
 			},
 			{
-				Name: "execution",
+				Name:  "execution",
+				Usage: "Get information about workflow executions",
 				Subcommands: []*cli.Command{
 					{
 						Name:        "describe",
@@ -155,7 +160,8 @@ func New(hdl *handler.Handler) *CLI {
 				},
 			},
 			{
-				Name: "provider",
+				Name:  "provider",
+				Usage: "Get information about providers",
 				Subcommands: []*cli.Command{
 					{
 						Name:   "describe",
@@ -191,7 +197,8 @@ func New(hdl *handler.Handler) *CLI {
 				},
 			},
 			{
-				Name: "tailnet",
+				Name:  "tailnet",
+				Usage: "Get information about tailnets",
 				Subcommands: []*cli.Command{
 					{
 						Name:   "describe",

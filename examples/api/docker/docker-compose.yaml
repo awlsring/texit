@@ -1,6 +1,6 @@
 services:
   api:
-    image: 7e1391ac856b
+    image: ghcr.io/awlsring/texit:latest
     ports:
       - 7032:7032
     volumes:
