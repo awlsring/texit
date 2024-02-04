@@ -9,6 +9,7 @@ go.work
 .vscode
 /cmd/tst
 /build/bin
+/build/smithy
 *config.yaml
 *.db
 model/**/build

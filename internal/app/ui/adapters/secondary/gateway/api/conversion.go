@@ -44,11 +44,18 @@ func SummaryToExecution(summary texit.ExecutionSummary) (*workflow.Execution, er
 		return nil, err
 	}
 
+	var finished time.Time
+	if summary.EndedAt.IsSet() {
+		finished = float64ToTime(summary.EndedAt.Value)
+	}
+
 	ex := &workflow.Execution{
 		Identifier: eid,
 		Workflow:   translateWorkflowName(summary.Workflow),
 		Status:     translateExecutionStatus(summary.Status),
 		Created:    float64ToTime(summary.StartedAt),
+		Finished:   &finished,
+		Results:    summary.Result,
 	}
 
 	if summary.EndedAt.IsSet() {

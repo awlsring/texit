@@ -39,5 +39,4 @@ func TestExecutionToSummary(t *testing.T) {
 	assert.Equal(t, TranslateExecutionStatus(execution.Status), summary.Status)
 	assert.Equal(t, float64(execution.Created.Unix()), summary.StartedAt)
 	assert.Equal(t, summary.EndedAt, texit.OptFloat64{})
-	assert.Equal(t, maybeMakeString(""), summary.Result)
 }

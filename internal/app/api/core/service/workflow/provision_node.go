@@ -2,6 +2,7 @@ package workflow
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
@@ -113,7 +114,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 		}
 
 		log.Debug().Msgf("Node created, id: %s", id)
-		s.closeWorkflow(ctx, exId, workflow.StatusComplete, nil)
+		s.closeWorkflow(ctx, exId, workflow.StatusComplete, []string{fmt.Sprintf("Node created. Id: %s", id.String())})
 	}()
 
 	return exId, nil

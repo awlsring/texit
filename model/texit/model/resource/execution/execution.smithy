@@ -42,5 +42,9 @@ structure ExecutionSummary {
 
     endedAt: Timestamp
 
-    result: String
+    result: StringList
+}
+
+list StringList {
+    member: String
 }

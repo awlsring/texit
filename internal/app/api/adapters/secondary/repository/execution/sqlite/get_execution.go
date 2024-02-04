@@ -26,9 +26,11 @@ func (r *SqliteExecutionRepository) GetExecution(ctx context.Context, id workflo
 		log.Error().Err(err).Msg("Failed to get execution from sqlite")
 		return nil, err
 	}
+	log.Debug().Interface("execution", ndb).Msg("Execution record retrieved")
 
 	log.Debug().Msg("Converting execution from record")
 	n := ndb.ToExecution()
+	log.Debug().Interface("execution", n).Msg("Execution converted")
 
 	log.Debug().Msgf("Returning execution: %s", n.Identifier.String())
 	return n, nil

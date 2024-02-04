@@ -20,13 +20,6 @@ func maybeMakeFloat64(f float64) texit.OptFloat64 {
 	return texit.NewOptFloat64(f)
 }
 
-func maybeMakeString(s string) texit.OptString {
-	if s == "" {
-		return texit.OptString{}
-	}
-	return texit.NewOptString(s)
-}
-
 func maybeMakeBool(b bool) texit.OptBool {
 	if !b {
 		return texit.OptBool{}

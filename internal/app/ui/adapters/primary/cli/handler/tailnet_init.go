@@ -30,7 +30,7 @@ func (h *Handler) initTailscaleTailnet(c *cli.Context) error {
 	fmt.Println("Create an access key by going to https://login.tailscale.com/admin/settings/keys and clicking 'Generate Access Token'.")
 	fmt.Println("")
 	fmt.Println("Once you have the access key, add the following to your texit config.yaml")
-	fmt.Println(`
+	fmt.Print(`
 tailnets:
   ...
   - apiKey: <THE KEY YOU JUST MADE>
@@ -49,7 +49,7 @@ func (h *Handler) initHeadscaleTailnet(c *cli.Context) error {
 	fmt.Println("headscale apikey create")
 	fmt.Println("")
 	fmt.Println("Once you have the api key, add the following to your texit config.yaml")
-	fmt.Println(`
+	fmt.Print(`
 tailnets:
   ...
   - apiKey: <THE KEY YOU JUST MADE>

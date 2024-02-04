@@ -3,11 +3,13 @@ package handler
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/flag"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 )
@@ -88,6 +90,16 @@ func (h *Handler) ProvisionNode(c *cli.Context) error {
 	}
 
 	fmt.Printf("Sent provision node request. Execution Id: %s\n", exId.String())
+	if !c.Bool(flag.NoPollExecution) {
+		results, err := h.pollWorkflow(exId, 120, 5)
+		if err != nil {
+			return err
+		}
+		for _, r := range results {
+			fmt.Println(r)
+		}
+		fmt.Println("Provision node workflow complete.")
+	}
 	return nil
 }
 
@@ -103,6 +115,15 @@ func (h *Handler) DeprovisionNode(c *cli.Context) error {
 	}
 
 	fmt.Printf("Sent deprovision node request. Execution Id: %s\n", exId.String())
+
+	if !c.Bool(flag.NoPollExecution) {
+		_, err := h.pollWorkflow(exId, 10, 2)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("Deprovision node workflow for %s complete.\n", node.String())
+	}
+
 	return nil
 }
 
@@ -134,4 +155,33 @@ func (h *Handler) StopNode(c *cli.Context) error {
 
 	fmt.Printf("Sent stop node request for node %s\n", node.String())
 	return nil
+}
+
+func (h *Handler) pollWorkflow(ex workflow.ExecutionIdentifier, intervals, wait int) ([]string, error) {
+	fmt.Println("Polling workflow until completion...")
+	time.Sleep(time.Duration(wait) * time.Second)
+	for i := 0; i < intervals; i++ {
+		exec, err := h.apiSvc.GetExecution(context.Background(), ex)
+		if err != nil {
+			return nil, err
+		}
+
+		if exec.Status == workflow.StatusFailed {
+			fmt.Println("Workflow failed")
+			fmt.Println("Errors:")
+			for _, e := range exec.Results {
+				fmt.Println(e)
+			}
+			return nil, errors.New("workflow failed")
+		}
+
+		if exec.Status == workflow.StatusComplete {
+			return exec.Results, nil
+		}
+
+		fmt.Printf("Workflow still running... waiting %v seconds\n", wait)
+		time.Sleep(time.Duration(wait) * time.Second)
+	}
+
+	return nil, errors.New("workflow timed out")
 }

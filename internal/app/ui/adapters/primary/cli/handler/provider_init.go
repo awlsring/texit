@@ -134,7 +134,7 @@ func (h *Handler) initAwsEcsProvider(ctx *cli.Context) error {
 	fmt.Println("aws iam create-access-key --user-name texit-ecs-provider")
 	fmt.Println("")
 	fmt.Println("Finally, configure the provider with the access key and secret key in the texit configuration file")
-	fmt.Println(`
+	fmt.Print(`
 providers:
   ...
   - type: aws-ecs

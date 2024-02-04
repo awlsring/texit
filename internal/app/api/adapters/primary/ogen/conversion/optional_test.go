@@ -21,11 +21,6 @@ func TestMaybeMakeFloat64(t *testing.T) {
 	assert.Equal(t, texit.OptFloat64{}, maybeMakeFloat64(0))
 }
 
-func TestMaybeMakeString(t *testing.T) {
-	assert.Equal(t, texit.NewOptString("test"), maybeMakeString("test"))
-	assert.Equal(t, texit.OptString{}, maybeMakeString(""))
-}
-
 func TestMaybeMakeBool(t *testing.T) {
 	assert.Equal(t, texit.NewOptBool(true), maybeMakeBool(true))
 	assert.Equal(t, texit.OptBool{}, maybeMakeBool(false))

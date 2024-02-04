@@ -83,6 +83,11 @@ func New(hdl *handler.Handler) *CLI {
 								Aliases: []string{"e"},
 								Usage:   "Whether or not the node should be ephemeral",
 							},
+							&cli.BoolFlag{
+								Name:    flag.NoPollExecution,
+								Aliases: []string{"no"},
+								Usage:   "Whether or not to poll the execution",
+							},
 						},
 					},
 					{
@@ -95,6 +100,11 @@ func New(hdl *handler.Handler) *CLI {
 								Aliases:  []string{"n"},
 								Usage:    "The id of the node to deprovision",
 								Required: true,
+							},
+							&cli.BoolFlag{
+								Name:    flag.NoPollExecution,
+								Aliases: []string{"no"},
+								Usage:   "Whether or not to poll the execution",
 							},
 						},
 					},

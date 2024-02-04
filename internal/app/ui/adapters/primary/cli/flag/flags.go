@@ -11,4 +11,5 @@ const (
 	TailnetType      = "type"
 	ExecutionId      = "id"
 	EphemeralNode    = "ephemeral"
+	NoPollExecution  = "no-poll"
 )

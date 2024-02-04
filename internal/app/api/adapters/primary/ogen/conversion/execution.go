@@ -38,6 +38,6 @@ func ExecutionToSummary(e *workflow.Execution) texit.ExecutionSummary {
 		Status:     TranslateExecutionStatus(e.Status),
 		StartedAt:  float64(e.Created.Unix()),
 		EndedAt:    maybeMakeTime(e.Finished),
-		Result:     maybeMakeString(""),
+		Result:     e.Results,
 	}
 }
