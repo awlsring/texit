@@ -8,6 +8,7 @@ import (
 
 func NewServerHealthCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
 	return tempest.Command{
+		AvailableInDM:       true,
 		Name:                "server-health",
 		Description:         "Check the health of the texit server",
 		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.ServerHealthCheck),
@@ -16,8 +17,9 @@ func NewServerHealthCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handl
 
 func NewSelfHealthCheckCommand(hdl *handler.Handler) tempest.Command {
 	return tempest.Command{
-		Name:        "self-health",
-		Description: "Check the health of the bot",
+		AvailableInDM: true,
+		Name:          "self-health",
+		Description:   "Check the health of the bot",
 		SlashCommandHandler: func(itx *tempest.CommandInteraction) {
 			itx.SendLinearReply("I'm healthy!", true)
 		},

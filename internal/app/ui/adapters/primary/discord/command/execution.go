@@ -9,8 +9,9 @@ import (
 
 func NewDescribeExecutionCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
 	return tempest.Command{
-		Name:        "describe-execution",
-		Description: "Describe an execution by its ID",
+		AvailableInDM: true,
+		Name:          "describe-execution",
+		Description:   "Describe an execution by its ID",
 		Options: []tempest.CommandOption{
 			{
 				Type:        tempest.STRING_OPTION_TYPE,

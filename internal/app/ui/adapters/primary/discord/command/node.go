@@ -11,8 +11,9 @@ import (
 
 func NewProvisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
 	return tempest.Command{
-		Name:        "create-exit-node",
-		Description: "Create an Exit Node on a tailnet and provider.",
+		AvailableInDM: true,
+		Name:          "create-exit-node",
+		Description:   "Create an Exit Node on a tailnet and provider.",
 		Options: []tempest.CommandOption{
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
@@ -60,8 +61,9 @@ func NewProvisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *hand
 
 func NewDeprovisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
 	return tempest.Command{
-		Name:        "delete-exit-node",
-		Description: "Deletes an Exit Node.",
+		AvailableInDM: true,
+		Name:          "delete-exit-node",
+		Description:   "Deletes an Exit Node.",
 		Options: []tempest.CommandOption{
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
@@ -86,6 +88,7 @@ func NewDeprovisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *ha
 
 func NewListNodesCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
 	return tempest.Command{
+		AvailableInDM:       true,
 		Name:                "list-exit-nodes",
 		Description:         "List all Exit Nodes.",
 		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.ListNodes),
