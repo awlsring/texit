@@ -11,6 +11,7 @@ go.work
 /build/bin
 /build/smithy
 /config.yaml
+/bot-config.yaml
 /cli-config.yaml
 *.db
 model/**/build

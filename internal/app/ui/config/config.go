@@ -6,24 +6,18 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Configuration to connect to the API server
-type ApiConfig struct {
-	Address string `yaml:"address"`
-	ApiKey  string `yaml:"apiKey"`
-}
-
-type Config struct {
-	Api ApiConfig `yaml:"api"`
+type Config interface {
+	Validate() error
 }
 
 // Loads the application config from a file at the specified path.
-func LoadFromFile(path string) (*Config, error) {
+func LoadFromFile[C Config](path string) (*C, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	var cfg Config
+	var cfg C
 	err = yaml.Unmarshal(data, &cfg)
 	if err != nil {
 		return nil, err

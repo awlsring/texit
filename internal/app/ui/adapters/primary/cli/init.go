@@ -3,6 +3,7 @@ package cli
 import (
 	"os"
 
+	cliconfig "github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/config"
 	"github.com/awlsring/texit/internal/app/ui/config"
 	"gopkg.in/yaml.v2"
 )
@@ -30,7 +31,7 @@ func configPath() string {
 }
 
 func InitDefaultConfig() {
-	cfg := config.Config{
+	cfg := cliconfig.Config{
 		Api: config.ApiConfig{
 			Address: "http://myserver:7032",
 			ApiKey:  "changeme",
@@ -46,13 +47,13 @@ func InitDefaultConfig() {
 	}
 }
 
-func LoadConfig() (*config.Config, error) {
+func LoadConfig() (*cliconfig.Config, error) {
 	configPath := configPath()
 	if override := os.Getenv(configOverrideFlag); override != "" {
 		configPath = override
 	}
 
-	cfg, err := config.LoadFromFile(configPath)
+	cfg, err := config.LoadFromFile[cliconfig.Config](configPath)
 	if err != nil {
 		return nil, err
 	}

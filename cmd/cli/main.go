@@ -49,7 +49,6 @@ func main() {
 	cfg, err := cli.LoadConfig()
 	panicOnErr(err)
 	client := initClient(cfg.Api.Address, cfg.Api.ApiKey)
-
 	apiGw := api_gateway.New(client)
 	svc := api.NewService(apiGw)
 	hdl := handler.New(svc)
