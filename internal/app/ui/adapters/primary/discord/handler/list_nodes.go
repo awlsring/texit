@@ -14,17 +14,17 @@ func (h *Handler) ListNodes(ctx *context.CommandContext) {
 	nodes, err := h.apiSvc.ListNodes(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("Error listing nodes")
-		ctx.EditResponse(fmt.Sprintf("Error listing nodes. Error: %s", err.Error()), true)
+		_ = ctx.EditResponse(fmt.Sprintf("Error listing nodes. Error: %s", err.Error()), true)
 		return
 	}
 
 	if len(nodes) == 0 {
-		ctx.EditResponse("No nodes found", true)
+		_ = ctx.EditResponse("No nodes found", true)
 		return
 	}
 
 	msg := "Nodes:\n"
-	msg += fmt.Sprintf("-------------------------------------------\n")
+	msg += "-------------------------------------------\n"
 	for _, n := range nodes {
 		msg += fmt.Sprintf("Node ID: `%s`\n", n.Identifier.String())
 		msg += fmt.Sprintf("Tailnet Name: `%s`\n", n.TailnetName.String())
@@ -34,8 +34,8 @@ func (h *Handler) ListNodes(ctx *context.CommandContext) {
 		msg += fmt.Sprintf("Ephemeral: `%t`\n", n.Ephemeral)
 		msg += fmt.Sprintf("Created At: `%s`\n", n.CreatedAt.Format(time.RFC1123))
 		msg += fmt.Sprintf("Updated At: `%s`\n", n.UpdatedAt.Format(time.RFC1123))
-		msg += fmt.Sprintf("-------------------------------------------\n")
+		msg += "-------------------------------------------\n"
 
 	}
-	ctx.EditResponse(msg, true)
+	_ = ctx.EditResponse(msg, true)
 }

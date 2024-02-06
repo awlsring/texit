@@ -91,14 +91,26 @@ func (h *Handler) ProvisionNode(c *cli.Context) error {
 
 	fmt.Printf("Sent provision node request. Execution Id: %s\n", exId.String())
 	if !c.Bool(flag.NoPollExecution) {
-		results, err := h.pollWorkflow(exId, 120, 5)
+		ex, err := h.pollWorkflow(exId, 120, 5)
 		if err != nil {
 			return err
 		}
-		for _, r := range results {
-			fmt.Println(r)
+
+		output, err := workflow.DeserializeExecutionResult[workflow.ProvisionNodeExecutionResult](ex.Results)
+		if err != nil {
+			return err
 		}
-		fmt.Println("Provision node workflow complete.")
+
+		if ex.Status == workflow.StatusFailed {
+			fmt.Printf("Provision node workflow failed on step %s. Errors: %s\n", output.GetFailedStep(), output.Errors)
+			return nil
+		} else {
+			if output.Node == nil {
+				fmt.Println("Provision node workflow complete, but no node found in results. This is unexpected. Manual intervention is likely required.")
+			} else {
+				fmt.Printf("Provision node workflow complete. Node Id: %s\n", *output.Node)
+			}
+		}
 	}
 	return nil
 }
@@ -117,11 +129,22 @@ func (h *Handler) DeprovisionNode(c *cli.Context) error {
 	fmt.Printf("Sent deprovision node request. Execution Id: %s\n", exId.String())
 
 	if !c.Bool(flag.NoPollExecution) {
-		_, err := h.pollWorkflow(exId, 10, 2)
+		ex, err := h.pollWorkflow(exId, 10, 2)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("Deprovision node workflow for %s complete.\n", node.String())
+
+		output, err := workflow.DeserializeExecutionResult[workflow.DeprovisionNodeExecutionResult](ex.Results)
+		if err != nil {
+			return err
+		}
+
+		if ex.Status == workflow.StatusFailed {
+			fmt.Printf("Deprovision node workflow failed on step %s. Errors: %s\n", output.GetFailedStep(), output.Errors)
+			return nil
+		}
+
+		fmt.Printf("Deprovision node workflow for node %s complete.\n", node.String())
 	}
 
 	return nil
@@ -157,7 +180,7 @@ func (h *Handler) StopNode(c *cli.Context) error {
 	return nil
 }
 
-func (h *Handler) pollWorkflow(ex workflow.ExecutionIdentifier, intervals, wait int) ([]string, error) {
+func (h *Handler) pollWorkflow(ex workflow.ExecutionIdentifier, intervals, wait int) (*workflow.Execution, error) {
 	fmt.Println("Polling workflow until completion...")
 	time.Sleep(time.Duration(wait) * time.Second)
 	for i := 0; i < intervals; i++ {
@@ -166,17 +189,8 @@ func (h *Handler) pollWorkflow(ex workflow.ExecutionIdentifier, intervals, wait 
 			return nil, err
 		}
 
-		if exec.Status == workflow.StatusFailed {
-			fmt.Println("Workflow failed")
-			fmt.Println("Errors:")
-			for _, e := range exec.Results {
-				fmt.Println(e)
-			}
-			return nil, errors.New("workflow failed")
-		}
-
-		if exec.Status == workflow.StatusComplete {
-			return exec.Results, nil
+		if exec.Status == workflow.StatusComplete || exec.Status == workflow.StatusFailed {
+			return exec, nil
 		}
 
 		fmt.Printf("Workflow still running... waiting %v seconds\n", wait)

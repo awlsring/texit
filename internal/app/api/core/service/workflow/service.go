@@ -51,11 +51,19 @@ func (s *Service) getTailnetGateway(ctx context.Context, id tailnet.Identifier) 
 	return gw, nil
 }
 
-func (s *Service) closeWorkflow(ctx context.Context, ex workflow.ExecutionIdentifier, result workflow.Status, msgs []string) {
+func (s *Service) closeWorkflow(ctx context.Context, ex workflow.ExecutionIdentifier, result workflow.Status, output workflow.ExecutionResult) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msgf("Closing workflow: %s", ex.String())
 
-	err := s.excRepo.CloseExecution(ctx, ex, result, msgs)
+	log.Debug().Msgf("Serializing output")
+	res, err := output.Serialize()
+	if err != nil {
+		log.Warn().Err(err).Msg("Failed to serialize output")
+		res = workflow.SerializedExecutionResult("")
+	}
+
+	log.Debug().Msgf("Closing execution: %s", ex.String())
+	err = s.excRepo.CloseExecution(ctx, ex, result, res)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to close workflow")
 	}

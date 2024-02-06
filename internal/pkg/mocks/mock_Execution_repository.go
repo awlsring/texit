@@ -23,17 +23,17 @@ func (_m *MockExecution_repository) EXPECT() *MockExecution_repository_Expecter 
 	return &MockExecution_repository_Expecter{mock: &_m.Mock}
 }
 
-// CloseExecution provides a mock function with given fields: ctx, id, result, msg
-func (_m *MockExecution_repository) CloseExecution(ctx context.Context, id workflow.ExecutionIdentifier, result workflow.Status, msg []string) error {
-	ret := _m.Called(ctx, id, result, msg)
+// CloseExecution provides a mock function with given fields: ctx, id, result, output
+func (_m *MockExecution_repository) CloseExecution(ctx context.Context, id workflow.ExecutionIdentifier, result workflow.Status, output workflow.SerializedExecutionResult) error {
+	ret := _m.Called(ctx, id, result, output)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CloseExecution")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, workflow.ExecutionIdentifier, workflow.Status, []string) error); ok {
-		r0 = rf(ctx, id, result, msg)
+	if rf, ok := ret.Get(0).(func(context.Context, workflow.ExecutionIdentifier, workflow.Status, workflow.SerializedExecutionResult) error); ok {
+		r0 = rf(ctx, id, result, output)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -50,14 +50,14 @@ type MockExecution_repository_CloseExecution_Call struct {
 //   - ctx context.Context
 //   - id workflow.ExecutionIdentifier
 //   - result workflow.Status
-//   - msg []string
-func (_e *MockExecution_repository_Expecter) CloseExecution(ctx interface{}, id interface{}, result interface{}, msg interface{}) *MockExecution_repository_CloseExecution_Call {
-	return &MockExecution_repository_CloseExecution_Call{Call: _e.mock.On("CloseExecution", ctx, id, result, msg)}
+//   - output workflow.SerializedExecutionResult
+func (_e *MockExecution_repository_Expecter) CloseExecution(ctx interface{}, id interface{}, result interface{}, output interface{}) *MockExecution_repository_CloseExecution_Call {
+	return &MockExecution_repository_CloseExecution_Call{Call: _e.mock.On("CloseExecution", ctx, id, result, output)}
 }
 
-func (_c *MockExecution_repository_CloseExecution_Call) Run(run func(ctx context.Context, id workflow.ExecutionIdentifier, result workflow.Status, msg []string)) *MockExecution_repository_CloseExecution_Call {
+func (_c *MockExecution_repository_CloseExecution_Call) Run(run func(ctx context.Context, id workflow.ExecutionIdentifier, result workflow.Status, output workflow.SerializedExecutionResult)) *MockExecution_repository_CloseExecution_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(workflow.ExecutionIdentifier), args[2].(workflow.Status), args[3].([]string))
+		run(args[0].(context.Context), args[1].(workflow.ExecutionIdentifier), args[2].(workflow.Status), args[3].(workflow.SerializedExecutionResult))
 	})
 	return _c
 }
@@ -67,7 +67,7 @@ func (_c *MockExecution_repository_CloseExecution_Call) Return(_a0 error) *MockE
 	return _c
 }
 
-func (_c *MockExecution_repository_CloseExecution_Call) RunAndReturn(run func(context.Context, workflow.ExecutionIdentifier, workflow.Status, []string) error) *MockExecution_repository_CloseExecution_Call {
+func (_c *MockExecution_repository_CloseExecution_Call) RunAndReturn(run func(context.Context, workflow.ExecutionIdentifier, workflow.Status, workflow.SerializedExecutionResult) error) *MockExecution_repository_CloseExecution_Call {
 	_c.Call.Return(run)
 	return _c
 }

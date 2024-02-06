@@ -26,3 +26,10 @@ func maybeMakeBool(b bool) texit.OptBool {
 	}
 	return texit.NewOptBool(b)
 }
+
+func maybeMakeString(s string) texit.OptString {
+	if s == "" {
+		return texit.OptString{}
+	}
+	return texit.NewOptString(s)
+}

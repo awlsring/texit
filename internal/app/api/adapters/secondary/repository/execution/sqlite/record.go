@@ -1,7 +1,6 @@
 package sqlite_execution_repository
 
 import (
-	"strings"
 	"time"
 
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -17,25 +16,20 @@ type ExecutionSqlRecord struct {
 	Results    *string    `db:"results"`
 }
 
-func resultsToStringList(results *string) []string {
-	if results == nil {
-		return nil
-	}
-	if *results == "" {
-		return nil
-	}
-	return strings.Split(*results, ",")
-}
-
 func (n *ExecutionSqlRecord) ToExecution() *workflow.Execution {
 	wf, err := workflow.WorkflowNameFromString(n.Workflow)
 	if err != nil {
 		wf = workflow.WorkflowNameUnknown
 	}
 
-	status, err := workflow.JobStatusFromString(n.Status)
+	status, err := workflow.StatusFromString(n.Status)
 	if err != nil {
 		status = workflow.StatusUnknown
+	}
+
+	results := workflow.SerializedExecutionResult("")
+	if n.Results != nil {
+		results = workflow.SerializedExecutionResult(*n.Results)
 	}
 
 	return &workflow.Execution{
@@ -45,6 +39,6 @@ func (n *ExecutionSqlRecord) ToExecution() *workflow.Execution {
 		Created:    n.CreatedAt,
 		Updated:    n.UpdatedAt,
 		Finished:   n.FinishedAt,
-		Results:    resultsToStringList(n.Results),
+		Results:    results,
 	}
 }

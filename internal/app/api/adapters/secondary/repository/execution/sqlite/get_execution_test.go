@@ -61,7 +61,6 @@ func TestGet_Closed(t *testing.T) {
 	assert.NoError(t, err)
 
 	now := time.Now()
-	results := []string{"result1", "result2", "result3"}
 
 	ex := &workflow.Execution{
 		Identifier: workflow.FormExecutionIdentifier(workflow.WorkflowNameProvisionNode),
@@ -74,7 +73,7 @@ func TestGet_Closed(t *testing.T) {
 	err = r.CreateExecution(ctx, ex)
 	assert.NoError(t, err)
 
-	err = r.CloseExecution(ctx, ex.Identifier, workflow.StatusComplete, results)
+	err = r.CloseExecution(ctx, ex.Identifier, workflow.StatusComplete, workflow.SerializedExecutionResult(""))
 	assert.NoError(t, err)
 
 	retrieved, err := r.GetExecution(ctx, ex.Identifier)
@@ -82,7 +81,7 @@ func TestGet_Closed(t *testing.T) {
 	assert.NotNil(t, retrieved)
 	assert.Equal(t, ex.Identifier, retrieved.Identifier)
 	assert.NotNil(t, retrieved.Finished)
-	assert.Equal(t, results, retrieved.Results)
+	assert.Equal(t, "", retrieved.Results.String())
 }
 
 func TestGet_NotFound(t *testing.T) {

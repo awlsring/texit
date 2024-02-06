@@ -26,13 +26,13 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	providerName, ok := ctx.GetOptionValue(option.ProviderName)
 	if !ok {
 		log.Error().Msg("Failed to get provider name from interaction")
-		ctx.EditResponse("Please specify a provider name.", true)
+		_ = ctx.EditResponse("Please specify a provider name.", true)
 		return
 	}
 	pr, err := provider.IdentifierFromString(providerName.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse provider name")
-		ctx.EditResponse("Failed to parse provider name", true)
+		_ = ctx.EditResponse("Failed to parse provider name", true)
 		return
 	}
 
@@ -40,13 +40,13 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	tailnetName, ok := ctx.GetOptionValue(option.TailnetName)
 	if !ok {
 		log.Error().Msg("Failed to get tailnet name from interaction")
-		ctx.EditResponse("Please specify a tailnet name.", true)
+		_ = ctx.EditResponse("Please specify a tailnet name.", true)
 		return
 	}
 	tn, err := tailnet.IdentifierFromString(tailnetName.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse tailnet name")
-		ctx.EditResponse("Failed to parse tailnet name", true)
+		_ = ctx.EditResponse("Failed to parse tailnet name", true)
 		return
 	}
 
@@ -54,7 +54,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	providerLocation, ok := ctx.GetOptionValue(option.ProviderLocation)
 	if !ok {
 		log.Error().Msg("Failed to get provider location from interaction")
-		ctx.EditResponse("Please specify a provider location.", true)
+		_ = ctx.EditResponse("Please specify a provider location.", true)
 		return
 	}
 	pl := provider.Location(providerLocation.(string))
@@ -69,7 +69,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	exId, err := h.apiSvc.ProvisionNode(ctx, pr, pl, tn, ephemeral)
 	if err != nil {
 		log.Error().Err(err).Msg("Error provisioning node")
-		ctx.EditResponse("Error provisioning node", true)
+		_ = ctx.EditResponse("Error provisioning node", true)
 		return
 	}
 
@@ -86,14 +86,24 @@ You'll be sent a message when its ready! This usually takes a few minutes.`, fmt
 		ex, err := h.apiSvc.GetExecution(ctx, exId)
 		if err != nil {
 			log.Error().Err(err).Msg("Error polling execution")
-			ctx.EditResponse("Error polling execution", true)
+			if err = ctx.EditResponse("Error polling execution", true); err != nil {
+				log.Error().Err(err).Msg("Failed to write bot response")
+			}
+			return
+		}
+		log.Debug().Interface("execution", ex).Msg("Execution")
+		output, err := workflow.DeserializeExecutionResult[workflow.ProvisionNodeExecutionResult](ex.Results)
+		if err != nil {
+			log.Error().Err(err).Msg("Error polling execution")
+			if err = ctx.EditResponse("Error getting execution results", true); err != nil {
+				log.Error().Err(err).Msg("Failed to write bot response")
+			}
 			return
 		}
 		if ex.Status == workflow.StatusComplete {
+			predicatedTailId := fmt.Sprintf("%s-%s", pl, output.GetNode())
 			log.Debug().Msg("Execution is complete, writing bot response")
-			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf(`The provision node workflow you requested has completed succesfully.
-			
-Results: %s`, strings.Join(ex.Results, ", ")))
+			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf("The provision node workflow you requested has completed succesfully.\n\nThe id of your new node is `%s`. (It should appear as something like `%s` on your tailnet)", output.GetNode(), predicatedTailId))
 			if err != nil {
 				log.Error().Err(err).Msg("Failed to write bot response")
 			}
@@ -101,9 +111,7 @@ Results: %s`, strings.Join(ex.Results, ", ")))
 		}
 		if ex.Status == workflow.StatusFailed {
 			log.Debug().Msg("Execution is failed, writing bot response")
-			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf(`The provision node workflow you request failed :(.
-			
-Heres the errors: %s`, strings.Join(ex.Results, ", ")))
+			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf("The provision node workflow you request failed :(.\n\nIt failed on step %s\nErrors encountered: %s", output.GetFailedStep(), strings.Join(output.Errors, ", ")))
 			if err != nil {
 				log.Error().Err(err).Msg("Failed to write bot response")
 			}

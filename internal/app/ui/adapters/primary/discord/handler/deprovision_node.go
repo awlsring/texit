@@ -25,13 +25,13 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 	nodeId, ok := ctx.GetOptionValue(option.NodeId)
 	if !ok {
 		log.Error().Msg("Failed to get node id from interaction")
-		ctx.EditResponse("Please specify a node id.", true)
+		_ = ctx.EditResponse("Please specify a node id.", true)
 		return
 	}
 	n, err := node.IdentifierFromString(nodeId.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse provider name")
-		ctx.EditResponse("Failed to parse node id", true)
+		_ = ctx.EditResponse("Failed to parse node id", true)
 		return
 	}
 
@@ -39,7 +39,7 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 	exId, err := h.apiSvc.DeprovisionNode(ctx, n)
 	if err != nil {
 		log.Error().Err(err).Msg("Error deprovisioning node")
-		ctx.EditResponse("Error deprovisioning node", true)
+		_ = ctx.EditResponse("Error deprovisioning node", true)
 		return
 	}
 
@@ -51,12 +51,18 @@ You'll be sent a message when its finished! This usually takes a few seconds.`, 
 	}
 
 	log.Debug().Msg("Polling execution")
-	for i := 0; i < pollAmount; i++ {
+	for i := 0; i < deprovisionPollAmount; i++ {
 		log.Debug().Int("poll_count", i).Msg("Polling execution")
 		ex, err := h.apiSvc.GetExecution(ctx, exId)
 		if err != nil {
 			log.Error().Err(err).Msg("Error polling execution")
-			ctx.EditResponse("Error polling execution", true)
+			_ = ctx.EditResponse("Error polling execution", true)
+			return
+		}
+		output, err := workflow.DeserializeExecutionResult[workflow.DeprovisionNodeExecutionResult](ex.Results)
+		if err != nil {
+			log.Error().Err(err).Msg("Error polling execution")
+			_ = ctx.EditResponse("Error getting execution results", true)
 			return
 		}
 		if ex.Status == workflow.StatusComplete {
@@ -68,17 +74,16 @@ You'll be sent a message when its finished! This usually takes a few seconds.`, 
 			return
 		}
 		if ex.Status == workflow.StatusFailed {
+
 			log.Debug().Msg("Execution is failed, writing bot response")
-			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf(`The deprovision node workflow you request failed :(.
-			
-Heres the errors: %s`, strings.Join(ex.Results, ", ")))
+			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf("The deprovision node workflow you request failed :(\n\nIt failed on step %s\nErrors: %s", output.GetFailedStep(), strings.Join(output.Errors, ", ")))
 			if err != nil {
 				log.Error().Err(err).Msg("Failed to write bot response")
 			}
 			return
 		}
 		log.Debug().Msg("Execution is not complete, waiting")
-		time.Sleep(pollDelay * time.Second)
+		time.Sleep(deprovisionPollDelay * time.Second)
 	}
 
 }

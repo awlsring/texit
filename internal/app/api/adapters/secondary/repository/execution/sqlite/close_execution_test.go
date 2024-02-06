@@ -25,7 +25,6 @@ func TestCloseExecution(t *testing.T) {
 	assert.NoError(t, err)
 
 	now := time.Now()
-	results := []string{"result1", "result2", "result3"}
 
 	ex := &workflow.Execution{
 		Identifier: workflow.FormExecutionIdentifier(workflow.WorkflowNameProvisionNode),
@@ -38,6 +37,6 @@ func TestCloseExecution(t *testing.T) {
 	err = r.CreateExecution(ctx, ex)
 	assert.NoError(t, err)
 
-	err = r.CloseExecution(ctx, ex.Identifier, workflow.StatusComplete, results)
+	err = r.CloseExecution(ctx, ex.Identifier, workflow.StatusComplete, workflow.SerializedExecutionResult(""))
 	assert.NoError(t, err)
 }

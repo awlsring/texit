@@ -21,7 +21,7 @@ func NewSelfHealthCheckCommand(hdl *handler.Handler) tempest.Command {
 		Name:          "self-health",
 		Description:   "Check the health of the bot",
 		SlashCommandHandler: func(itx *tempest.CommandInteraction) {
-			itx.SendLinearReply("I'm healthy!", true)
+			_ = itx.SendLinearReply("I'm healthy!", true)
 		},
 	}
 }

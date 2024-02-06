@@ -14,13 +14,13 @@ func TestTranslateExecutionStatus(t *testing.T) {
 	assert.Equal(t, texit.ExecutionStatusRunning, TranslateExecutionStatus(workflow.StatusRunning))
 	assert.Equal(t, texit.ExecutionStatusCompleted, TranslateExecutionStatus(workflow.StatusComplete))
 	assert.Equal(t, texit.ExecutionStatusFailed, TranslateExecutionStatus(workflow.StatusFailed))
-	assert.Equal(t, texit.ExecutionStatusUnknown, TranslateExecutionStatus(workflow.Status(999))) // Unknown status
+	assert.Equal(t, texit.ExecutionStatusUnknown, TranslateExecutionStatus(workflow.Status(999)))
 }
 
 func TestTranslateWorkflowName(t *testing.T) {
 	assert.Equal(t, texit.WorkflowNameDeprovisionNode, TranslateWorkflowName(workflow.WorkflowNameDeprovisionNode))
 	assert.Equal(t, texit.WorkflowNameProvisionNode, TranslateWorkflowName(workflow.WorkflowNameProvisionNode))
-	assert.Equal(t, texit.WorkflowNameUnknown, TranslateWorkflowName(workflow.WorkflowNameUnknown)) // Unknown workflow name
+	assert.Equal(t, texit.WorkflowNameUnknown, TranslateWorkflowName(workflow.WorkflowNameUnknown))
 }
 
 func TestExecutionToSummary(t *testing.T) {

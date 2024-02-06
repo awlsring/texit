@@ -9,36 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestResultsToStringList(t *testing.T) {
-	t.Run("returns nil when input is nil", func(t *testing.T) {
-		var input *string
-		expected := []string(nil)
-		result := resultsToStringList(input)
-		assert.Equal(t, expected, result)
-	})
-
-	t.Run("returns nil when input is an empty string", func(t *testing.T) {
-		input := ""
-		expected := []string(nil)
-		result := resultsToStringList(&input)
-		assert.Equal(t, expected, result)
-	})
-
-	t.Run("returns a list of strings when input is a comma-separated string", func(t *testing.T) {
-		input := "test1,test2,test3"
-		expected := []string{"test1", "test2", "test3"}
-		result := resultsToStringList(&input)
-		assert.Equal(t, expected, result)
-	})
-
-	t.Run("returns a list with one string when input is a string without commas", func(t *testing.T) {
-		input := "test1"
-		expected := []string{"test1"}
-		result := resultsToStringList(&input)
-		assert.Equal(t, expected, result)
-	})
-}
-
 func TestToExecution(t *testing.T) {
 	now := time.Now()
 
@@ -57,11 +27,12 @@ func TestToExecution(t *testing.T) {
 		assert.Equal(t, record.CreatedAt, result.Created)
 		assert.Equal(t, record.UpdatedAt, result.Updated)
 		assert.Nil(t, result.Finished)
-		assert.Nil(t, result.Results)
+		assert.Equal(t, result.Results.String(), "")
 	})
 
 	t.Run("returns optional fields when set", func(t *testing.T) {
-		results := "test1,test2,test3"
+		results := "{\"nodeId\":\"node\",\"failedStep\":\"step\",\"errors\":[\"error\"]}"
+
 		record := &ExecutionSqlRecord{
 			Identifier: uuid.New().String(),
 			Workflow:   workflow.WorkflowNameProvisionNode.String(),
@@ -78,7 +49,7 @@ func TestToExecution(t *testing.T) {
 		assert.Equal(t, record.CreatedAt, result.Created)
 		assert.Equal(t, record.UpdatedAt, result.Updated)
 		assert.Equal(t, *record.FinishedAt, *result.Finished)
-		assert.Equal(t, []string{"test1", "test2", "test3"}, result.Results)
+		assert.Equal(t, result.Results.String(), results)
 	})
 
 }

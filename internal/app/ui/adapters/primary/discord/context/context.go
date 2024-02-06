@@ -52,13 +52,6 @@ func InitContext(client *tempest.Client, itx *tempest.CommandInteraction, lvl ze
 		tempest:            client,
 	}
 
-	log.Debug().Msg("Deferring command interaction")
-	if err := itx.Defer(true); err != nil {
-		err := errors.New("Failed to defer command interaction")
-		tex.SendLinearReply("Command failed with an unknown error!", true)
-		return tex, err
-	}
-
 	log.Debug().Msg("Returning command context")
 	return tex, nil
 }

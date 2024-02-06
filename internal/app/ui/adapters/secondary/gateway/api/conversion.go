@@ -55,7 +55,7 @@ func SummaryToExecution(summary texit.ExecutionSummary) (*workflow.Execution, er
 		Status:     translateExecutionStatus(summary.Status),
 		Created:    float64ToTime(summary.StartedAt),
 		Finished:   &finished,
-		Results:    summary.Result,
+		Results:    workflow.SerializedExecutionResult(summary.Result.Value),
 	}
 
 	if summary.EndedAt.IsSet() {

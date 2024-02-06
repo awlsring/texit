@@ -2,7 +2,6 @@ package workflow
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
@@ -43,53 +42,74 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 		tailName := tailnet.FormDeviceName(location.String(), id.String())
 		log.Debug().Msgf("New tailnet device name: %s", tailName)
 
+		step := "get-tailnet-gateway"
+		results := workflow.NewProvisionNodeExecutionResult(step)
 		log.Debug().Msg("Getting tailnet gateway")
 		tailnetGw, err := s.getTailnetGateway(ctx, tn.Name)
 		if err != nil {
+			results.Errors = append(results.Errors, err.Error())
+			results.FailedStep = &step
 			log.Error().Err(err).Msg("Failed to get tailnet gateway")
-			s.closeWorkflow(ctx, execution.Identifier, workflow.StatusFailed, []string{"Failed to get tailnet gateway", err.Error()})
+			s.closeWorkflow(ctx, execution.Identifier, workflow.StatusFailed, results)
 			return
 		}
 
-		log.Debug().Msg("Creating preauth key for node")
-		preauthKey, err := tailnetGw.CreatePreauthKey(ctx, ephemeral)
-		if err != nil {
-			log.Error().Err(err).Msg("Failed to create preauth key")
-			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to create preauth key", err.Error()})
-			return
-		}
-
+		step = "get-platform-gateway"
 		log.Debug().Msg("Getting platfrom gateway")
 		platformGw, err := s.getPlatformGateway(ctx, prov.Name)
 		if err != nil {
+			results.Errors = append(results.Errors, err.Error())
+			results.FailedStep = &step
 			log.Error().Err(err).Msg("Failed to get platform gateway")
-			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to get platform gateway", err.Error()})
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, results)
 			return
 		}
 
+		step = "create-preauth-key"
+		log.Debug().Msg("Creating preauth key for node")
+		preauthKey, err := tailnetGw.CreatePreauthKey(ctx, ephemeral)
+		if err != nil {
+			results.Errors = append(results.Errors, err.Error())
+			results.FailedStep = &step
+			log.Error().Err(err).Msg("Failed to create preauth key")
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, results)
+			return
+		}
+
+		step = "create-node"
 		log.Debug().Msg("Creating node on platform")
 		platId, err := platformGw.CreateNode(ctx, id, tailName, prov, location, tn, preauthKey)
 		if err != nil {
+			results.Errors = append(results.Errors, err.Error())
+			results.FailedStep = &step
 			log.Error().Err(err).Msg("Failed to create node")
-			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to create node", err.Error()})
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, results)
 			return
 		}
 
 		log.Debug().Msgf("Sleeping for %s to wait for device registration on tailnet", postCreationWaitTime)
 		time.Sleep(postCreationWaitTime)
 
+		step = "get-tailnet-device-id"
 		log.Debug().Msg("Getting the tailnet device id")
 		tid, err := tailnetGw.GetDeviceId(ctx, tailName)
 		if err != nil {
+			results.Errors = append(results.Errors, err.Error())
+			results.FailedStep = &step
 			log.Error().Err(err).Msg("Failed to get tailnet device id")
-			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to get tailnet device id", err.Error()})
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, results)
 			return
 		}
 
+		step = "enable-exit-node"
 		log.Debug().Msg("Enabling as exit node")
 		err = tailnetGw.EnableExitNode(ctx, tid)
 		if err != nil {
+			results.Errors = append(results.Errors, err.Error())
+			results.FailedStep = &step
 			log.Error().Err(err).Msg("Failed to enable exit node")
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, results)
+			return
 		}
 
 		log.Debug().Msg("Froming node entry")
@@ -105,16 +125,22 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 			TailnetName:        tailName,
 		}
 
+		step = "create-node-record"
 		log.Debug().Msg("Creating node in repository")
 		err = s.nodeRepo.Create(ctx, n)
 		if err != nil {
+			results.Errors = append(results.Errors, err.Error())
+			results.FailedStep = &step
 			log.Error().Err(err).Msg("Failed to create node")
-			s.closeWorkflow(ctx, exId, workflow.StatusFailed, []string{"Failed to create node", err.Error()})
+			s.closeWorkflow(ctx, exId, workflow.StatusFailed, results)
 			return
 		}
 
+		results.FailedStep = nil
+		nodeId := id.String()
+		results.Node = &nodeId
 		log.Debug().Msgf("Node created, id: %s", id)
-		s.closeWorkflow(ctx, exId, workflow.StatusComplete, []string{fmt.Sprintf("Node created. Id: %s", id.String())})
+		s.closeWorkflow(ctx, exId, workflow.StatusComplete, results)
 	}()
 
 	return exId, nil
