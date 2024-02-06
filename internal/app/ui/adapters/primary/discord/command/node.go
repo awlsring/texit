@@ -94,3 +94,30 @@ func NewListNodesCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.
 		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.ListNodes),
 	}
 }
+
+func NewDescribeNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
+	return tempest.Command{
+		AvailableInDM: true,
+		Name:          "describe-exit-node",
+		Description:   "Describes an Exit Node.",
+		Options: []tempest.CommandOption{
+			{
+				Type:         tempest.STRING_OPTION_TYPE,
+				Name:         option.NodeId,
+				Description:  "The ID of the node to describe",
+				Required:     true,
+				MinValue:     1,
+				AutoComplete: true,
+			},
+		},
+		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.DescribeNode),
+		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx *tempest.CommandInteraction) []tempest.Choice {
+			field, input := itx.GetFocusedValue()
+			switch field {
+			case option.NodeId:
+				return hdl.NodeIdAutoComplete(ctx, itx, field, input.(string))
+			}
+			return nil
+		}),
+	}
+}

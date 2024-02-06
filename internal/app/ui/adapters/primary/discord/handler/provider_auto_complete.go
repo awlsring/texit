@@ -13,7 +13,7 @@ func (h *Handler) ProviderNameAutoComplete(ctx context.Context, itx *tempest.Com
 	log.Debug().Msg("Auto completing provider name")
 
 	log.Debug().Msg("Calling list providers method")
-	pro, err := h.apiSvc.ListProviders(context.Background())
+	pro, err := h.provSvc.ListProviders(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list providers")
 		return []tempest.Choice{}

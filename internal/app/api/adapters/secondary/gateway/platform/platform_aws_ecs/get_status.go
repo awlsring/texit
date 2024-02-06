@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
-	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/interfaces"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -27,7 +26,7 @@ func taskStatusToNodeStatus(status string) node.Status {
 	}
 }
 
-func listServiceTasks(ctx context.Context, client interfaces.EcsClient, id tailnet.DeviceName) ([]string, error) {
+func listServiceTasks(ctx context.Context, client interfaces.EcsClient, id node.Identifier) ([]string, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Listing service tasks")
 
@@ -83,7 +82,7 @@ func (g *PlatformAwsEcsGateway) GetStatus(ctx context.Context, n *node.Node) (no
 		return node.StatusUnknown, err
 	}
 
-	tasks, err := listServiceTasks(ctx, ecsClient, n.TailnetName)
+	tasks, err := listServiceTasks(ctx, ecsClient, n.Identifier)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list service tasks")
 		return node.StatusUnknown, err

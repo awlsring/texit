@@ -12,6 +12,9 @@ import (
 	api_gateway "github.com/awlsring/texit/internal/app/ui/adapters/secondary/gateway/api"
 	"github.com/awlsring/texit/internal/app/ui/config"
 	"github.com/awlsring/texit/internal/app/ui/core/service/api"
+	"github.com/awlsring/texit/internal/app/ui/core/service/node"
+	"github.com/awlsring/texit/internal/app/ui/core/service/provider"
+	"github.com/awlsring/texit/internal/app/ui/core/service/tailnet"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/pkg/gen/texit"
 	"github.com/rs/zerolog"
@@ -67,8 +70,11 @@ func main() {
 
 	texit := initClient(cfg.Api.Address, cfg.Api.ApiKey)
 	apiGw := api_gateway.New(texit)
-	svc := api.NewService(apiGw)
-	hdl := handler.New(svc)
+	apiSvc := api.NewService(apiGw)
+	provSvc := provider.NewService(apiGw)
+	tailSvc := tailnet.NewService(apiGw)
+	nodeSvc := node.NewService(apiGw, tailSvc, provSvc)
+	hdl := handler.New(apiSvc, nodeSvc, provSvc, tailSvc)
 
 	log.Info().Msg("Creating new Tempest client...")
 	client := tempest.NewClient(tempest.ClientOptions{

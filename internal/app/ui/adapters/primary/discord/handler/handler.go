@@ -5,11 +5,17 @@ import (
 )
 
 type Handler struct {
-	apiSvc service.Api
+	apiSvc  service.Api
+	nodeSvc service.Node
+	provSvc service.Provider
+	tailSvc service.Tailnet
 }
 
-func New(svc service.Api) *Handler {
+func New(apiSvc service.Api, nodeSvc service.Node, provSvc service.Provider, tailSvc service.Tailnet) *Handler {
 	return &Handler{
-		apiSvc: svc,
+		apiSvc:  apiSvc,
+		nodeSvc: nodeSvc,
+		provSvc: provSvc,
+		tailSvc: tailSvc,
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"github.com/awlsring/texit/internal/app/ui/ports/service"
 )
 
+// A service that is just a proxy for the Api gateway
 type Service struct {
 	apiGw gateway.Api
 }

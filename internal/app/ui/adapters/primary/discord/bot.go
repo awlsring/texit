@@ -57,11 +57,15 @@ func (b *Bot) Initialize() error {
 		return err
 	}
 
-	// guild, err := tempest.StringToSnowflake("948052547795574794")
-	// if err != nil {
-	// 	return err
-	// }
-	if err := b.tmpst.SyncCommands(nil, nil, false); err != nil {
+	if err := b.tmpst.RegisterCommand(command.NewDescribeNodeCommand(b.logLevel, b.tmpst, b.hdl)); err != nil {
+		return err
+	}
+
+	guild, err := tempest.StringToSnowflake("948052547795574794")
+	if err != nil {
+		return err
+	}
+	if err := b.tmpst.SyncCommands([]tempest.Snowflake{guild}, nil, false); err != nil {
 		return err
 	}
 

@@ -13,7 +13,7 @@ func (h *Handler) TailnetNameAutoComplete(ctx context.Context, itx *tempest.Comm
 	log.Debug().Msg("Auto completing tailnet name")
 
 	log.Debug().Msg("Calling list tailnets method")
-	pro, err := h.apiSvc.ListTailnets(ctx)
+	pro, err := h.tailSvc.ListTailnets(ctx)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to list tailnets")
 		return []tempest.Choice{}

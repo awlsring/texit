@@ -1,41 +1,39 @@
 package handler
 
 import (
-	"fmt"
-	"time"
-
+	tempest "github.com/Amatsagu/Tempest"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/embed"
 )
 
 func (h *Handler) ListNodes(ctx *context.CommandContext) {
 	log := ctx.Logger()
 	log.Debug().Msg("Listing nodes")
 
-	nodes, err := h.apiSvc.ListNodes(ctx)
+	log.Debug().Msg("Getting nodes from service")
+	nodes, err := h.nodeSvc.ListNodes(ctx)
 	if err != nil {
-		log.Error().Err(err).Msg("Error listing nodes")
-		_ = ctx.EditResponse(fmt.Sprintf("Error listing nodes. Error: %s", err.Error()), true)
+		log.Warn().Err(err).Msg("Error listing nodes")
+		_ = ctx.EditResponse("Error listing nodes", true)
 		return
 	}
 
 	if len(nodes) == 0 {
+		log.Debug().Msg("No nodes found")
 		_ = ctx.EditResponse("No nodes found", true)
 		return
 	}
 
-	msg := "Nodes:\n"
-	msg += "-------------------------------------------\n"
+	log.Debug().Msg("Nodes found, creating embeds")
+	ems := []*tempest.Embed{}
 	for _, n := range nodes {
-		msg += fmt.Sprintf("Node ID: `%s`\n", n.Identifier.String())
-		msg += fmt.Sprintf("Tailnet Name: `%s`\n", n.TailnetName.String())
-		msg += fmt.Sprintf("Provider: `%s`\n", n.Provider.String())
-		msg += fmt.Sprintf("Tailnet: `%s`\n", n.Tailnet.String())
-		msg += fmt.Sprintf("Location: `%s`\n", n.Location.String())
-		msg += fmt.Sprintf("Ephemeral: `%t`\n", n.Ephemeral)
-		msg += fmt.Sprintf("Created At: `%s`\n", n.CreatedAt.Format(time.RFC1123))
-		msg += fmt.Sprintf("Updated At: `%s`\n", n.UpdatedAt.Format(time.RFC1123))
-		msg += "-------------------------------------------\n"
-
+		em := embed.NodeAsEmbed(n)
+		ems = append(ems, em)
 	}
-	_ = ctx.EditResponse(msg, true)
+
+	log.Debug().Msg("Sending embeds in message")
+	_ = ctx.EditReply(tempest.ResponseMessageData{
+		Content: "Here's a list of all current known nodes...",
+		Embeds:  ems,
+	}, true)
 }
