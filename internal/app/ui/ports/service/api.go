@@ -2,11 +2,17 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
+)
+
+var (
+	ErrInvalidInputError = errors.New("invalid input")
+	ErrUnknownExecution  = errors.New("unknown execution")
 )
 
 type Api interface {

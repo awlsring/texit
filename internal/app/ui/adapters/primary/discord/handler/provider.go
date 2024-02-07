@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 
+	"github.com/awlsring/texit/internal/app/api/ports/service"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
@@ -23,15 +25,19 @@ func (h *Handler) DescribeProvider(ctx *context.CommandContext) {
 	provName, err := provider.IdentifierFromString(providerName.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse provider name")
-		_ = ctx.EditResponse("Failed to parse provider name", true)
+		ProviderNameInvalidConstraintsResponse(ctx)
 		return
 	}
 
 	log.Debug().Msg("Getting provider from service")
 	p, err := h.provSvc.DescribeProvider(ctx, provName)
 	if err != nil {
+		if errors.Is(err, service.ErrUnknownProvider) {
+			UnknownProviderResponse(ctx, provName.String())
+			return
+		}
 		log.Warn().Err(err).Msg("Error getting provider")
-		_ = ctx.EditResponse("Error getting provider", true)
+		InternalErrorResponse(ctx)
 		return
 	}
 
@@ -51,7 +57,7 @@ func (h *Handler) ListProviders(ctx *context.CommandContext) {
 	ps, err := h.provSvc.ListProviders(ctx)
 	if err != nil {
 		log.Warn().Err(err).Msg("Error listing providers")
-		_ = ctx.EditResponse("Error listing providers.", true)
+		InternalErrorResponse(ctx)
 		return
 	}
 

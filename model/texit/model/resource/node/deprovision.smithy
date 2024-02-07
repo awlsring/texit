@@ -18,6 +18,7 @@ operation DeprovisionNode {
     }
 
     errors: [
+        InvalidInputError
         ResourceNotFoundError
     ]
 }

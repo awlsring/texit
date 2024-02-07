@@ -18,6 +18,7 @@ operation GetNodeStatus {
     }
 
     errors: [
+        InvalidInputError
         ResourceNotFoundError
     ]
 }

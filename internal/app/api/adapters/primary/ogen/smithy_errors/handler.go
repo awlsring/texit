@@ -25,7 +25,7 @@ func ResponseHandler(ctx context.Context, w http.ResponseWriter, r *http.Request
 
 	log.Debug().Msg("Getting exception from error")
 	serr := translateError(err)
-	log.Debug().Interface("exception", err).Msgf("got exception")
+	log.Debug().Interface("exception", serr).Msgf("got exception")
 
 	log.Debug().Msg("Building response")
 	w.Header().Set("Content-Type", "application/json")

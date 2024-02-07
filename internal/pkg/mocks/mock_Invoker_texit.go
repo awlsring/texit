@@ -435,23 +435,23 @@ func (_c *MockInvoker_texit_Health_Call) RunAndReturn(run func(context.Context) 
 }
 
 // ListNodes provides a mock function with given fields: ctx
-func (_m *MockInvoker_texit) ListNodes(ctx context.Context) (texit.ListNodesRes, error) {
+func (_m *MockInvoker_texit) ListNodes(ctx context.Context) (*texit.ListNodesResponseContent, error) {
 	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ListNodes")
 	}
 
-	var r0 texit.ListNodesRes
+	var r0 *texit.ListNodesResponseContent
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) (texit.ListNodesRes, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) (*texit.ListNodesResponseContent, error)); ok {
 		return rf(ctx)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) texit.ListNodesRes); ok {
+	if rf, ok := ret.Get(0).(func(context.Context) *texit.ListNodesResponseContent); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(texit.ListNodesRes)
+			r0 = ret.Get(0).(*texit.ListNodesResponseContent)
 		}
 	}
 
@@ -482,12 +482,12 @@ func (_c *MockInvoker_texit_ListNodes_Call) Run(run func(ctx context.Context)) *
 	return _c
 }
 
-func (_c *MockInvoker_texit_ListNodes_Call) Return(_a0 texit.ListNodesRes, _a1 error) *MockInvoker_texit_ListNodes_Call {
+func (_c *MockInvoker_texit_ListNodes_Call) Return(_a0 *texit.ListNodesResponseContent, _a1 error) *MockInvoker_texit_ListNodes_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *MockInvoker_texit_ListNodes_Call) RunAndReturn(run func(context.Context) (texit.ListNodesRes, error)) *MockInvoker_texit_ListNodes_Call {
+func (_c *MockInvoker_texit_ListNodes_Call) RunAndReturn(run func(context.Context) (*texit.ListNodesResponseContent, error)) *MockInvoker_texit_ListNodes_Call {
 	_c.Call.Return(run)
 	return _c
 }

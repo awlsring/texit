@@ -25,10 +25,6 @@ type GetNodeStatusRes interface {
 	getNodeStatusRes()
 }
 
-type ListNodesRes interface {
-	listNodesRes()
-}
-
 type ProvisionNodeRes interface {
 	provisionNodeRes()
 }

@@ -25,7 +25,7 @@ func translateError(err error) *SmithyError {
 		code := ogenErr.Code()
 		switch code {
 		case 400:
-			return NewInvalidInputError(err.Error())
+			return NewInvalidInputError("input given does not match required constraints")
 		}
 	}
 

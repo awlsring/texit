@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"fmt"
+	"errors"
 
 	tempest "github.com/Amatsagu/Tempest"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/embed"
+	"github.com/awlsring/texit/internal/app/ui/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 )
 
@@ -23,15 +24,19 @@ func (h *Handler) DescribeNode(ctx *context.CommandContext) {
 	nodeId, err := node.IdentifierFromString(nodeIdStr.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse node ID")
-		_ = ctx.EditResponse(fmt.Sprintf("Failed to parse to provided node id. Error: %s", err.Error()), true)
+		NodeIdInvalidConstraintsResponse(ctx)
 		return
 	}
 
 	log.Debug().Msg("Getting node from service")
 	n, err := h.nodeSvc.DescribeNode(ctx, nodeId)
 	if err != nil {
+		if errors.Is(err, service.ErrUnknownNode) {
+			UnknownNodeResponse(ctx, nodeId.String())
+			return
+		}
 		log.Warn().Err(err).Msg("Error getting node")
-		_ = ctx.EditResponse("Error getting node", true)
+		InternalErrorResponse(ctx)
 		return
 	}
 

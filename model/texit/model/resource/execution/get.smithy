@@ -18,6 +18,7 @@ operation GetExecution {
     }
 
     errors: [
+        InvalidInputError
         ResourceNotFoundError
     ]
 }

@@ -3,8 +3,10 @@ package api_gateway
 import (
 	"context"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/pkg/gen/texit"
+	"github.com/go-faster/errors"
 )
 
 func (g *ApiGateway) DescribeTailnet(ctx context.Context, identifier tailnet.Identifier) (*tailnet.Tailnet, error) {
@@ -13,13 +15,22 @@ func (g *ApiGateway) DescribeTailnet(ctx context.Context, identifier tailnet.Ide
 	}
 	resp, err := g.client.DescribeTailnet(ctx, req)
 	if err != nil {
-		return nil, translateError(err)
+		return nil, errors.Wrap(gateway.ErrInternalServerError, err.Error())
 	}
 
-	tail, err := SummaryToTailnet(resp.(*texit.DescribeTailnetResponseContent).Summary)
-	if err != nil {
-		return nil, translateError(err)
-	}
+	switch resp.(type) {
+	case *texit.DescribeTailnetResponseContent:
+		tail, err := SummaryToTailnet(resp.(*texit.DescribeTailnetResponseContent).Summary)
+		if err != nil {
+			return nil, errors.Wrap(gateway.ErrInternalServerError, err.Error())
+		}
 
-	return tail, nil
+		return tail, nil
+	case *texit.ResourceNotFoundErrorResponseContent:
+		return nil, errors.Wrap(gateway.ErrResourceNotFoundError, resp.(*texit.ResourceNotFoundErrorResponseContent).Message)
+	case *texit.InvalidInputErrorResponseContent:
+		return nil, errors.Wrap(gateway.ErrInvalidInputError, resp.(*texit.InvalidInputErrorResponseContent).Message)
+	default:
+		return nil, gateway.ErrInternalServerError
+	}
 }

@@ -2,8 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
+)
+
+var (
+	ErrUnknownProvider = errors.New("unknown provider")
 )
 
 type Provider interface {

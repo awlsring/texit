@@ -17,6 +17,7 @@ operation StopNode {
     }
 
     errors: [
+        InvalidInputError
         ResourceNotFoundError
     ]
 }

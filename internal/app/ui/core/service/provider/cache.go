@@ -2,9 +2,9 @@ package provider
 
 import (
 	"context"
-	"errors"
 	"time"
 
+	"github.com/awlsring/texit/internal/app/api/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 )
 
@@ -34,7 +34,7 @@ func (s *Service) getProviderFromMap(ctx context.Context, id provider.Identifier
 	s.mut.Unlock()
 	p, ok := s.providers[string(id.String())]
 	if !ok {
-		return nil, errors.New("provider not found")
+		return nil, service.ErrUnknownProvider
 	}
 	return p, nil
 }

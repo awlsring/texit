@@ -8,7 +8,7 @@ import (
 	"github.com/awlsring/texit/pkg/gen/texit"
 )
 
-func (h *Handler) ListNodes(ctx context.Context) (texit.ListNodesRes, error) {
+func (h *Handler) ListNodes(ctx context.Context) (*texit.ListNodesResponseContent, error) {
 	log := logger.FromContext(ctx)
 	log.Info().Msg("Recieved list nodes request")
 

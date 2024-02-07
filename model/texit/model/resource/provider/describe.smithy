@@ -18,6 +18,7 @@ operation DescribeProvider {
     }
 
     errors: [
+        InvalidInputError
         ResourceNotFoundError
     ]
 }

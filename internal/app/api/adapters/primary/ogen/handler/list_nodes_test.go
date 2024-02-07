@@ -7,7 +7,6 @@ import (
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/mocks"
-	"github.com/awlsring/texit/pkg/gen/texit"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -31,7 +30,7 @@ func TestListNodes(t *testing.T) {
 	res, err := h.ListNodes(ctx)
 
 	assert.NoError(t, err)
-	assert.Len(t, res.(*texit.ListNodesResponseContent).Summaries, len(testNodes))
+	assert.Len(t, res.Summaries, len(testNodes))
 }
 
 func TestListNodesError(t *testing.T) {

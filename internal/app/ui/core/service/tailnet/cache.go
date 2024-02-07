@@ -2,9 +2,9 @@ package tailnet
 
 import (
 	"context"
-	"errors"
 	"time"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 )
 
@@ -34,7 +34,7 @@ func (s *Service) getTailnetFromMap(ctx context.Context, id tailnet.Identifier) 
 	s.mut.Unlock()
 	p, ok := s.tailnets[string(id.String())]
 	if !ok {
-		return nil, errors.New("tailnet not found")
+		return nil, service.ErrUnknownTailnet
 	}
 	return p, nil
 }

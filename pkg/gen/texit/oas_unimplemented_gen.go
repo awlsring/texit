@@ -79,7 +79,7 @@ func (UnimplementedHandler) Health(ctx context.Context) (r *HealthResponseConten
 // Lists all known nodes.
 //
 // GET /node
-func (UnimplementedHandler) ListNodes(ctx context.Context) (r ListNodesRes, _ error) {
+func (UnimplementedHandler) ListNodes(ctx context.Context) (r *ListNodesResponseContent, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

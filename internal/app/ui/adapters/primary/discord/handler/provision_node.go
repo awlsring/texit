@@ -32,7 +32,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	pr, err := provider.IdentifierFromString(providerName.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse provider name")
-		_ = ctx.EditResponse("Failed to parse provider name", true)
+		ProviderNameInvalidConstraintsResponse(ctx)
 		return
 	}
 
@@ -46,7 +46,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	tn, err := tailnet.IdentifierFromString(tailnetName.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse tailnet name")
-		_ = ctx.EditResponse("Failed to parse tailnet name", true)
+		TailnetNameInvalidConstraintsResponse(ctx)
 		return
 	}
 
@@ -69,14 +69,12 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	exId, err := h.apiSvc.ProvisionNode(ctx, pr, pl, tn, ephemeral)
 	if err != nil {
 		log.Error().Err(err).Msg("Error provisioning node")
-		_ = ctx.EditResponse("Error provisioning node", true)
+		InternalErrorResponse(ctx)
 		return
 	}
 
 	log.Debug().Msg("Provisioned node, writing bot response")
-	if err = ctx.EditResponse(fmt.Sprintf(`Provision node workflow started. The execution id is %s
-
-You'll be sent a message when its ready! This usually takes a few minutes.`, fmt.Sprintf("`%s`", exId.String())), true); err != nil {
+	if err = ctx.EditResponse(fmt.Sprintf("Provision node workflow started. The execution id is %s.\n\nYou'll be sent a message when its ready! This usually takes a few minutes.", fmt.Sprintf("`%s`", exId.String())), true); err != nil {
 		log.Error().Err(err).Msg("Failed to write bot response")
 	}
 
@@ -86,18 +84,14 @@ You'll be sent a message when its ready! This usually takes a few minutes.`, fmt
 		ex, err := h.apiSvc.GetExecution(ctx, exId)
 		if err != nil {
 			log.Error().Err(err).Msg("Error polling execution")
-			if err = ctx.EditResponse("Error polling execution", true); err != nil {
-				log.Error().Err(err).Msg("Failed to write bot response")
-			}
+			ExecutionInternalErrorResponse(ctx)
 			return
 		}
 		log.Debug().Interface("execution", ex).Msg("Execution")
 		output, err := workflow.DeserializeExecutionResult[workflow.ProvisionNodeExecutionResult](ex.Results)
 		if err != nil {
 			log.Error().Err(err).Msg("Error polling execution")
-			if err = ctx.EditResponse("Error getting execution results", true); err != nil {
-				log.Error().Err(err).Msg("Failed to write bot response")
-			}
+			ExecutionInternalErrorResponse(ctx)
 			return
 		}
 		if ex.Status == workflow.StatusComplete {

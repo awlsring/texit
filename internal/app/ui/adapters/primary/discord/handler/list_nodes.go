@@ -14,7 +14,7 @@ func (h *Handler) ListNodes(ctx *context.CommandContext) {
 	nodes, err := h.nodeSvc.ListNodes(ctx)
 	if err != nil {
 		log.Warn().Err(err).Msg("Error listing nodes")
-		_ = ctx.EditResponse("Error listing nodes", true)
+		InternalErrorResponse(ctx)
 		return
 	}
 

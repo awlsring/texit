@@ -69,7 +69,7 @@ type Invoker interface {
 	// Lists all known nodes.
 	//
 	// GET /node
-	ListNodes(ctx context.Context) (ListNodesRes, error)
+	ListNodes(ctx context.Context) (*ListNodesResponseContent, error)
 	// ListProviders invokes ListProviders operation.
 	//
 	// List all registered providers.
@@ -999,12 +999,12 @@ func (c *Client) sendHealth(ctx context.Context) (res *HealthResponseContent, er
 // Lists all known nodes.
 //
 // GET /node
-func (c *Client) ListNodes(ctx context.Context) (ListNodesRes, error) {
+func (c *Client) ListNodes(ctx context.Context) (*ListNodesResponseContent, error) {
 	res, err := c.sendListNodes(ctx)
 	return res, err
 }
 
-func (c *Client) sendListNodes(ctx context.Context) (res ListNodesRes, err error) {
+func (c *Client) sendListNodes(ctx context.Context) (res *ListNodesResponseContent, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("ListNodes"),
 		semconv.HTTPMethodKey.String("GET"),

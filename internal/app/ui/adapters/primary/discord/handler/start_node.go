@@ -1,10 +1,11 @@
 package handler
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
+	"github.com/awlsring/texit/internal/app/ui/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 )
 
@@ -21,15 +22,19 @@ func (h *Handler) StartNode(ctx *context.CommandContext) {
 	nodeId, err := node.IdentifierFromString(nodeIdStr.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse node ID")
-		_ = ctx.EditResponse(fmt.Sprintf("Failed to parse to provided node id. Error: %s", err.Error()), true)
+		NodeIdInvalidConstraintsResponse(ctx)
 		return
 	}
 
 	log.Debug().Msg("starting node from service")
 	err = h.apiSvc.StartNode(ctx, nodeId)
 	if err != nil {
+		if errors.Is(err, service.ErrUnknownNode) {
+			UnknownNodeResponse(ctx, nodeId.String())
+			return
+		}
 		log.Warn().Err(err).Msg("Error starting node")
-		_ = ctx.EditResponse("Error starting node", true)
+		InternalErrorResponse(ctx)
 		return
 	}
 

@@ -2,8 +2,13 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+)
+
+var (
+	ErrUnknownTailnet = errors.New("unknown tailnet")
 )
 
 type Tailnet interface {

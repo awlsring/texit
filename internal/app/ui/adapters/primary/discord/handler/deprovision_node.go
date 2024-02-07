@@ -31,22 +31,19 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 	n, err := node.IdentifierFromString(nodeId.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse provider name")
-		_ = ctx.EditResponse("Failed to parse node id", true)
+		NodeIdInvalidConstraintsResponse(ctx)
 		return
 	}
 
 	log.Debug().Msg("Calling deprovision node method")
 	exId, err := h.apiSvc.DeprovisionNode(ctx, n)
 	if err != nil {
-		log.Error().Err(err).Msg("Error deprovisioning node")
-		_ = ctx.EditResponse("Error deprovisioning node", true)
+		WriteErrorResponse(ctx, err, n.String())
 		return
 	}
 
 	log.Debug().Msg("Deprovision node workflow started, writing bot response")
-	if err = ctx.EditResponse(fmt.Sprintf(`Deprovision node workflow started. The execution id is %s
-
-You'll be sent a message when its finished! This usually takes a few seconds.`, fmt.Sprintf("`%s`", exId.String())), true); err != nil {
+	if err = ctx.EditResponse(fmt.Sprintf("Deprovision node workflow started. The execution id is %s\n\nYou'll be sent a message when its finished! This usually takes a few seconds.", fmt.Sprintf("`%s`", exId.String())), true); err != nil {
 		log.Error().Err(err).Msg("Failed to write bot response")
 	}
 
@@ -56,13 +53,13 @@ You'll be sent a message when its finished! This usually takes a few seconds.`, 
 		ex, err := h.apiSvc.GetExecution(ctx, exId)
 		if err != nil {
 			log.Error().Err(err).Msg("Error polling execution")
-			_ = ctx.EditResponse("Error polling execution", true)
+			ExecutionInternalErrorResponse(ctx)
 			return
 		}
 		output, err := workflow.DeserializeExecutionResult[workflow.DeprovisionNodeExecutionResult](ex.Results)
 		if err != nil {
 			log.Error().Err(err).Msg("Error polling execution")
-			_ = ctx.EditResponse("Error getting execution results", true)
+			ExecutionInternalErrorResponse(ctx)
 			return
 		}
 		if ex.Status == workflow.StatusComplete {

@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
+	"github.com/awlsring/texit/internal/app/ui/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 )
 
@@ -23,15 +25,19 @@ func (h *Handler) DescribeTailnet(ctx *context.CommandContext) {
 	provName, err := tailnet.IdentifierFromString(tailnetName.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse tailnet name")
-		_ = ctx.EditResponse("Failed to parse tailnet name", true)
+		TailnetNameInvalidConstraintsResponse(ctx)
 		return
 	}
 
 	log.Debug().Msg("Getting tailnet from service")
 	p, err := h.tailSvc.DescribeTailnet(ctx, provName)
 	if err != nil {
+		if errors.Is(err, service.ErrUnknownTailnet) {
+			UnknownTailnetResponse(ctx, provName.String())
+			return
+		}
 		log.Warn().Err(err).Msg("Error getting tailnet")
-		_ = ctx.EditResponse("Error getting tailnet", true)
+		InternalErrorResponse(ctx)
 		return
 	}
 
@@ -51,7 +57,7 @@ func (h *Handler) ListTailnets(ctx *context.CommandContext) {
 	ps, err := h.tailSvc.ListTailnets(ctx)
 	if err != nil {
 		log.Warn().Err(err).Msg("Error listing tailnets")
-		_ = ctx.EditResponse("Error listing tailnets.", true)
+		InternalErrorResponse(ctx)
 		return
 	}
 

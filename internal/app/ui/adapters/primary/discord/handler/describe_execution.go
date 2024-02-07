@@ -23,15 +23,15 @@ func (h *Handler) DescribeExecution(ctx *context.CommandContext) {
 	exId, err := workflow.ExecutionIdentifierFromString(exIdStr.(string))
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse execution ID")
-		_ = ctx.EditResponse(fmt.Sprintf("Failed to parse to provided execution id. Error: %s", err.Error()), true)
+		ExecutionIdInvalidConstraintsResponse(ctx)
 		return
 	}
 
-	log.Debug().Msg("Calling server health method")
+	log.Debug().Msg("Calling get execution method")
 	ex, err := h.apiSvc.GetExecution(ctx, exId)
 	if err != nil {
-		log.Error().Err(err).Msg("Error describing execution")
-		_ = ctx.EditResponse(fmt.Sprintf("Error describing execution: %s", err.Error()), true)
+		log.Error().Err(err).Msg("Error getting execution")
+		WriteErrorResponse(ctx, err, exId.String())
 		return
 	}
 	log.Debug().Msg("Got execution, writing bot response")
@@ -44,7 +44,7 @@ func (h *Handler) DescribeExecution(ctx *context.CommandContext) {
 	}
 	if err != nil {
 		log.Error().Err(err).Msg("Error writing bot response")
-		_ = ctx.EditResponse("Error writing bot response", true)
+		InternalErrorResponse(ctx)
 		return
 	}
 

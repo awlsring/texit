@@ -1140,7 +1140,7 @@ func (s *Server) handleListNodesRequest(args [0]string, argsEscaped bool, w http
 		}
 	}
 
-	var response ListNodesRes
+	var response *ListNodesResponseContent
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -1155,7 +1155,7 @@ func (s *Server) handleListNodesRequest(args [0]string, argsEscaped bool, w http
 		type (
 			Request  = struct{}
 			Params   = struct{}
-			Response = ListNodesRes
+			Response = *ListNodesResponseContent
 		)
 		response, err = middleware.HookMiddleware[
 			Request,

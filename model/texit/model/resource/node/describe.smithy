@@ -18,6 +18,7 @@ operation DescribeNode {
     }
 
     errors: [
+        InvalidInputError
         ResourceNotFoundError
     ]
 }

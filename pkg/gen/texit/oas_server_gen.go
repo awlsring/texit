@@ -53,7 +53,7 @@ type Handler interface {
 	// Lists all known nodes.
 	//
 	// GET /node
-	ListNodes(ctx context.Context) (ListNodesRes, error)
+	ListNodes(ctx context.Context) (*ListNodesResponseContent, error)
 	// ListProviders implements ListProviders operation.
 	//
 	// List all registered providers.

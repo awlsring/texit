@@ -18,6 +18,7 @@ operation DescribeTailnet {
     }
 
     errors: [
+        InvalidInputError
         ResourceNotFoundError
     ]
 }

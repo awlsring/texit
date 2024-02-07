@@ -17,6 +17,7 @@ operation StartNode {
     }
 
     errors: [
+        InvalidInputError
         ResourceNotFoundError
     ]
 }

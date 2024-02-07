@@ -6,6 +6,7 @@ import (
 
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/flag"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/handler"
+	"github.com/rs/zerolog"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,6 +15,7 @@ type CLI struct {
 }
 
 func New(hdl *handler.Handler) *CLI {
+	zerolog.SetGlobalLevel(zerolog.Disabled)
 	app := &cli.App{
 		Name:        "texit",
 		Usage:       "Texit allows for creating and managing exit nodes on a cloud provider.",

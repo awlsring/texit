@@ -274,7 +274,15 @@ func (s *InvalidInputErrorResponseContent) SetMessage(val string) {
 	s.Message = val
 }
 
-func (*InvalidInputErrorResponseContent) provisionNodeRes() {}
+func (*InvalidInputErrorResponseContent) deprovisionNodeRes()  {}
+func (*InvalidInputErrorResponseContent) describeNodeRes()     {}
+func (*InvalidInputErrorResponseContent) describeProviderRes() {}
+func (*InvalidInputErrorResponseContent) describeTailnetRes()  {}
+func (*InvalidInputErrorResponseContent) getExecutionRes()     {}
+func (*InvalidInputErrorResponseContent) getNodeStatusRes()    {}
+func (*InvalidInputErrorResponseContent) provisionNodeRes()    {}
+func (*InvalidInputErrorResponseContent) startNodeRes()        {}
+func (*InvalidInputErrorResponseContent) stopNodeRes()         {}
 
 // Ref: #/components/schemas/ListNodesResponseContent
 type ListNodesResponseContent struct {
@@ -290,8 +298,6 @@ func (s *ListNodesResponseContent) GetSummaries() []NodeSummary {
 func (s *ListNodesResponseContent) SetSummaries(val []NodeSummary) {
 	s.Summaries = val
 }
-
-func (*ListNodesResponseContent) listNodesRes() {}
 
 // Ref: #/components/schemas/ListProvidersResponseContent
 type ListProvidersResponseContent struct {
@@ -809,7 +815,6 @@ func (*ResourceNotFoundErrorResponseContent) describeProviderRes() {}
 func (*ResourceNotFoundErrorResponseContent) describeTailnetRes()  {}
 func (*ResourceNotFoundErrorResponseContent) getExecutionRes()     {}
 func (*ResourceNotFoundErrorResponseContent) getNodeStatusRes()    {}
-func (*ResourceNotFoundErrorResponseContent) listNodesRes()        {}
 func (*ResourceNotFoundErrorResponseContent) provisionNodeRes()    {}
 func (*ResourceNotFoundErrorResponseContent) startNodeRes()        {}
 func (*ResourceNotFoundErrorResponseContent) stopNodeRes()         {}

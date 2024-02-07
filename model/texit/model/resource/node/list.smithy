@@ -12,8 +12,4 @@ operation ListNodes {
         @required
         summaries: NodeSummaries
     }
-
-    errors: [
-        ResourceNotFoundError
-    ]
 }
