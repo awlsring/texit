@@ -14,10 +14,15 @@ var DefaultLogger zerolog.Logger = log.With().Logger()
 
 type LoggingOpt func(zctx zerolog.Context, ctx context.Context) zerolog.Context
 
+func WithField(key string, value interface{}) LoggingOpt {
+	return func(zctx zerolog.Context, ctx context.Context) zerolog.Context {
+		return zctx.Interface(key, value)
+	}
+}
+
 func InitContextLogger(ctx context.Context, lvl zerolog.Level, opts ...LoggingOpt) context.Context {
 	buildInfo, _ := debug.ReadBuildInfo()
-
-	logger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
+	logger := zerolog.New(os.Stderr)
 	logger = logger.Level(lvl)
 	logger = logger.With().
 		Caller().
@@ -44,6 +49,10 @@ func FromContext(ctx context.Context) zerolog.Logger {
 		return DefaultLogger
 	}
 	return *logger
+}
+
+func UsePrettyLogger(log zerolog.Logger) zerolog.Logger {
+	return log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
 }
 
 func LogLevelFromEnv() zerolog.Level {
