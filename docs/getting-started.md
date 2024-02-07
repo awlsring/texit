@@ -1,8 +1,8 @@
 # Getting Started
 
-## Pre-requisites
+## Prerequisites
 
-Before following this guide, you will need to have installed the CLI. You can download the latest release from the releases page.
+Before following this guide, you will need to have installed the CLI. You can download the latest release from the releases page. You can follow the [CLI installation guide](/docs/cli.md) for more information.
 
 Commands in this guide will assume you have placed the binary in your PATH under the "texit" name.
 
