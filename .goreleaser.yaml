@@ -16,6 +16,16 @@ builds:
     ignore:
       - goarch: "386"
 
+  - id: discord
+    main: ./cmd/discord/main.go
+    binary: texit-discord
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+    ignore:
+      - goarch: "386"
+
   - id: cli
     main: ./cmd/cli/main.go
     binary: texit-cli
@@ -45,9 +55,37 @@ dockers:
     build_flag_templates:
       - "--platform=linux/amd64"
     goarch: amd64
+  - id: discord-arm64
+    dockerfile: build/package/discord/Dockerfile
+    image_templates:
+      - "ghcr.io/awlsring/texit-discord:{{.Version}}-arm64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64"
+    goarch: arm64
+  - id: discord-amd64
+    dockerfile: build/package/discord/Dockerfile
+    image_templates:
+      - "ghcr.io/awlsring/texit-discord:{{.Version}}-amd64"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+    goarch: amd64
 
 docker_manifests:
   - name_template: "ghcr.io/awlsring/texit:{{.Version}}"
+    image_templates:
+      - "ghcr.io/awlsring/texit:{{.Version}}-amd64"
+      - "ghcr.io/awlsring/texit:{{.Version}}-arm64"
+  - name_template: "ghcr.io/awlsring/texit:latest"
+    image_templates:
+      - "ghcr.io/awlsring/texit:{{.Version}}-amd64"
+      - "ghcr.io/awlsring/texit:{{.Version}}-arm64"
+  - name_template: "ghcr.io/awlsring/texit-discord:{{.Version}}"
+    image_templates:
+      - "ghcr.io/awlsring/texit:{{.Version}}-amd64"
+      - "ghcr.io/awlsring/texit:{{.Version}}-arm64"
+  - name_template: "ghcr.io/awlsring/texit-discord:latest"
     image_templates:
       - "ghcr.io/awlsring/texit:{{.Version}}-amd64"
       - "ghcr.io/awlsring/texit:{{.Version}}-arm64"
@@ -57,6 +95,17 @@ archives:
     format: tar.gz
     name_template: >-
       {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    allow_different_binary_count: true
+
+  - id: discord
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_discord_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
       {{- else if eq .Arch "386" }}i386
