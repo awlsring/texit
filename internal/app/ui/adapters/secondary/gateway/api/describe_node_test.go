@@ -6,9 +6,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
+	"github.com/ogen-go/ogen/validate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -57,7 +59,19 @@ func TestGetNode(t *testing.T) {
 		n, err := g.DescribeNode(ctx, id)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "get node failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
+		assert.Nil(t, n)
+	})
+
+	t.Run("returns error when get node isn't found", func(t *testing.T) {
+		mockClient := mocks.NewMockInvoker_texit(t)
+		g := New(mockClient)
+		mockClient.EXPECT().DescribeNode(ctx, req).Return(nil, &validate.UnexpectedStatusCodeError{StatusCode: 404})
+
+		n, err := g.DescribeNode(ctx, id)
+
+		assert.Error(t, err)
+		assert.ErrorIs(t, err, gateway.ErrResourceNotFoundError)
 		assert.Nil(t, n)
 	})
 

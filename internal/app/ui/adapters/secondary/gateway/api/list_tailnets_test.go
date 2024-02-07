@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
@@ -52,7 +53,7 @@ func TestApiGateway_ListTailnets(t *testing.T) {
 		tailnets, err := g.ListTailnets(ctx)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "list tailnets failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 		assert.Nil(t, tailnets)
 	})
 

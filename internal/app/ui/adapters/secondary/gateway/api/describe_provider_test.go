@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
@@ -43,7 +44,7 @@ func TestGetProvider(t *testing.T) {
 		prov, err := g.DescribeProvider(ctx, identifier)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "get provider failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 		assert.Nil(t, prov)
 	})
 

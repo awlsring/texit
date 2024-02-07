@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
 	"github.com/stretchr/testify/assert"
@@ -66,7 +67,7 @@ func TestApiGateway_ListNodes(t *testing.T) {
 		nodes, err := g.ListNodes(ctx)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "list nodes failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 		assert.Nil(t, nodes)
 	})
 

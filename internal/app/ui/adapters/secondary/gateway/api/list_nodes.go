@@ -10,14 +10,14 @@ import (
 func (g *ApiGateway) ListNodes(ctx context.Context) ([]*node.Node, error) {
 	resp, err := g.client.ListNodes(ctx)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	nodes := []*node.Node{}
 	for _, n := range resp.(*texit.ListNodesResponseContent).Summaries {
 		node, err := SummaryToNode(n)
 		if err != nil {
-			return nil, err
+			return nil, translateError(err)
 		}
 		nodes = append(nodes, node)
 	}

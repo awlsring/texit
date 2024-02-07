@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
 	"github.com/stretchr/testify/assert"
@@ -48,7 +49,7 @@ func TestApiGateway_ListProviders(t *testing.T) {
 		providers, err := g.ListProviders(ctx)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "list providers failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 		assert.Nil(t, providers)
 	})
 

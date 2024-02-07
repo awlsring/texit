@@ -19,12 +19,12 @@ func (g *ApiGateway) ProvisionNode(ctx context.Context, prov provider.Identifier
 
 	resp, err := g.client.ProvisionNode(ctx, req)
 	if err != nil {
-		return "", err
+		return "", translateError(err)
 	}
 
 	id, err := workflow.ExecutionIdentifierFromString(resp.(*texit.ProvisionNodeResponseContent).Execution)
 	if err != nil {
-		return "", err
+		return "", translateError(err)
 	}
 
 	return id, nil

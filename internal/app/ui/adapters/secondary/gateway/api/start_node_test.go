@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
@@ -38,6 +39,6 @@ func TestApiGateway_StartNode(t *testing.T) {
 		err := g.StartNode(ctx, nodeId)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "start node failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 	})
 }

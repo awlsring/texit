@@ -14,7 +14,7 @@ func (g *ApiGateway) StartNode(ctx context.Context, id node.Identifier) error {
 
 	_, err := g.client.StartNode(ctx, req)
 	if err != nil {
-		return err
+		return translateError(err)
 	}
 
 	return nil

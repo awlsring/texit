@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -54,7 +55,7 @@ func TestApiGateway_ProvisionNode(t *testing.T) {
 		executionId, err := g.ProvisionNode(ctx, provId, loc, tnId, eph)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "provision node failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 		assert.Equal(t, workflow.ExecutionIdentifier(""), executionId)
 	})
 

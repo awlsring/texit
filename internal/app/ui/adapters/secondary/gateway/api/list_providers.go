@@ -9,14 +9,14 @@ import (
 func (g *ApiGateway) ListProviders(ctx context.Context) ([]*provider.Provider, error) {
 	resp, err := g.client.ListProviders(ctx)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	nodes := []*provider.Provider{}
 	for _, n := range resp.Summaries {
 		node, err := SummaryToProvider(n)
 		if err != nil {
-			return nil, err
+			return nil, translateError(err)
 		}
 		nodes = append(nodes, node)
 	}

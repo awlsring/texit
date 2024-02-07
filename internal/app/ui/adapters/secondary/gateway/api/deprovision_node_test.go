@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/mocks"
@@ -40,7 +41,7 @@ func TestDeprovisionNode(t *testing.T) {
 		exId, err := apiGateway.DeprovisionNode(ctx, id)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "deprovision failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 		assert.Equal(t, workflow.ExecutionIdentifier(""), exId)
 		mockClient.AssertExpectations(t)
 	})

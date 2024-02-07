@@ -15,12 +15,12 @@ func (g *ApiGateway) DeprovisionNode(ctx context.Context, id node.Identifier) (w
 
 	resp, err := g.client.DeprovisionNode(ctx, req)
 	if err != nil {
-		return "", err
+		return "", translateError(err)
 	}
 
 	exId, err := workflow.ExecutionIdentifierFromString(resp.(*texit.DeprovisionNodeResponseContent).Execution)
 	if err != nil {
-		return "", err
+		return "", translateError(err)
 	}
 
 	return exId, nil

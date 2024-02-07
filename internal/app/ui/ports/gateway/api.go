@@ -2,11 +2,19 @@ package gateway
 
 import (
 	"context"
+	"errors"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
+)
+
+var (
+	ErrInvalidInputError     = errors.New("invalid input")
+	ErrResourceNotFoundError = errors.New("resource not found")
+	ErrUnauthorizedError     = errors.New("unauthorized")
+	ErrInternalServerError   = errors.New("internal server error")
 )
 
 type Api interface {

@@ -13,7 +13,7 @@ func (g *ApiGateway) GetNodeStatus(ctx context.Context, id node.Identifier) (nod
 	}
 	resp, err := g.client.GetNodeStatus(ctx, req)
 	if err != nil {
-		return node.StatusUnknown, err
+		return node.StatusUnknown, translateError(err)
 	}
 
 	status := translateNodeStatus(resp.(*texit.GetNodeStatusResponseContent).Status)

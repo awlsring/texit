@@ -13,12 +13,12 @@ func (g *ApiGateway) DescribeNode(ctx context.Context, id node.Identifier) (*nod
 	}
 	resp, err := g.client.DescribeNode(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	node, err := SummaryToNode(resp.(*texit.DescribeNodeResponseContent).Summary)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	return node, nil

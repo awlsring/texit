@@ -9,14 +9,14 @@ import (
 func (g *ApiGateway) ListTailnets(ctx context.Context) ([]*tailnet.Tailnet, error) {
 	resp, err := g.client.ListTailnets(ctx)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	nodes := []*tailnet.Tailnet{}
 	for _, n := range resp.Summaries {
 		node, err := SummaryToTailnet(n)
 		if err != nil {
-			return nil, err
+			return nil, translateError(err)
 		}
 		nodes = append(nodes, node)
 	}

@@ -13,12 +13,12 @@ func (g *ApiGateway) DescribeTailnet(ctx context.Context, identifier tailnet.Ide
 	}
 	resp, err := g.client.DescribeTailnet(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	tail, err := SummaryToTailnet(resp.(*texit.DescribeTailnetResponseContent).Summary)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	return tail, nil

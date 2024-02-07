@@ -99,5 +99,5 @@ func TestGet_NotFound(t *testing.T) {
 
 	_, err = r.GetExecution(ctx, workflow.ExecutionIdentifier("non-existent-id"))
 	assert.Error(t, err)
-	assert.True(t, errors.Is(err, repository.ErrNodeNotFound))
+	assert.True(t, errors.Is(err, repository.ErrExecutionNotFound))
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
@@ -40,6 +41,7 @@ func TestApiGateway_GetNodeStatus(t *testing.T) {
 		status, err := g.GetNodeStatus(ctx, id)
 
 		assert.Error(t, err)
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 		assert.Equal(t, node.StatusUnknown, status)
 	})
 

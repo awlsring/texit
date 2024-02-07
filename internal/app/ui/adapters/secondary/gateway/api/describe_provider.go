@@ -13,12 +13,12 @@ func (g *ApiGateway) DescribeProvider(ctx context.Context, identifier provider.I
 	}
 	resp, err := g.client.DescribeProvider(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	prov, err := SummaryToProvider(resp.(*texit.DescribeProviderResponseContent).Summary)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	return prov, nil

@@ -12,6 +12,7 @@ import (
 
 var (
 	ErrExecutionNotFound = errors.New("execution not found")
+	ErrInvalidLocation   = errors.New("invalid location")
 )
 
 type Workflow interface {

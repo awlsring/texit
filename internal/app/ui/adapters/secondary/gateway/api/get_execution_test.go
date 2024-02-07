@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
@@ -46,7 +47,7 @@ func TestGetExecution(t *testing.T) {
 		exec, err := g.GetExecution(ctx, id)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "get execution failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 		assert.Nil(t, exec)
 		mockClient.AssertExpectations(t)
 	})

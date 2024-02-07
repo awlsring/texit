@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
@@ -46,7 +47,7 @@ func TestDescribeTailnet(t *testing.T) {
 		tail, err := g.DescribeTailnet(ctx, identifier)
 
 		assert.Error(t, err)
-		assert.EqualError(t, err, "describe tailnet failed")
+		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
 		assert.Nil(t, tail)
 	})
 

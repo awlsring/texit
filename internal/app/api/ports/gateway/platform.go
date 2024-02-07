@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	ErrUnknownNode = errors.New("unknown node")
+	ErrUnknownNode     = errors.New("unknown node")
+	ErrInvalidLocation = errors.New("invalid location")
 )
 
 type Platform interface {

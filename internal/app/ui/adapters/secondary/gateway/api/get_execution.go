@@ -14,12 +14,12 @@ func (g *ApiGateway) GetExecution(ctx context.Context, id workflow.ExecutionIden
 
 	resp, err := g.client.GetExecution(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	ex, err := SummaryToExecution(resp.(*texit.GetExecutionResponseContent).Summary)
 	if err != nil {
-		return nil, err
+		return nil, translateError(err)
 	}
 
 	return ex, nil

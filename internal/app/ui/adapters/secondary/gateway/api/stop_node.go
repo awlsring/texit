@@ -14,7 +14,7 @@ func (g *ApiGateway) StopNode(ctx context.Context, id node.Identifier) error {
 
 	_, err := g.client.StopNode(ctx, req)
 	if err != nil {
-		return err
+		return translateError(err)
 	}
 
 	return nil
