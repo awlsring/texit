@@ -46,7 +46,7 @@ func NewProvisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *hand
 			},
 		},
 		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.ProvisionNode),
-		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx *tempest.CommandInteraction) []tempest.Choice {
+		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx tempest.CommandInteraction) []tempest.Choice {
 			field, input := itx.GetFocusedValue()
 			switch field {
 			case option.ProviderName:
@@ -75,7 +75,7 @@ func NewDeprovisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *ha
 			},
 		},
 		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.DeprovisionNode),
-		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx *tempest.CommandInteraction) []tempest.Choice {
+		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx tempest.CommandInteraction) []tempest.Choice {
 			field, input := itx.GetFocusedValue()
 			switch field {
 			case option.NodeId:
@@ -111,7 +111,7 @@ func NewDescribeNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handl
 			},
 		},
 		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.DescribeNode),
-		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx *tempest.CommandInteraction) []tempest.Choice {
+		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx tempest.CommandInteraction) []tempest.Choice {
 			field, input := itx.GetFocusedValue()
 			switch field {
 			case option.NodeId:

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/tls"
 	"net"
 	"net/url"
 	"os"
@@ -26,6 +25,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/tsn"
 	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
@@ -33,7 +33,6 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/tailscale/tailscale-client-go/tailscale"
 	_ "modernc.org/sqlite"
-	"tailscale.com/tsnet"
 )
 
 var log zerolog.Logger
@@ -146,47 +145,14 @@ func initHeadscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {
 
 func initListener(cfg *config.ServerConfig) net.Listener {
 	if cfg.Tailnet != nil {
-		log.Info().Msg("Creating tailnet listener")
-		return initTailnetListener(cfg)
+		l, err := tsn.ListenerFromConfig(*cfg.Tailnet, cfg.Address, tsn.WithStandardLoggingFunc(log))
+		panicOnErr(err)
+		return l
 	}
 	log.Info().Msg("Creating normal net listener")
 	l, err := net.Listen("tcp", cfg.Address)
 	panicOnErr(err)
 	return l
-}
-
-func initTailnetListener(cfg *config.ServerConfig) net.Listener {
-	s := new(tsnet.Server)
-	s.Hostname = cfg.Tailnet.Hostname
-	s.AuthKey = cfg.Tailnet.AuthKey
-	s.RunWebClient = true
-	tailog := log.With().Timestamp().Str("process", "tsnet").Str("tailname", s.Hostname).Logger()
-	s.Logf = func(format string, args ...interface{}) {
-		tailog.Debug().Msgf(format, args...)
-	}
-	if cfg.Tailnet.StateDir != "" {
-		s.Dir = cfg.Tailnet.StateDir
-	}
-
-	if cfg.Tailnet.ControlUrl != "" {
-		log.Info().Msg("using headscale control server")
-		s.ControlURL = cfg.Tailnet.ControlUrl
-	}
-
-	panicOnErr(s.Start())
-	localClient, _ := s.LocalClient()
-
-	ln, err := s.Listen("tcp", cfg.Address)
-	panicOnErr(err)
-
-	if cfg.Tailnet.Tls {
-		log.Info().Msg("starting tailnet listener with TLS")
-		ln = tls.NewListener(ln, &tls.Config{
-			GetCertificate: localClient.GetCertificate,
-		})
-	}
-
-	return ln
 }
 
 func main() {

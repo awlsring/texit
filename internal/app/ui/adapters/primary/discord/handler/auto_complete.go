@@ -9,7 +9,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (h *Handler) NodeIdAutoComplete(ctx context.Context, itx *tempest.CommandInteraction, name, filter string) []tempest.Choice {
+func (h *Handler) NodeIdAutoComplete(ctx context.Context, itx tempest.CommandInteraction, name, filter string) []tempest.Choice {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Auto completing node id")
 
@@ -37,7 +37,7 @@ func (h *Handler) NodeIdAutoComplete(ctx context.Context, itx *tempest.CommandIn
 	return choices
 }
 
-func (h *Handler) ProviderNameAutoComplete(ctx context.Context, itx *tempest.CommandInteraction, name, filter string) []tempest.Choice {
+func (h *Handler) ProviderNameAutoComplete(ctx context.Context, itx tempest.CommandInteraction, name, filter string) []tempest.Choice {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Auto completing provider name")
 
@@ -65,7 +65,7 @@ func (h *Handler) ProviderNameAutoComplete(ctx context.Context, itx *tempest.Com
 	return choices
 }
 
-func (h *Handler) TailnetNameAutoComplete(ctx context.Context, itx *tempest.CommandInteraction, name, filter string) []tempest.Choice {
+func (h *Handler) TailnetNameAutoComplete(ctx context.Context, itx tempest.CommandInteraction, name, filter string) []tempest.Choice {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Auto completing tailnet name")
 

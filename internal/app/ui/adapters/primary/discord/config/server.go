@@ -1,6 +1,10 @@
 package config
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/awlsring/texit/internal/pkg/tsn"
+)
 
 const (
 	DefaultAddress  = ":8032"
@@ -22,6 +26,7 @@ type ServerTailnetConfig struct {
 	Tls bool `yaml:"tls"`
 	// ControlUrl is the URL of the control server to use. Specify this if you are using Headscale. If not specified, the default tailscale address will be used.
 	ControlUrl string `yaml:"controlUrl"`
+	Funnel     bool   `yaml:"funnel"`
 }
 
 func (c *ServerTailnetConfig) Validate() error {
@@ -37,8 +42,8 @@ func (c *ServerTailnetConfig) Validate() error {
 }
 
 type ServerConfig struct {
-	Address string               `yaml:"address"`
-	Tailnet *ServerTailnetConfig `yaml:"tailnet"`
+	Address string      `yaml:"address"`
+	Tailnet *tsn.Config `yaml:"tailnet"`
 }
 
 func (c *ServerConfig) Validate() error {

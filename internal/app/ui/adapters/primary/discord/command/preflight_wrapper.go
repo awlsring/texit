@@ -30,10 +30,10 @@ func CommandWrapper(logLevel zerolog.Level, tmpst *tempest.Client, comFunc Comma
 	}
 }
 
-type AutoCompleteFunc func(context.Context, *tempest.CommandInteraction) []tempest.Choice
+type AutoCompleteFunc func(context.Context, tempest.CommandInteraction) []tempest.Choice
 
-func AutoCompleteWrapper(logLevel zerolog.Level, comFunc AutoCompleteFunc) func(itx *tempest.CommandInteraction) []tempest.Choice {
-	return func(itx *tempest.CommandInteraction) []tempest.Choice {
+func AutoCompleteWrapper(logLevel zerolog.Level, comFunc AutoCompleteFunc) func(itx tempest.CommandInteraction) []tempest.Choice {
+	return func(itx tempest.CommandInteraction) []tempest.Choice {
 		ctx := logger.InitContextLogger(context.Background(), logLevel)
 		return comFunc(ctx, itx)
 	}
