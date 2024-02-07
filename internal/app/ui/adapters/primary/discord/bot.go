@@ -98,6 +98,28 @@ func (b *Bot) registerCommands() error {
 		return err
 	}
 
+	if err := b.tmpst.RegisterCommand(command.NewStartNodeCommand(b.CommandPreflight(b.hdl.StartNode), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
+		field, input := ctx.GetFocusedValue()
+		switch field {
+		case option.NodeId:
+			return b.hdl.NodeIdAutoComplete(ctx, field, input.(string))
+		}
+		return nil
+	}))); err != nil {
+		return err
+	}
+
+	if err := b.tmpst.RegisterCommand(command.NewStopNodeCommand(b.CommandPreflight(b.hdl.StopNode), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
+		field, input := ctx.GetFocusedValue()
+		switch field {
+		case option.NodeId:
+			return b.hdl.NodeIdAutoComplete(ctx, field, input.(string))
+		}
+		return nil
+	}))); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -95,3 +95,43 @@ func NewDescribeNodeCommand(slash func(itx *tempest.CommandInteraction), auto fu
 		AutoCompleteHandler: auto,
 	}
 }
+
+func NewStartNodeCommand(slash func(itx *tempest.CommandInteraction), auto func(itx tempest.CommandInteraction) []tempest.Choice) tempest.Command {
+	return tempest.Command{
+		AvailableInDM: true,
+		Name:          "start-exit-node",
+		Description:   "Starts an Exit Node.",
+		Options: []tempest.CommandOption{
+			{
+				Type:         tempest.STRING_OPTION_TYPE,
+				Name:         option.NodeId,
+				Description:  "The ID of the node to start",
+				Required:     true,
+				MinValue:     1,
+				AutoComplete: true,
+			},
+		},
+		SlashCommandHandler: slash,
+		AutoCompleteHandler: auto,
+	}
+}
+
+func NewStopNodeCommand(slash func(itx *tempest.CommandInteraction), auto func(itx tempest.CommandInteraction) []tempest.Choice) tempest.Command {
+	return tempest.Command{
+		AvailableInDM: true,
+		Name:          "stop-exit-node",
+		Description:   "Stops an Exit Node.",
+		Options: []tempest.CommandOption{
+			{
+				Type:         tempest.STRING_OPTION_TYPE,
+				Name:         option.NodeId,
+				Description:  "The ID of the node to stop",
+				Required:     true,
+				MinValue:     1,
+				AutoComplete: true,
+			},
+		},
+		SlashCommandHandler: slash,
+		AutoCompleteHandler: auto,
+	}
+}
