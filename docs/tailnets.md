@@ -7,7 +7,7 @@ All tailnets have the following configuration options.
 - **Tailnet**: This is the name of your tailnet and how you will specify it when calling the texit api. Implementation is different for each tailnet type, so see the corresponding section for more details.
 - **Type**: This is the type of tailnet you are configuring. This must match the type of provider you are specifying.
 - **User**: This is the user you want to authenticate as when calling the tailnet api.
-- **ApiKey**: This is the api key you want to authenticate as when calling the tailnet api. This can also be set with an env variable of `<tailnet-name>_TAILNET_API_KEY`. _If your tailnet includes `.`, replace them with `_`in the env variable name. For example,`my.tailnet`would be`my_tailnet_TAILNET_API_KEY`_
+- **ApiKey**: This is the api key you want to authenticate as when calling the tailnet api. This can also be set with an env variable of `<tailnet-name>_TAILNET_API_KEY`. If your tailnet includes `.`, replace them with `_`in the env variable name. For example,`my.tailnet`would be`my_tailnet_TAILNET_API_KEY`.
 - **ControlServer**: This is the control server that will be specified when configuring nodes. This is optional based on the provider.
 
 Further sections will detail all supported tailnets and unique fields that must be set when configuring them.
@@ -64,4 +64,5 @@ tailnets:
     tailnet: "my-tailnet"
     type: "headscale"
     user: "user"
+    controlServer: "https://headscale.example.com"
 ```
