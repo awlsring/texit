@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	tempest "github.com/Amatsagu/Tempest"
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/embed"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 )
 
@@ -14,7 +14,7 @@ func (h *Handler) DescribeNode(ctx *context.CommandContext) {
 	log := ctx.Logger()
 	log.Debug().Msg("describing node")
 
-	nodeIdStr, ok := ctx.GetOptionValue(option.NodeId)
+	nodeIdStr, ok := ctx.GetOptionValue(command.OptionNodeId)
 	if !ok {
 		log.Error().Msg("Failed to get node ID from interaction")
 		_ = ctx.EditResponse("Please specify an node id to describe", true)

@@ -3,8 +3,8 @@ package handler
 import (
 	"fmt"
 
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 )
 
@@ -13,7 +13,7 @@ func (h *Handler) DescribeTailnet(ctx *context.CommandContext) {
 	log.Debug().Msg("Describing tailnet")
 
 	log.Debug().Msg("Getting tailnet name")
-	tailnetName, ok := ctx.GetOptionValue(option.TailnetName)
+	tailnetName, ok := ctx.GetOptionValue(command.OptionTailnetName)
 	if !ok {
 		log.Error().Msg("Failed to get tailnet name from interaction")
 		_ = ctx.EditResponse("Please specify a tailnet name.", true)

@@ -2,7 +2,6 @@ package command
 
 import (
 	tempest "github.com/Amatsagu/Tempest"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 )
 
 func NewProvisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto func(itx tempest.CommandInteraction) []tempest.Choice) tempest.Command {
@@ -13,7 +12,7 @@ func NewProvisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto f
 		Options: []tempest.CommandOption{
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
-				Name:         option.ProviderName,
+				Name:         OptionProviderName,
 				Description:  "The name of the provider to create the exit node in",
 				Required:     true,
 				MinValue:     1,
@@ -21,7 +20,7 @@ func NewProvisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto f
 			},
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
-				Name:         option.TailnetName,
+				Name:         OptionTailnetName,
 				Description:  "The tailnet to add the exit node to.",
 				Required:     true,
 				MinValue:     1,
@@ -29,7 +28,7 @@ func NewProvisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto f
 			},
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
-				Name:         option.ProviderLocation,
+				Name:         OptionProviderLocation,
 				Description:  "The location of the provider to create the exit node on",
 				Required:     true,
 				MinValue:     3,
@@ -37,7 +36,7 @@ func NewProvisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto f
 			},
 			{
 				Type:        tempest.BOOLEAN_OPTION_TYPE,
-				Name:        option.Ephemeral,
+				Name:        OptionEphemeral,
 				Description: "Whether the created exit node should be ephemeral or not. Defaults to false.",
 				Required:    false,
 			},
@@ -55,7 +54,7 @@ func NewDeprovisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto
 		Options: []tempest.CommandOption{
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
-				Name:         option.NodeId,
+				Name:         OptionNodeId,
 				Description:  "The ID of the node to delete",
 				Required:     true,
 				MinValue:     1,
@@ -84,7 +83,7 @@ func NewDescribeNodeCommand(slash func(itx *tempest.CommandInteraction), auto fu
 		Options: []tempest.CommandOption{
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
-				Name:         option.NodeId,
+				Name:         OptionNodeId,
 				Description:  "The ID of the node to describe",
 				Required:     true,
 				MinValue:     1,
@@ -104,7 +103,7 @@ func NewStartNodeCommand(slash func(itx *tempest.CommandInteraction), auto func(
 		Options: []tempest.CommandOption{
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
-				Name:         option.NodeId,
+				Name:         OptionNodeId,
 				Description:  "The ID of the node to start",
 				Required:     true,
 				MinValue:     1,
@@ -124,7 +123,7 @@ func NewStopNodeCommand(slash func(itx *tempest.CommandInteraction), auto func(i
 		Options: []tempest.CommandOption{
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
-				Name:         option.NodeId,
+				Name:         OptionNodeId,
 				Description:  "The ID of the node to stop",
 				Required:     true,
 				MinValue:     1,

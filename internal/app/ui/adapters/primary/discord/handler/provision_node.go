@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -23,7 +23,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	log.Debug().Msg("Provisioning node")
 
 	log.Debug().Msg("Getting provider name")
-	providerName, ok := ctx.GetOptionValue(option.ProviderName)
+	providerName, ok := ctx.GetOptionValue(command.OptionProviderName)
 	if !ok {
 		log.Error().Msg("Failed to get provider name from interaction")
 		_ = ctx.EditResponse("Please specify a provider name.", true)
@@ -37,7 +37,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	}
 
 	log.Debug().Msg("Getting tailnet name")
-	tailnetName, ok := ctx.GetOptionValue(option.TailnetName)
+	tailnetName, ok := ctx.GetOptionValue(command.OptionTailnetName)
 	if !ok {
 		log.Error().Msg("Failed to get tailnet name from interaction")
 		_ = ctx.EditResponse("Please specify a tailnet name.", true)
@@ -51,7 +51,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	}
 
 	log.Debug().Msg("Getting provider location")
-	providerLocation, ok := ctx.GetOptionValue(option.ProviderLocation)
+	providerLocation, ok := ctx.GetOptionValue(command.OptionProviderLocation)
 	if !ok {
 		log.Error().Msg("Failed to get provider location from interaction")
 		_ = ctx.EditResponse("Please specify a provider location.", true)
@@ -60,7 +60,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	pl := provider.Location(providerLocation.(string))
 
 	ephemeral := false
-	ephRaw, ok := ctx.GetOptionValue(option.Ephemeral)
+	ephRaw, ok := ctx.GetOptionValue(command.OptionEphemeral)
 	if ok {
 		ephemeral = ephRaw.(bool)
 	}

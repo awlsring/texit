@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/logger"
@@ -22,7 +22,7 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 	log.Debug().Msg("Deprovisioning node")
 
 	log.Debug().Msg("Getting node id")
-	nodeId, ok := ctx.GetOptionValue(option.NodeId)
+	nodeId, ok := ctx.GetOptionValue(command.OptionNodeId)
 	if !ok {
 		log.Error().Msg("Failed to get node id from interaction")
 		_ = ctx.EditResponse("Please specify a node id.", true)

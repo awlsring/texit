@@ -2,7 +2,6 @@ package command
 
 import (
 	tempest "github.com/Amatsagu/Tempest"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 )
 
 func NewListProvidersCommand(slash func(itx *tempest.CommandInteraction)) tempest.Command {
@@ -22,7 +21,7 @@ func NewDescribeProviderCommand(slash func(itx *tempest.CommandInteraction), aut
 		Options: []tempest.CommandOption{
 			{
 				Type:         tempest.STRING_OPTION_TYPE,
-				Name:         option.ProviderName,
+				Name:         OptionProviderName,
 				Description:  "The name of the provider to describe",
 				Required:     true,
 				MinValue:     1,

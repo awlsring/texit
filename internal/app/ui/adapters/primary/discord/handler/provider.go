@@ -3,8 +3,8 @@ package handler
 import (
 	"fmt"
 
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 )
 
@@ -13,7 +13,7 @@ func (h *Handler) DescribeProvider(ctx *context.CommandContext) {
 	log.Debug().Msg("Describing provider")
 
 	log.Debug().Msg("Getting provider name")
-	providerName, ok := ctx.GetOptionValue(option.ProviderName)
+	providerName, ok := ctx.GetOptionValue(command.OptionProviderName)
 	if !ok {
 		log.Error().Msg("Failed to get provider name from interaction")
 		_ = ctx.EditResponse("Please specify a provider name.", true)

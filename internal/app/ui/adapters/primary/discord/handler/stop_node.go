@@ -3,8 +3,8 @@ package handler
 import (
 	"fmt"
 
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 )
 
@@ -12,7 +12,7 @@ func (h *Handler) StopNode(ctx *context.CommandContext) {
 	log := ctx.Logger()
 	log.Debug().Msg("stopping node handler")
 
-	nodeIdStr, ok := ctx.GetOptionValue(option.NodeId)
+	nodeIdStr, ok := ctx.GetOptionValue(command.OptionNodeId)
 	if !ok {
 		log.Error().Msg("Failed to get node ID from interaction")
 		_ = ctx.EditResponse("Please specify an node id to stop", true)

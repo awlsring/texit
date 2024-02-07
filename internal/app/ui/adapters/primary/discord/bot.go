@@ -9,7 +9,6 @@ import (
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	comctx "github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/handler"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/rs/zerolog"
 )
@@ -20,7 +19,7 @@ type Bot struct {
 	hdl        *handler.Handler
 	lis        net.Listener
 	authorized []tempest.Snowflake
-	guildId    *tempest.Snowflake
+	guildIds   []tempest.Snowflake
 }
 
 func (b *Bot) Handler() *handler.Handler {
@@ -35,17 +34,22 @@ func (b *Bot) LogLevel() zerolog.Level {
 	return b.logLevel
 }
 
-func NewBot(lis net.Listener, hdl *handler.Handler, tmpst *tempest.Client, lvl zerolog.Level, authorized []tempest.Snowflake, guild *tempest.Snowflake) *Bot {
-	return &Bot{
-		logLevel:   lvl,
-		lis:        lis,
-		tmpst:      tmpst,
-		hdl:        hdl,
-		authorized: authorized,
+func NewBot(lis net.Listener, hdl *handler.Handler, tmpst *tempest.Client, opts ...BotOption) *Bot {
+	b := &Bot{
+		logLevel: zerolog.InfoLevel,
+		lis:      lis,
+		tmpst:    tmpst,
+		hdl:      hdl,
 	}
+	for _, opt := range opts {
+		opt(b)
+	}
+
+	return b
 }
 
 func (b *Bot) registerCommands() error {
+	// TODO: This is gross and should be refactored
 	if err := b.tmpst.RegisterCommand(command.NewServerHealthCommand(b.CommandPreflight(b.hdl.ServerHealthCheck))); err != nil {
 		return err
 	}
@@ -61,11 +65,11 @@ func (b *Bot) registerCommands() error {
 	if err := b.tmpst.RegisterCommand(command.NewProvisionNodeCommand(b.CommandPreflight(b.hdl.ProvisionNode), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
 		field, input := ctx.GetFocusedValue()
 		switch field {
-		case option.ProviderName:
+		case command.OptionProviderName:
 			return b.hdl.ProviderNameAutoComplete(ctx, field, input.(string))
-		case option.TailnetName:
+		case command.OptionTailnetName:
 			return b.hdl.TailnetNameAutoComplete(ctx, field, input.(string))
-		case option.ProviderLocation:
+		case command.OptionProviderLocation:
 			return b.hdl.ProviderLocationAutoComplete(ctx, field, input.(string))
 		}
 		return nil
@@ -76,7 +80,7 @@ func (b *Bot) registerCommands() error {
 	if err := b.tmpst.RegisterCommand(command.NewDeprovisionNodeCommand(b.CommandPreflight(b.hdl.DeprovisionNode), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
 		field, input := ctx.GetFocusedValue()
 		switch field {
-		case option.NodeId:
+		case command.OptionNodeId:
 			return b.hdl.NodeIdAutoComplete(ctx, field, input.(string))
 		}
 		return nil
@@ -91,7 +95,7 @@ func (b *Bot) registerCommands() error {
 	if err := b.tmpst.RegisterCommand(command.NewDescribeNodeCommand(b.CommandPreflight(b.hdl.DescribeNode), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
 		field, input := ctx.GetFocusedValue()
 		switch field {
-		case option.NodeId:
+		case command.OptionNodeId:
 			return b.hdl.NodeIdAutoComplete(ctx, field, input.(string))
 		}
 		return nil
@@ -102,7 +106,7 @@ func (b *Bot) registerCommands() error {
 	if err := b.tmpst.RegisterCommand(command.NewStartNodeCommand(b.CommandPreflight(b.hdl.StartNode), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
 		field, input := ctx.GetFocusedValue()
 		switch field {
-		case option.NodeId:
+		case command.OptionNodeId:
 			return b.hdl.NodeIdAutoComplete(ctx, field, input.(string))
 		}
 		return nil
@@ -113,7 +117,7 @@ func (b *Bot) registerCommands() error {
 	if err := b.tmpst.RegisterCommand(command.NewStopNodeCommand(b.CommandPreflight(b.hdl.StopNode), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
 		field, input := ctx.GetFocusedValue()
 		switch field {
-		case option.NodeId:
+		case command.OptionNodeId:
 			return b.hdl.NodeIdAutoComplete(ctx, field, input.(string))
 		}
 		return nil
@@ -128,7 +132,7 @@ func (b *Bot) registerCommands() error {
 	if err := b.tmpst.RegisterCommand(command.NewDescribeProviderCommand(b.CommandPreflight(b.hdl.DescribeProvider), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
 		field, input := ctx.GetFocusedValue()
 		switch field {
-		case option.ProviderName:
+		case command.OptionProviderName:
 			return b.hdl.ProviderNameAutoComplete(ctx, field, input.(string))
 		}
 		return nil
@@ -143,7 +147,7 @@ func (b *Bot) registerCommands() error {
 	if err := b.tmpst.RegisterCommand(command.NewDescribeTailnetCommand(b.CommandPreflight(b.hdl.DescribeTailnet), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
 		field, input := ctx.GetFocusedValue()
 		switch field {
-		case option.TailnetName:
+		case command.OptionTailnetName:
 			return b.hdl.TailnetNameAutoComplete(ctx, field, input.(string))
 		}
 		return nil
@@ -154,74 +158,6 @@ func (b *Bot) registerCommands() error {
 	return nil
 }
 
-type CommandFunc func(*comctx.CommandContext)
-
-func (b *Bot) auth(ctx *comctx.CommandContext) bool {
-	log := logger.FromContext(ctx)
-	log.Debug().Msg("Checking authorization")
-
-	if len(b.authorized) == 0 {
-		log.Debug().Msg("No authorized users, allowing")
-		return true
-	}
-
-	for _, id := range b.authorized {
-		if ctx.Requester() == id {
-			log.Debug().Msg("User is authorized")
-			return true
-		}
-		if ctx.RequesterRoles() != nil {
-			for _, r := range ctx.RequesterRoles() {
-				if r == id {
-					log.Debug().Msg("User is in authorized role")
-					return true
-				}
-			}
-		}
-	}
-
-	log.Debug().Msgf("User %d is not authorized", ctx.Requester())
-	return false
-}
-
-func (b *Bot) CommandPreflight(comFunc CommandFunc) func(itx *tempest.CommandInteraction) {
-	return func(itx *tempest.CommandInteraction) {
-		ctx, err := comctx.InitContext(b.tmpst, itx, b.logLevel)
-		if err != nil {
-			return
-		}
-		if !b.auth(ctx) {
-			_ = ctx.SendLinearReply("You are not authorized to use this command", true)
-			return
-		}
-		log := ctx.Logger()
-		log.Debug().Msg("Deferring command interaction")
-		if err := itx.Defer(true); err != nil {
-			log.Error().Err(err).Msg("Failed to defer command interaction")
-			if err = ctx.SendLinearReply("Command failed with an unknown error!", true); err != nil {
-				log.Error().Err(err).Msg("Failed to write bot response")
-			}
-			return
-		}
-		comFunc(ctx)
-	}
-}
-
-type AutoCompleteFunc func(*comctx.CommandContext) []tempest.Choice
-
-func (b *Bot) AutoCompletePreflight(logLevel zerolog.Level, comFunc AutoCompleteFunc) func(itx tempest.CommandInteraction) []tempest.Choice {
-	return func(itx tempest.CommandInteraction) []tempest.Choice {
-		ctx, err := comctx.InitContext(b.tmpst, &itx, logLevel)
-		if err != nil {
-			return nil
-		}
-		if !b.auth(ctx) {
-			return nil
-		}
-		return comFunc(ctx)
-	}
-}
-
 func (b *Bot) Start(ctx context.Context) error {
 	log := logger.FromContext(ctx)
 
@@ -230,13 +166,7 @@ func (b *Bot) Start(ctx context.Context) error {
 		return err
 	}
 
-	var guilds []tempest.Snowflake
-	if b.guildId != nil {
-		guilds = append(guilds, *b.guildId)
-	} else {
-		guilds = nil
-	}
-	if err := b.tmpst.SyncCommands(guilds, nil, false); err != nil {
+	if err := b.tmpst.SyncCommands(b.guildIds, nil, false); err != nil {
 		return err
 	}
 

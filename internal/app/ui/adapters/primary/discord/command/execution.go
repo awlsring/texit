@@ -2,7 +2,6 @@ package command
 
 import (
 	tempest "github.com/Amatsagu/Tempest"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 )
 
 func NewDescribeExecutionCommand(slash func(itx *tempest.CommandInteraction)) tempest.Command {
@@ -13,7 +12,7 @@ func NewDescribeExecutionCommand(slash func(itx *tempest.CommandInteraction)) te
 		Options: []tempest.CommandOption{
 			{
 				Type:        tempest.STRING_OPTION_TYPE,
-				Name:        option.ExecutionId,
+				Name:        OptionExecutionId,
 				Description: "The ID of the execution to describe",
 				Required:    true,
 				MinValue:    32,

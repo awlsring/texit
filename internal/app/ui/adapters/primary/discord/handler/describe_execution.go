@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
@@ -14,7 +14,7 @@ func (h *Handler) DescribeExecution(ctx *context.CommandContext) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Getting execution")
 
-	exIdStr, ok := ctx.GetOptionValue(option.ExecutionId)
+	exIdStr, ok := ctx.GetOptionValue(command.OptionExecutionId)
 	if !ok {
 		log.Error().Msg("Failed to get execution ID from interaction")
 		_ = ctx.EditResponse("Please specify an execution id to describe", true)

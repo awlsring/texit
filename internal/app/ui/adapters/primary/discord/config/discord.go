@@ -11,7 +11,7 @@ var (
 type DiscordBotConfig struct {
 	ApplicationId string   `yaml:"applicationId"`
 	PublicKey     string   `yaml:"publicKey"`
-	GuildId       string   `yaml:"guildId"`
+	GuildIds      []string `yaml:"guildIds"`
 	Token         string   `yaml:"token"`
 	Authorized    []string `yaml:"authorized"`
 }
