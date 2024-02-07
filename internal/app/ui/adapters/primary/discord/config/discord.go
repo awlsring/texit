@@ -9,9 +9,10 @@ var (
 )
 
 type DiscordBotConfig struct {
-	ApplicationId string `yaml:"applicationId"`
-	PublicKey     string `yaml:"publicKey"`
-	Token         string `yaml:"token"`
+	ApplicationId string   `yaml:"applicationId"`
+	PublicKey     string   `yaml:"publicKey"`
+	Token         string   `yaml:"token"`
+	Authorized    []string `yaml:"authorized"`
 }
 
 func (c *DiscordBotConfig) Validate() error {

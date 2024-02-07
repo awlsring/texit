@@ -2,12 +2,10 @@ package command
 
 import (
 	tempest "github.com/Amatsagu/Tempest"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/handler"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
-	"github.com/rs/zerolog"
 )
 
-func NewDescribeExecutionCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
+func NewDescribeExecutionCommand(slash func(itx *tempest.CommandInteraction)) tempest.Command {
 	return tempest.Command{
 		AvailableInDM: true,
 		Name:          "describe-execution",
@@ -21,6 +19,6 @@ func NewDescribeExecutionCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *
 				MinValue:    32,
 			},
 		},
-		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.DescribeExecution),
+		SlashCommandHandler: slash,
 	}
 }

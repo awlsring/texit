@@ -1,15 +1,11 @@
 package command
 
 import (
-	"context"
-
 	tempest "github.com/Amatsagu/Tempest"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/handler"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/option"
-	"github.com/rs/zerolog"
 )
 
-func NewProvisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
+func NewProvisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto func(itx tempest.CommandInteraction) []tempest.Choice) tempest.Command {
 	return tempest.Command{
 		AvailableInDM: true,
 		Name:          "create-exit-node",
@@ -46,23 +42,12 @@ func NewProvisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *hand
 				Required:    false,
 			},
 		},
-		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.ProvisionNode),
-		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx tempest.CommandInteraction) []tempest.Choice {
-			field, input := itx.GetFocusedValue()
-			switch field {
-			case option.ProviderName:
-				return hdl.ProviderNameAutoComplete(ctx, itx, field, input.(string))
-			case option.TailnetName:
-				return hdl.TailnetNameAutoComplete(ctx, itx, field, input.(string))
-			case option.ProviderLocation:
-				return hdl.ProviderLocationAutoComplete(ctx, itx, field, input.(string))
-			}
-			return nil
-		}),
+		SlashCommandHandler: slash,
+		AutoCompleteHandler: auto,
 	}
 }
 
-func NewDeprovisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
+func NewDeprovisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto func(itx tempest.CommandInteraction) []tempest.Choice) tempest.Command {
 	return tempest.Command{
 		AvailableInDM: true,
 		Name:          "delete-exit-node",
@@ -77,28 +62,21 @@ func NewDeprovisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *ha
 				AutoComplete: true,
 			},
 		},
-		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.DeprovisionNode),
-		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx tempest.CommandInteraction) []tempest.Choice {
-			field, input := itx.GetFocusedValue()
-			switch field {
-			case option.NodeId:
-				return hdl.NodeIdAutoComplete(ctx, itx, field, input.(string))
-			}
-			return nil
-		}),
+		SlashCommandHandler: slash,
+		AutoCompleteHandler: auto,
 	}
 }
 
-func NewListNodesCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
+func NewListNodesCommand(slash func(itx *tempest.CommandInteraction)) tempest.Command {
 	return tempest.Command{
 		AvailableInDM:       true,
 		Name:                "list-exit-nodes",
 		Description:         "List all Exit Nodes.",
-		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.ListNodes),
+		SlashCommandHandler: slash,
 	}
 }
 
-func NewDescribeNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
+func NewDescribeNodeCommand(slash func(itx *tempest.CommandInteraction), auto func(itx tempest.CommandInteraction) []tempest.Choice) tempest.Command {
 	return tempest.Command{
 		AvailableInDM: true,
 		Name:          "describe-exit-node",
@@ -113,14 +91,7 @@ func NewDescribeNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handl
 				AutoComplete: true,
 			},
 		},
-		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.DescribeNode),
-		AutoCompleteHandler: AutoCompleteWrapper(lvl, func(ctx context.Context, itx tempest.CommandInteraction) []tempest.Choice {
-			field, input := itx.GetFocusedValue()
-			switch field {
-			case option.NodeId:
-				return hdl.NodeIdAutoComplete(ctx, itx, field, input.(string))
-			}
-			return nil
-		}),
+		SlashCommandHandler: slash,
+		AutoCompleteHandler: auto,
 	}
 }

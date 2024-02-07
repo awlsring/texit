@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
 	tempest "github.com/Amatsagu/Tempest"
+	comctx "github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
@@ -170,7 +170,7 @@ func (l LocationChoice) Display() string {
 	return fmt.Sprintf("%s (%s) - %s", l.Name, l.Geolocation, l.Provider)
 }
 
-func (h *Handler) ProviderLocationAutoComplete(ctx context.Context, itx tempest.CommandInteraction, name, filter string) []tempest.Choice {
+func (h *Handler) ProviderLocationAutoComplete(ctx *comctx.CommandContext, name, filter string) []tempest.Choice {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Auto completing location")
 	choices := []tempest.Choice{}

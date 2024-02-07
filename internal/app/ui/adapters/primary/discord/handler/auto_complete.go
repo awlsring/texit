@@ -6,10 +6,11 @@ import (
 	"strings"
 
 	tempest "github.com/Amatsagu/Tempest"
+	comctx "github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (h *Handler) NodeIdAutoComplete(ctx context.Context, itx tempest.CommandInteraction, name, filter string) []tempest.Choice {
+func (h *Handler) NodeIdAutoComplete(ctx *comctx.CommandContext, name, filter string) []tempest.Choice {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Auto completing node id")
 
@@ -37,7 +38,7 @@ func (h *Handler) NodeIdAutoComplete(ctx context.Context, itx tempest.CommandInt
 	return choices
 }
 
-func (h *Handler) ProviderNameAutoComplete(ctx context.Context, itx tempest.CommandInteraction, name, filter string) []tempest.Choice {
+func (h *Handler) ProviderNameAutoComplete(ctx *comctx.CommandContext, name, filter string) []tempest.Choice {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Auto completing provider name")
 
@@ -65,7 +66,7 @@ func (h *Handler) ProviderNameAutoComplete(ctx context.Context, itx tempest.Comm
 	return choices
 }
 
-func (h *Handler) TailnetNameAutoComplete(ctx context.Context, itx tempest.CommandInteraction, name, filter string) []tempest.Choice {
+func (h *Handler) TailnetNameAutoComplete(ctx *comctx.CommandContext, name, filter string) []tempest.Choice {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Auto completing tailnet name")
 

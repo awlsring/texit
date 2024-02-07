@@ -105,8 +105,16 @@ func main() {
 	log.Info().Msg("Initing Listener")
 	lis := initListener(cfg.Server)
 
+	log.Info().Msg("loading authorized snowflakes")
+	authorized := []tempest.Snowflake{}
+	for _, id := range cfg.Discord.Authorized {
+		s, err := tempest.StringToSnowflake(id)
+		panicOnErr(err)
+		authorized = append(authorized, s)
+	}
+
 	log.Info().Msg("Initing Discord Bot")
-	bot := discord.NewBot(lis, hdl, client, zerolog.DebugLevel)
+	bot := discord.NewBot(lis, hdl, client, zerolog.DebugLevel, authorized)
 
 	go func() {
 		log.Info().Msg("Starting Bot")

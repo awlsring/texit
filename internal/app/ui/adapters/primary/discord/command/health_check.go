@@ -2,20 +2,18 @@ package command
 
 import (
 	tempest "github.com/Amatsagu/Tempest"
-	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/handler"
-	"github.com/rs/zerolog"
 )
 
-func NewServerHealthCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *handler.Handler) tempest.Command {
+func NewServerHealthCommand(slash func(itx *tempest.CommandInteraction)) tempest.Command {
 	return tempest.Command{
 		AvailableInDM:       true,
 		Name:                "server-health",
 		Description:         "Check the health of the texit server",
-		SlashCommandHandler: CommandWrapper(lvl, tmpst, hdl.ServerHealthCheck),
+		SlashCommandHandler: slash,
 	}
 }
 
-func NewSelfHealthCheckCommand(hdl *handler.Handler) tempest.Command {
+func NewSelfHealthCheckCommand() tempest.Command {
 	return tempest.Command{
 		AvailableInDM: true,
 		Name:          "self-health",
