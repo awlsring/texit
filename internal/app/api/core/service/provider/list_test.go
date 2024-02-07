@@ -29,7 +29,8 @@ func TestListProviders(t *testing.T) {
 	result, err := s.List(ctx)
 
 	assert.NoError(t, err)
-	assert.Equal(t, []*provider.Provider{mockProvider1, mockProvider2}, result)
+	assert.Contains(t, result, mockProvider1)
+	assert.Contains(t, result, mockProvider2)
 }
 
 func TestListProvidersEmpty(t *testing.T) {

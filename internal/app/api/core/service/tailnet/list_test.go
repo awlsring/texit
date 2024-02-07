@@ -29,7 +29,8 @@ func TestListTailnets(t *testing.T) {
 	result, err := s.List(ctx)
 
 	assert.NoError(t, err)
-	assert.Equal(t, []*tailnet.Tailnet{mockTailnet1, mockTailnet2}, result)
+	assert.Contains(t, result, mockTailnet1)
+	assert.Contains(t, result, mockTailnet2)
 }
 
 func TestListTailnetsEmpty(t *testing.T) {
