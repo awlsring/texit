@@ -8,7 +8,9 @@ Commands in this guide will assume you have placed the binary in your PATH under
 
 ## Setup
 
-Texit has a concept of "Tailnets" and "Providers". Tailnets are networks that exit nodes can be placed in. Providers are cloud platforms that the exit nodes can be launched on. You must have at least 1 tailnet and 1 provider configured to launch the api
+Texit has a concept of "Tailnets" and "Providers". Tailnets are networks that exit nodes can be placed in. Providers are cloud platforms that the exit nodes can be launched on. You must have at least 1 tailnet and 1 provider configured to launch the api.
+
+You can read more about [tailnets](/docs/tailnets.md) and [providers](/docs/providers.md) and how to configure them in their respective sections.
 
 ### Configuration
 
