@@ -1,0 +1,13 @@
+server:
+  address: :8032 # The address to run your server on
+api:
+  address: "http://localhost:7032" # the address of your Texit API
+  apiKey: changeme # the API key for your Texit API
+discord:
+  authorized:
+    - "155875705417236480" # the user and role IDs of the people who can use the bot
+  guildIds:
+    - "948052547795574794" # the guild IDs of the servers the bot can be used on. This is used to update commands at launch. If this isn't set, the bot will update the global scope of commands.
+  applicationId: "123123123123123123" # the application ID of your bot
+  publicKey: "sdkjgheoirugheirnfjenfjebiyfgewpdfm[oemfpiuebrigfu]" # the public key of your bot
+  token: "skdjfhkjsdfjhsgfjhgsdjhfgsjkdfgkjshgdfjhgfjheferf" # the token of your bot

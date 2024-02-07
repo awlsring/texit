@@ -1,0 +1,17 @@
+services:
+  texit_api:
+    image: ghcr.io/awlsring/texit:latest
+    ports:
+      - 7032:7032
+    volumes:
+      - ./config.yaml:/etc/texit/config.yaml
+      - ./data:/var/lib/texit
+  discord_bot:
+    image: ghcr.io/awlsring/texit-discord:latest
+    ports:
+      - 8032:8032
+    volumes:
+      # This is the path to your config file
+      - ./config.yaml:/etc/texit-discord/config.yaml
+      # If you are using TS net, you'll want to mount the data directory to persist your state data.
+      - ./data:/var/lib/texit-discord

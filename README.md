@@ -8,4 +8,4 @@ Texit is designed to allow for launching exit nodes on various tailnets and clou
 
 See the [Getting Started](docs/getting-started.md) guide for information on how to get started with Texit.
 
-You can find an example docker setup in the [example](example/api/docker) directory.
+You can find an example docker setup in the [example](/examples/api/docker) directory.
