@@ -41,7 +41,7 @@ func (h *Handler) ProvisionNode(ctx context.Context, req *texit.ProvisionNodeReq
 	}
 
 	log.Debug().Msg("Parsing provider location")
-	loc, err := provider.LocationFromString(req.GetLocation(), prov.Platform)
+	loc, err := provider.LocationFromString(req.GetLocation())
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse provider location")
 		return nil, err
