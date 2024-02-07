@@ -113,8 +113,15 @@ func main() {
 		authorized = append(authorized, s)
 	}
 
+	var guild *tempest.Snowflake
+	if cfg.Discord.GuildId != "" {
+		g, err := tempest.StringToSnowflake(cfg.Discord.GuildId)
+		panicOnErr(err)
+		guild = &g
+	}
+
 	log.Info().Msg("Initing Discord Bot")
-	bot := discord.NewBot(lis, hdl, client, zerolog.DebugLevel, authorized)
+	bot := discord.NewBot(lis, hdl, client, zerolog.DebugLevel, authorized, guild)
 
 	go func() {
 		log.Info().Msg("Starting Bot")

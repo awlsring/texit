@@ -20,6 +20,7 @@ type Bot struct {
 	hdl        *handler.Handler
 	lis        net.Listener
 	authorized []tempest.Snowflake
+	guildId    *tempest.Snowflake
 }
 
 func (b *Bot) Handler() *handler.Handler {
@@ -34,7 +35,7 @@ func (b *Bot) LogLevel() zerolog.Level {
 	return b.logLevel
 }
 
-func NewBot(lis net.Listener, hdl *handler.Handler, tmpst *tempest.Client, lvl zerolog.Level, authorized []tempest.Snowflake) *Bot {
+func NewBot(lis net.Listener, hdl *handler.Handler, tmpst *tempest.Client, lvl zerolog.Level, authorized []tempest.Snowflake, guild *tempest.Snowflake) *Bot {
 	return &Bot{
 		logLevel:   lvl,
 		lis:        lis,
@@ -72,7 +73,7 @@ func (b *Bot) registerCommands() error {
 		return err
 	}
 
-	if err := b.tmpst.RegisterCommand(command.NewDeprovisionNodeCommand(b.CommandPreflight(b.hdl.ProvisionNode), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
+	if err := b.tmpst.RegisterCommand(command.NewDeprovisionNodeCommand(b.CommandPreflight(b.hdl.DeprovisionNode), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
 		field, input := ctx.GetFocusedValue()
 		switch field {
 		case option.NodeId:
@@ -114,6 +115,36 @@ func (b *Bot) registerCommands() error {
 		switch field {
 		case option.NodeId:
 			return b.hdl.NodeIdAutoComplete(ctx, field, input.(string))
+		}
+		return nil
+	}))); err != nil {
+		return err
+	}
+
+	if err := b.tmpst.RegisterCommand(command.NewListProvidersCommand(b.CommandPreflight(b.hdl.ListProviders))); err != nil {
+		return err
+	}
+
+	if err := b.tmpst.RegisterCommand(command.NewDescribeProviderCommand(b.CommandPreflight(b.hdl.DescribeProvider), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
+		field, input := ctx.GetFocusedValue()
+		switch field {
+		case option.ProviderName:
+			return b.hdl.ProviderNameAutoComplete(ctx, field, input.(string))
+		}
+		return nil
+	}))); err != nil {
+		return err
+	}
+
+	if err := b.tmpst.RegisterCommand(command.NewListTailnetsCommand(b.CommandPreflight(b.hdl.ListTailnets))); err != nil {
+		return err
+	}
+
+	if err := b.tmpst.RegisterCommand(command.NewDescribeTailnetCommand(b.CommandPreflight(b.hdl.DescribeTailnet), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
+		field, input := ctx.GetFocusedValue()
+		switch field {
+		case option.TailnetName:
+			return b.hdl.TailnetNameAutoComplete(ctx, field, input.(string))
 		}
 		return nil
 	}))); err != nil {
@@ -199,7 +230,13 @@ func (b *Bot) Start(ctx context.Context) error {
 		return err
 	}
 
-	if err := b.tmpst.SyncCommands(nil, nil, false); err != nil {
+	var guilds []tempest.Snowflake
+	if b.guildId != nil {
+		guilds = append(guilds, *b.guildId)
+	} else {
+		guilds = nil
+	}
+	if err := b.tmpst.SyncCommands(guilds, nil, false); err != nil {
 		return err
 	}
 
