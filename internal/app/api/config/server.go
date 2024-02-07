@@ -9,6 +9,7 @@ import (
 
 const (
 	ServerApiKeyEnv = "SERVER_API_KEY"
+	DefaultTsState  = "/var/lib/texit/tsstate"
 )
 
 const charset = "abcdefghijklmnopqrstuvwxyz" +
@@ -40,6 +41,9 @@ func (c *ServerConfig) Validate() error {
 	if c.Tailnet != nil {
 		if err := c.Tailnet.Validate(); err != nil {
 			return err
+		}
+		if c.Tailnet.StateDir == "" {
+			c.Tailnet.StateDir = DefaultTsState
 		}
 	}
 
