@@ -61,7 +61,7 @@ func initClient(address string, key string) texit.Invoker {
 
 func initListener(cfg discfg.ServerConfig) net.Listener {
 	if cfg.Tailnet != nil {
-		l, err := tsn.ListenerFromConfig(*cfg.Tailnet, cfg.Address, tsn.WithStandardLoggingFunc(log))
+		l, err := tsn.ListenerFromConfig(*cfg.Tailnet, cfg.Address)
 		panicOnErr(err)
 		return l
 	}
@@ -106,7 +106,7 @@ func main() {
 	lis := initListener(cfg.Server)
 
 	log.Info().Msg("Initing Discord Bot")
-	bot := discord.NewBot(lis, hdl, client)
+	bot := discord.NewBot(lis, hdl, client, zerolog.DebugLevel)
 
 	go func() {
 		log.Info().Msg("Starting Bot")

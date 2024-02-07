@@ -32,16 +32,17 @@ func NewProvisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *hand
 				AutoComplete: true,
 			},
 			{
-				Type:        tempest.STRING_OPTION_TYPE,
-				Name:        option.ProviderLocation,
-				Description: "The location of the provider to create the exit node on",
-				Required:    true,
-				MinValue:    3,
+				Type:         tempest.STRING_OPTION_TYPE,
+				Name:         option.ProviderLocation,
+				Description:  "The location of the provider to create the exit node on",
+				Required:     true,
+				MinValue:     3,
+				AutoComplete: true,
 			},
 			{
 				Type:        tempest.BOOLEAN_OPTION_TYPE,
 				Name:        option.Ephemeral,
-				Description: "Whether the created exit node should be executed or not. Defaults to false.",
+				Description: "Whether the created exit node should be ephemeral or not. Defaults to false.",
 				Required:    false,
 			},
 		},
@@ -53,6 +54,8 @@ func NewProvisionNodeCommand(lvl zerolog.Level, tmpst *tempest.Client, hdl *hand
 				return hdl.ProviderNameAutoComplete(ctx, itx, field, input.(string))
 			case option.TailnetName:
 				return hdl.TailnetNameAutoComplete(ctx, itx, field, input.(string))
+			case option.ProviderLocation:
+				return hdl.ProviderLocationAutoComplete(ctx, itx, field, input.(string))
 			}
 			return nil
 		}),

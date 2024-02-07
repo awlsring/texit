@@ -19,10 +19,6 @@ type Bot struct {
 	lis      net.Listener
 }
 
-func (b *Bot) SetLogLevel(lvl zerolog.Level) {
-	b.logLevel = lvl
-}
-
 func (b *Bot) Handler() *handler.Handler {
 	return b.hdl
 }
@@ -31,9 +27,9 @@ func (b *Bot) Tempest() *tempest.Client {
 	return b.tmpst
 }
 
-func NewBot(lis net.Listener, hdl *handler.Handler, tmpst *tempest.Client) *Bot {
+func NewBot(lis net.Listener, hdl *handler.Handler, tmpst *tempest.Client, lvl zerolog.Level) *Bot {
 	return &Bot{
-		logLevel: zerolog.InfoLevel,
+		logLevel: lvl,
 		lis:      lis,
 		tmpst:    tmpst,
 		hdl:      hdl,
@@ -80,11 +76,11 @@ func (b *Bot) Start(ctx context.Context) error {
 		return err
 	}
 
-	guild, err := tempest.StringToSnowflake("948052547795574794")
-	if err != nil {
-		return err
-	}
-	if err := b.tmpst.SyncCommands([]tempest.Snowflake{guild}, nil, false); err != nil {
+	// guild, err := tempest.StringToSnowflake("948052547795574794")
+	// if err != nil {
+	// 	return err
+	// }
+	if err := b.tmpst.SyncCommands(nil, nil, false); err != nil {
 		return err
 	}
 

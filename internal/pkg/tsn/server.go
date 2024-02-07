@@ -53,7 +53,10 @@ func WithLogFunc(logFunc func(format string, args ...interface{})) ServerOption 
 }
 
 func NewServer(options ...ServerOption) *tsnet.Server {
-	s := new(tsnet.Server)
+	s := &tsnet.Server{
+		Logf: func(format string, args ...interface{}) {},
+	}
+
 	for _, opt := range options {
 		opt(s)
 	}
