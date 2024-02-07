@@ -10,6 +10,7 @@ import (
 var (
 	ErrUnknownTailnetId = errors.New("unknown tailnet")
 	ErrUnknownPlatform  = errors.New("unknown platform")
+	ErrUnknownNode      = errors.New("unknown node")
 )
 
 type Node interface {

@@ -32,5 +32,7 @@ func ResponseHandler(ctx context.Context, w http.ResponseWriter, r *http.Request
 	w.Header().Set(SmithyErrorTypeHeader, serr.Type().String())
 	w.WriteHeader(serr.Code())
 	_, e := w.Write(serr.AsJsonMessage())
-	log.Error().Err(e).Msg("Failed to write response")
+	if e != nil {
+		log.Error().Err(e).Msg("Failed to write response")
+	}
 }

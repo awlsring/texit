@@ -21,7 +21,7 @@ func (r *SqliteExecutionRepository) GetExecution(ctx context.Context, id workflo
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Warn().Msgf("Execution not found %s", id.String())
-			return nil, errors.Wrap(repository.ErrNodeNotFound, id.String())
+			return nil, errors.Wrap(repository.ErrExecutionNotFound, id.String())
 		}
 		log.Error().Err(err).Msg("Failed to get execution from sqlite")
 		return nil, err

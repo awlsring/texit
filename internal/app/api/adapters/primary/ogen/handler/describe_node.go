@@ -21,7 +21,6 @@ func (h *Handler) DescribeNode(ctx context.Context, req texit.DescribeNodeParams
 
 	node, err := h.nodeSvc.Describe(ctx, nodeId)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to describe node")
 		return nil, err
 	}
 
