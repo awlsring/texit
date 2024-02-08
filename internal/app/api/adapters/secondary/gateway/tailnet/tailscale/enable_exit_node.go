@@ -5,6 +5,7 @@ import (
 
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/logger"
+	"github.com/tailscale/tailscale-client-go/tailscale"
 )
 
 func (g *TailscaleGateway) EnableExitNode(ctx context.Context, tid tailnet.DeviceIdentifier) error {
@@ -23,6 +24,14 @@ func (g *TailscaleGateway) EnableExitNode(ctx context.Context, tid tailnet.Devic
 	if err != nil {
 		log.Error().Err(err).Msg("failed to enable exit node")
 		return err
+	}
+
+	log.Debug().Msg("disabling expiry")
+	err = g.client.SetDeviceKey(ctx, tid.String(), tailscale.DeviceKey{
+		KeyExpiryDisabled: true,
+	})
+	if err != nil {
+		log.Error().Err(err).Msg("failed to disable expiry")
 	}
 
 	log.Debug().Msg("exit node enabled")

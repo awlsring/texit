@@ -367,6 +367,54 @@ func (_c *MockTailscale_interfaces_SetACL_Call) RunAndReturn(run func(context.Co
 	return _c
 }
 
+// SetDeviceKey provides a mock function with given fields: ctx, deviceID, key
+func (_m *MockTailscale_interfaces) SetDeviceKey(ctx context.Context, deviceID string, key tailscale.DeviceKey) error {
+	ret := _m.Called(ctx, deviceID, key)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SetDeviceKey")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, tailscale.DeviceKey) error); ok {
+		r0 = rf(ctx, deviceID, key)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// MockTailscale_interfaces_SetDeviceKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SetDeviceKey'
+type MockTailscale_interfaces_SetDeviceKey_Call struct {
+	*mock.Call
+}
+
+// SetDeviceKey is a helper method to define mock.On call
+//   - ctx context.Context
+//   - deviceID string
+//   - key tailscale.DeviceKey
+func (_e *MockTailscale_interfaces_Expecter) SetDeviceKey(ctx interface{}, deviceID interface{}, key interface{}) *MockTailscale_interfaces_SetDeviceKey_Call {
+	return &MockTailscale_interfaces_SetDeviceKey_Call{Call: _e.mock.On("SetDeviceKey", ctx, deviceID, key)}
+}
+
+func (_c *MockTailscale_interfaces_SetDeviceKey_Call) Run(run func(ctx context.Context, deviceID string, key tailscale.DeviceKey)) *MockTailscale_interfaces_SetDeviceKey_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(string), args[2].(tailscale.DeviceKey))
+	})
+	return _c
+}
+
+func (_c *MockTailscale_interfaces_SetDeviceKey_Call) Return(_a0 error) *MockTailscale_interfaces_SetDeviceKey_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockTailscale_interfaces_SetDeviceKey_Call) RunAndReturn(run func(context.Context, string, tailscale.DeviceKey) error) *MockTailscale_interfaces_SetDeviceKey_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // SetDeviceTags provides a mock function with given fields: ctx, deviceID, tags
 func (_m *MockTailscale_interfaces) SetDeviceTags(ctx context.Context, deviceID string, tags []string) error {
 	ret := _m.Called(ctx, deviceID, tags)

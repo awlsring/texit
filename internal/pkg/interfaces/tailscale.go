@@ -9,6 +9,7 @@ import (
 type Tailscale interface {
 	CreateKey(ctx context.Context, caps tailscale.KeyCapabilities, opts ...tailscale.CreateKeyOption) (tailscale.Key, error)
 	SetDeviceTags(ctx context.Context, deviceID string, tags []string) error
+	SetDeviceKey(ctx context.Context, deviceID string, key tailscale.DeviceKey) error
 	DeleteKey(context.Context, string) error
 	Devices(ctx context.Context) ([]tailscale.Device, error)
 	DeleteDevice(context.Context, string) error
