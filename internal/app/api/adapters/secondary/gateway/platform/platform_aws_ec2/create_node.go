@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	postCreationSleep = 30
+	postCreationSleep = 60
 )
 
 func (g *PlatformAwsEc2Gateway) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, pid *provider.Provider, loc provider.Location, tn *tailnet.Tailnet, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
@@ -76,6 +76,17 @@ func runInstance(ctx context.Context, client interfaces.Ec2Client, ami, typee, c
 		UserData:     &cloudInit,
 		MaxCount:     aws.Int32(1),
 		MinCount:     aws.Int32(1),
+		TagSpecifications: []types.TagSpecification{
+			{
+				ResourceType: types.ResourceTypeInstance,
+				Tags: []types.Tag{
+					{
+						Key:   aws.String("created-by"),
+						Value: aws.String("texit"),
+					},
+				},
+			},
+		},
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create EC2 instance")

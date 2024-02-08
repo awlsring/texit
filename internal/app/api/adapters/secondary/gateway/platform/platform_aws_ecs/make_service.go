@@ -156,10 +156,6 @@ func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client 
 				Key:   aws.String("created-by"),
 				Value: aws.String("texit"),
 			},
-			{
-				Key:   aws.String("ephemeral"),
-				Value: aws.String("true"),
-			},
 		},
 	})
 	if err != nil {

@@ -87,10 +87,6 @@ func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, id n
 				Key:   aws.String("created-at"),
 				Value: aws.String(time.Now().Format(time.RFC3339Nano)),
 			},
-			{
-				Key:   aws.String("ephemeral"),
-				Value: aws.String("true"),
-			},
 		},
 		Family:      aws.String(id.String()),
 		Cpu:         aws.String(defaultCpuAmount),

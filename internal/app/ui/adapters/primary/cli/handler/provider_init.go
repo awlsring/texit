@@ -46,7 +46,8 @@ func (h *Handler) initAwsEc2Provider(ctx *cli.Context) error {
                 "ec2:StartInstances",
                 "ec2:StopInstances",
                 "ec2:TerminateInstances",
-                "ec2:DescribeInstances"
+                "ec2:DescribeInstances",
+				"ec2:CreateTags"
 			],
 			"Resource": "*"
 		}
