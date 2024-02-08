@@ -18,18 +18,18 @@ func (g *ApiGateway) DescribeTailnet(ctx context.Context, identifier tailnet.Ide
 		return nil, errors.Wrap(gateway.ErrInternalServerError, err.Error())
 	}
 
-	switch resp.(type) {
+	switch resp := resp.(type) {
 	case *texit.DescribeTailnetResponseContent:
-		tail, err := SummaryToTailnet(resp.(*texit.DescribeTailnetResponseContent).Summary)
+		tail, err := SummaryToTailnet(resp.Summary)
 		if err != nil {
 			return nil, errors.Wrap(gateway.ErrInternalServerError, err.Error())
 		}
 
 		return tail, nil
 	case *texit.ResourceNotFoundErrorResponseContent:
-		return nil, errors.Wrap(gateway.ErrResourceNotFoundError, resp.(*texit.ResourceNotFoundErrorResponseContent).Message)
+		return nil, errors.Wrap(gateway.ErrResourceNotFoundError, resp.Message)
 	case *texit.InvalidInputErrorResponseContent:
-		return nil, errors.Wrap(gateway.ErrInvalidInputError, resp.(*texit.InvalidInputErrorResponseContent).Message)
+		return nil, errors.Wrap(gateway.ErrInvalidInputError, resp.Message)
 	default:
 		return nil, gateway.ErrInternalServerError
 	}

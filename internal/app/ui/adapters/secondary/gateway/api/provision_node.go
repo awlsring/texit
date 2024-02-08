@@ -24,18 +24,18 @@ func (g *ApiGateway) ProvisionNode(ctx context.Context, prov provider.Identifier
 		return "", errors.Wrap(gateway.ErrInternalServerError, err.Error())
 	}
 
-	switch resp.(type) {
+	switch resp := resp.(type) {
 	case *texit.ProvisionNodeResponseContent:
-		id, err := workflow.ExecutionIdentifierFromString(resp.(*texit.ProvisionNodeResponseContent).Execution)
+		id, err := workflow.ExecutionIdentifierFromString(resp.Execution)
 		if err != nil {
 			return "", errors.Wrap(gateway.ErrInternalServerError, err.Error())
 		}
 
 		return id, nil
 	case *texit.ResourceNotFoundErrorResponseContent:
-		return "", errors.Wrap(gateway.ErrResourceNotFoundError, resp.(*texit.ResourceNotFoundErrorResponseContent).Message)
+		return "", errors.Wrap(gateway.ErrResourceNotFoundError, resp.Message)
 	case *texit.InvalidInputErrorResponseContent:
-		return "", errors.Wrap(gateway.ErrInvalidInputError, resp.(*texit.InvalidInputErrorResponseContent).Message)
+		return "", errors.Wrap(gateway.ErrInvalidInputError, resp.Message)
 	default:
 		return "", gateway.ErrInternalServerError
 	}

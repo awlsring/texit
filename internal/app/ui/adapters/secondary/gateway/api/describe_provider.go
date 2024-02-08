@@ -18,17 +18,17 @@ func (g *ApiGateway) DescribeProvider(ctx context.Context, identifier provider.I
 		return nil, errors.Wrap(gateway.ErrInternalServerError, err.Error())
 	}
 
-	switch resp.(type) {
+	switch resp := resp.(type) {
 	case *texit.DescribeProviderResponseContent:
-		prov, err := SummaryToProvider(resp.(*texit.DescribeProviderResponseContent).Summary)
+		prov, err := SummaryToProvider(resp.Summary)
 		if err != nil {
 			return nil, errors.Wrap(gateway.ErrInternalServerError, err.Error())
 		}
 		return prov, nil
 	case *texit.ResourceNotFoundErrorResponseContent:
-		return nil, errors.Wrap(gateway.ErrResourceNotFoundError, resp.(*texit.ResourceNotFoundErrorResponseContent).Message)
+		return nil, errors.Wrap(gateway.ErrResourceNotFoundError, resp.Message)
 	case *texit.InvalidInputErrorResponseContent:
-		return nil, errors.Wrap(gateway.ErrInvalidInputError, resp.(*texit.InvalidInputErrorResponseContent).Message)
+		return nil, errors.Wrap(gateway.ErrInvalidInputError, resp.Message)
 	default:
 		return nil, gateway.ErrInternalServerError
 	}

@@ -13,6 +13,7 @@ func (t ProviderType) String() string {
 
 const (
 	ProviderTypeAwsEcs ProviderType = "aws-ecs"
+	ProviderTypeAwsEc2 ProviderType = "aws-ec2"
 )
 
 const (
@@ -44,14 +45,14 @@ func providerSecretEnv(name, suffix string) string {
 
 func (c *ProviderConfig) Validate() error {
 	switch c.Type {
-	case ProviderTypeAwsEcs:
-		return c.validateAwsEcs()
+	case ProviderTypeAwsEcs, ProviderTypeAwsEc2:
+		return c.validateAws()
 	default:
 		return fmt.Errorf("invalid provider type: %s", c.Type)
 	}
 }
 
-func (c *ProviderConfig) validateAwsEcs() error {
+func (c *ProviderConfig) validateAws() error {
 	if c.Name == "" {
 		return ErrMissingProviderName
 	}

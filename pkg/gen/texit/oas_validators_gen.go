@@ -529,6 +529,8 @@ func (s ProviderType) Validate() error {
 	switch s {
 	case "aws-ecs":
 		return nil
+	case "aws-ec2":
+		return nil
 	case "unknown":
 		return nil
 	default:

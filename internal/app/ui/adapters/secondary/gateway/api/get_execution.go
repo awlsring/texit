@@ -26,10 +26,10 @@ func (g *ApiGateway) GetExecution(ctx context.Context, id workflow.ExecutionIden
 	}
 
 	log.Debug().Str("execution_id", id.String()).Msg("got execution, translating response")
-	switch resp.(type) {
+	switch resp := resp.(type) {
 	case *texit.GetExecutionResponseContent:
 		log.Debug().Str("execution_id", id.String()).Msg("response is standard")
-		ex, err := SummaryToExecution(resp.(*texit.GetExecutionResponseContent).Summary)
+		ex, err := SummaryToExecution(resp.Summary)
 		if err != nil {
 			return nil, errors.Wrap(gateway.ErrInternalServerError, err.Error())
 		}
@@ -37,10 +37,10 @@ func (g *ApiGateway) GetExecution(ctx context.Context, id workflow.ExecutionIden
 		return ex, nil
 	case *texit.ResourceNotFoundErrorResponseContent:
 		log.Warn().Str("execution_id", id.String()).Msg("response is not found")
-		return nil, errors.Wrap(gateway.ErrResourceNotFoundError, resp.(*texit.ResourceNotFoundErrorResponseContent).Message)
+		return nil, errors.Wrap(gateway.ErrResourceNotFoundError, resp.Message)
 	case *texit.InvalidInputErrorResponseContent:
 		log.Warn().Str("execution_id", id.String()).Msg("response is invalid input")
-		return nil, errors.Wrap(gateway.ErrInvalidInputError, resp.(*texit.InvalidInputErrorResponseContent).Message)
+		return nil, errors.Wrap(gateway.ErrInvalidInputError, resp.Message)
 	default:
 		log.Error().Str("execution_id", id.String()).Msg("response is unknown, marking as internal server error")
 		return nil, gateway.ErrInternalServerError

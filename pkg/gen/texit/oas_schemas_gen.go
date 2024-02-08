@@ -688,6 +688,7 @@ type ProviderType string
 
 const (
 	ProviderTypeAWSEcs  ProviderType = "aws-ecs"
+	ProviderTypeAWSEc2  ProviderType = "aws-ec2"
 	ProviderTypeUnknown ProviderType = "unknown"
 )
 
@@ -695,6 +696,7 @@ const (
 func (ProviderType) AllValues() []ProviderType {
 	return []ProviderType{
 		ProviderTypeAWSEcs,
+		ProviderTypeAWSEc2,
 		ProviderTypeUnknown,
 	}
 }
@@ -703,6 +705,8 @@ func (ProviderType) AllValues() []ProviderType {
 func (s ProviderType) MarshalText() ([]byte, error) {
 	switch s {
 	case ProviderTypeAWSEcs:
+		return []byte(s), nil
+	case ProviderTypeAWSEc2:
 		return []byte(s), nil
 	case ProviderTypeUnknown:
 		return []byte(s), nil
@@ -716,6 +720,9 @@ func (s *ProviderType) UnmarshalText(data []byte) error {
 	switch ProviderType(data) {
 	case ProviderTypeAWSEcs:
 		*s = ProviderTypeAWSEcs
+		return nil
+	case ProviderTypeAWSEc2:
+		*s = ProviderTypeAWSEc2
 		return nil
 	case ProviderTypeUnknown:
 		*s = ProviderTypeUnknown

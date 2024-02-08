@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	platform_aws "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_common"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/interfaces"
 	"github.com/awlsring/texit/internal/pkg/logger"
@@ -76,7 +77,7 @@ func (g *PlatformAwsEcsGateway) GetStatus(ctx context.Context, n *node.Node) (no
 	log.Debug().Msg("Getting service status")
 
 	log.Debug().Msgf("Getting ecs client for location %s", n.Location.String())
-	ecsClient, err := getClientForLocation(ctx, ecs.NewFromConfig, g.ecsCache, n.Location, g.creds)
+	ecsClient, err := platform_aws.GetClientForLocation(ctx, ecs.NewFromConfig, g.ecsCache, n.Location, g.Creds)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to get ECS client")
 		return node.StatusUnknown, err

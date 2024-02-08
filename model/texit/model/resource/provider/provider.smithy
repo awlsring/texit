@@ -15,6 +15,7 @@ resource Provider {
 @documentation("The type of provider.")
 enum ProviderType {
     AWS_ECS = "aws-ecs"
+    AWS_EC2 = "aws-ec2"
     UNKNOWN = "unknown"
 }
 

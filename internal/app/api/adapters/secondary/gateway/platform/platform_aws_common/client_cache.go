@@ -1,7 +1,8 @@
-package platform_aws_ecs
+package platform_aws
 
 import (
 	"context"
+	"time"
 
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/logger"
@@ -10,9 +11,14 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
+const (
+	DefaultCacheExpiration      = 5 * time.Minute
+	DefaultCacheCleanUpInterval = 10 * time.Minute
+)
+
 type ClientCreateFunc[C any, O any] func(aws.Config, ...func(O)) C
 
-func getClientForLocation[C any, O any](ctx context.Context, clientFunc ClientCreateFunc[C, O], ch *cache.Cache, loc provider.Location, creds aws.CredentialsProvider) (C, error) {
+func GetClientForLocation[C any, O any](ctx context.Context, clientFunc ClientCreateFunc[C, O], ch *cache.Cache, loc provider.Location, creds aws.CredentialsProvider) (C, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msgf("Getting client for location %s", loc.String())
 
@@ -26,7 +32,7 @@ func getClientForLocation[C any, O any](ctx context.Context, clientFunc ClientCr
 
 	log.Debug().Msg("Client not found in cache, creating a new one")
 	log.Debug().Msg("Creating AWS config")
-	cfg, err := createAwsConfig(ctx, loc, creds)
+	cfg, err := CreateAwsConfig(ctx, loc, creds)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create AWS config")
 		return c, err
@@ -40,7 +46,7 @@ func getClientForLocation[C any, O any](ctx context.Context, clientFunc ClientCr
 	return client, nil
 }
 
-func createAwsConfig(ctx context.Context, loc provider.Location, creds aws.CredentialsProvider) (aws.Config, error) {
+func CreateAwsConfig(ctx context.Context, loc provider.Location, creds aws.CredentialsProvider) (aws.Config, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating AWS config")
 

@@ -23,6 +23,154 @@ func (_m *MockEc2Client_interfaces) EXPECT() *MockEc2Client_interfaces_Expecter 
 	return &MockEc2Client_interfaces_Expecter{mock: &_m.Mock}
 }
 
+// DescribeImages provides a mock function with given fields: ctx, params, optFns
+func (_m *MockEc2Client_interfaces) DescribeImages(ctx context.Context, params *ec2.DescribeImagesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeImagesOutput, error) {
+	_va := make([]interface{}, len(optFns))
+	for _i := range optFns {
+		_va[_i] = optFns[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, params)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DescribeImages")
+	}
+
+	var r0 *ec2.DescribeImagesOutput
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.DescribeImagesInput, ...func(*ec2.Options)) (*ec2.DescribeImagesOutput, error)); ok {
+		return rf(ctx, params, optFns...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.DescribeImagesInput, ...func(*ec2.Options)) *ec2.DescribeImagesOutput); ok {
+		r0 = rf(ctx, params, optFns...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ec2.DescribeImagesOutput)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *ec2.DescribeImagesInput, ...func(*ec2.Options)) error); ok {
+		r1 = rf(ctx, params, optFns...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockEc2Client_interfaces_DescribeImages_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DescribeImages'
+type MockEc2Client_interfaces_DescribeImages_Call struct {
+	*mock.Call
+}
+
+// DescribeImages is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params *ec2.DescribeImagesInput
+//   - optFns ...func(*ec2.Options)
+func (_e *MockEc2Client_interfaces_Expecter) DescribeImages(ctx interface{}, params interface{}, optFns ...interface{}) *MockEc2Client_interfaces_DescribeImages_Call {
+	return &MockEc2Client_interfaces_DescribeImages_Call{Call: _e.mock.On("DescribeImages",
+		append([]interface{}{ctx, params}, optFns...)...)}
+}
+
+func (_c *MockEc2Client_interfaces_DescribeImages_Call) Run(run func(ctx context.Context, params *ec2.DescribeImagesInput, optFns ...func(*ec2.Options))) *MockEc2Client_interfaces_DescribeImages_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := make([]func(*ec2.Options), len(args)-2)
+		for i, a := range args[2:] {
+			if a != nil {
+				variadicArgs[i] = a.(func(*ec2.Options))
+			}
+		}
+		run(args[0].(context.Context), args[1].(*ec2.DescribeImagesInput), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_DescribeImages_Call) Return(_a0 *ec2.DescribeImagesOutput, _a1 error) *MockEc2Client_interfaces_DescribeImages_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_DescribeImages_Call) RunAndReturn(run func(context.Context, *ec2.DescribeImagesInput, ...func(*ec2.Options)) (*ec2.DescribeImagesOutput, error)) *MockEc2Client_interfaces_DescribeImages_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DescribeInstances provides a mock function with given fields: ctx, params, optFns
+func (_m *MockEc2Client_interfaces) DescribeInstances(ctx context.Context, params *ec2.DescribeInstancesInput, optFns ...func(*ec2.Options)) (*ec2.DescribeInstancesOutput, error) {
+	_va := make([]interface{}, len(optFns))
+	for _i := range optFns {
+		_va[_i] = optFns[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, params)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DescribeInstances")
+	}
+
+	var r0 *ec2.DescribeInstancesOutput
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.DescribeInstancesInput, ...func(*ec2.Options)) (*ec2.DescribeInstancesOutput, error)); ok {
+		return rf(ctx, params, optFns...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.DescribeInstancesInput, ...func(*ec2.Options)) *ec2.DescribeInstancesOutput); ok {
+		r0 = rf(ctx, params, optFns...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ec2.DescribeInstancesOutput)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *ec2.DescribeInstancesInput, ...func(*ec2.Options)) error); ok {
+		r1 = rf(ctx, params, optFns...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockEc2Client_interfaces_DescribeInstances_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DescribeInstances'
+type MockEc2Client_interfaces_DescribeInstances_Call struct {
+	*mock.Call
+}
+
+// DescribeInstances is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params *ec2.DescribeInstancesInput
+//   - optFns ...func(*ec2.Options)
+func (_e *MockEc2Client_interfaces_Expecter) DescribeInstances(ctx interface{}, params interface{}, optFns ...interface{}) *MockEc2Client_interfaces_DescribeInstances_Call {
+	return &MockEc2Client_interfaces_DescribeInstances_Call{Call: _e.mock.On("DescribeInstances",
+		append([]interface{}{ctx, params}, optFns...)...)}
+}
+
+func (_c *MockEc2Client_interfaces_DescribeInstances_Call) Run(run func(ctx context.Context, params *ec2.DescribeInstancesInput, optFns ...func(*ec2.Options))) *MockEc2Client_interfaces_DescribeInstances_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := make([]func(*ec2.Options), len(args)-2)
+		for i, a := range args[2:] {
+			if a != nil {
+				variadicArgs[i] = a.(func(*ec2.Options))
+			}
+		}
+		run(args[0].(context.Context), args[1].(*ec2.DescribeInstancesInput), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_DescribeInstances_Call) Return(_a0 *ec2.DescribeInstancesOutput, _a1 error) *MockEc2Client_interfaces_DescribeInstances_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_DescribeInstances_Call) RunAndReturn(run func(context.Context, *ec2.DescribeInstancesInput, ...func(*ec2.Options)) (*ec2.DescribeInstancesOutput, error)) *MockEc2Client_interfaces_DescribeInstances_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // DescribeSecurityGroups provides a mock function with given fields: ctx, params, optFns
 func (_m *MockEc2Client_interfaces) DescribeSecurityGroups(ctx context.Context, params *ec2.DescribeSecurityGroupsInput, optFns ...func(*ec2.Options)) (*ec2.DescribeSecurityGroupsOutput, error) {
 	_va := make([]interface{}, len(optFns))
@@ -241,6 +389,302 @@ func (_c *MockEc2Client_interfaces_DescribeVpcs_Call) Return(_a0 *ec2.DescribeVp
 }
 
 func (_c *MockEc2Client_interfaces_DescribeVpcs_Call) RunAndReturn(run func(context.Context, *ec2.DescribeVpcsInput, ...func(*ec2.Options)) (*ec2.DescribeVpcsOutput, error)) *MockEc2Client_interfaces_DescribeVpcs_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// RunInstances provides a mock function with given fields: ctx, params, optFns
+func (_m *MockEc2Client_interfaces) RunInstances(ctx context.Context, params *ec2.RunInstancesInput, optFns ...func(*ec2.Options)) (*ec2.RunInstancesOutput, error) {
+	_va := make([]interface{}, len(optFns))
+	for _i := range optFns {
+		_va[_i] = optFns[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, params)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RunInstances")
+	}
+
+	var r0 *ec2.RunInstancesOutput
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.RunInstancesInput, ...func(*ec2.Options)) (*ec2.RunInstancesOutput, error)); ok {
+		return rf(ctx, params, optFns...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.RunInstancesInput, ...func(*ec2.Options)) *ec2.RunInstancesOutput); ok {
+		r0 = rf(ctx, params, optFns...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ec2.RunInstancesOutput)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *ec2.RunInstancesInput, ...func(*ec2.Options)) error); ok {
+		r1 = rf(ctx, params, optFns...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockEc2Client_interfaces_RunInstances_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'RunInstances'
+type MockEc2Client_interfaces_RunInstances_Call struct {
+	*mock.Call
+}
+
+// RunInstances is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params *ec2.RunInstancesInput
+//   - optFns ...func(*ec2.Options)
+func (_e *MockEc2Client_interfaces_Expecter) RunInstances(ctx interface{}, params interface{}, optFns ...interface{}) *MockEc2Client_interfaces_RunInstances_Call {
+	return &MockEc2Client_interfaces_RunInstances_Call{Call: _e.mock.On("RunInstances",
+		append([]interface{}{ctx, params}, optFns...)...)}
+}
+
+func (_c *MockEc2Client_interfaces_RunInstances_Call) Run(run func(ctx context.Context, params *ec2.RunInstancesInput, optFns ...func(*ec2.Options))) *MockEc2Client_interfaces_RunInstances_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := make([]func(*ec2.Options), len(args)-2)
+		for i, a := range args[2:] {
+			if a != nil {
+				variadicArgs[i] = a.(func(*ec2.Options))
+			}
+		}
+		run(args[0].(context.Context), args[1].(*ec2.RunInstancesInput), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_RunInstances_Call) Return(_a0 *ec2.RunInstancesOutput, _a1 error) *MockEc2Client_interfaces_RunInstances_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_RunInstances_Call) RunAndReturn(run func(context.Context, *ec2.RunInstancesInput, ...func(*ec2.Options)) (*ec2.RunInstancesOutput, error)) *MockEc2Client_interfaces_RunInstances_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// StartInstances provides a mock function with given fields: ctx, params, optFns
+func (_m *MockEc2Client_interfaces) StartInstances(ctx context.Context, params *ec2.StartInstancesInput, optFns ...func(*ec2.Options)) (*ec2.StartInstancesOutput, error) {
+	_va := make([]interface{}, len(optFns))
+	for _i := range optFns {
+		_va[_i] = optFns[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, params)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for StartInstances")
+	}
+
+	var r0 *ec2.StartInstancesOutput
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.StartInstancesInput, ...func(*ec2.Options)) (*ec2.StartInstancesOutput, error)); ok {
+		return rf(ctx, params, optFns...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.StartInstancesInput, ...func(*ec2.Options)) *ec2.StartInstancesOutput); ok {
+		r0 = rf(ctx, params, optFns...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ec2.StartInstancesOutput)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *ec2.StartInstancesInput, ...func(*ec2.Options)) error); ok {
+		r1 = rf(ctx, params, optFns...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockEc2Client_interfaces_StartInstances_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'StartInstances'
+type MockEc2Client_interfaces_StartInstances_Call struct {
+	*mock.Call
+}
+
+// StartInstances is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params *ec2.StartInstancesInput
+//   - optFns ...func(*ec2.Options)
+func (_e *MockEc2Client_interfaces_Expecter) StartInstances(ctx interface{}, params interface{}, optFns ...interface{}) *MockEc2Client_interfaces_StartInstances_Call {
+	return &MockEc2Client_interfaces_StartInstances_Call{Call: _e.mock.On("StartInstances",
+		append([]interface{}{ctx, params}, optFns...)...)}
+}
+
+func (_c *MockEc2Client_interfaces_StartInstances_Call) Run(run func(ctx context.Context, params *ec2.StartInstancesInput, optFns ...func(*ec2.Options))) *MockEc2Client_interfaces_StartInstances_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := make([]func(*ec2.Options), len(args)-2)
+		for i, a := range args[2:] {
+			if a != nil {
+				variadicArgs[i] = a.(func(*ec2.Options))
+			}
+		}
+		run(args[0].(context.Context), args[1].(*ec2.StartInstancesInput), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_StartInstances_Call) Return(_a0 *ec2.StartInstancesOutput, _a1 error) *MockEc2Client_interfaces_StartInstances_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_StartInstances_Call) RunAndReturn(run func(context.Context, *ec2.StartInstancesInput, ...func(*ec2.Options)) (*ec2.StartInstancesOutput, error)) *MockEc2Client_interfaces_StartInstances_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// StopInstances provides a mock function with given fields: ctx, params, optFns
+func (_m *MockEc2Client_interfaces) StopInstances(ctx context.Context, params *ec2.StopInstancesInput, optFns ...func(*ec2.Options)) (*ec2.StopInstancesOutput, error) {
+	_va := make([]interface{}, len(optFns))
+	for _i := range optFns {
+		_va[_i] = optFns[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, params)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for StopInstances")
+	}
+
+	var r0 *ec2.StopInstancesOutput
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.StopInstancesInput, ...func(*ec2.Options)) (*ec2.StopInstancesOutput, error)); ok {
+		return rf(ctx, params, optFns...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.StopInstancesInput, ...func(*ec2.Options)) *ec2.StopInstancesOutput); ok {
+		r0 = rf(ctx, params, optFns...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ec2.StopInstancesOutput)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *ec2.StopInstancesInput, ...func(*ec2.Options)) error); ok {
+		r1 = rf(ctx, params, optFns...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockEc2Client_interfaces_StopInstances_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'StopInstances'
+type MockEc2Client_interfaces_StopInstances_Call struct {
+	*mock.Call
+}
+
+// StopInstances is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params *ec2.StopInstancesInput
+//   - optFns ...func(*ec2.Options)
+func (_e *MockEc2Client_interfaces_Expecter) StopInstances(ctx interface{}, params interface{}, optFns ...interface{}) *MockEc2Client_interfaces_StopInstances_Call {
+	return &MockEc2Client_interfaces_StopInstances_Call{Call: _e.mock.On("StopInstances",
+		append([]interface{}{ctx, params}, optFns...)...)}
+}
+
+func (_c *MockEc2Client_interfaces_StopInstances_Call) Run(run func(ctx context.Context, params *ec2.StopInstancesInput, optFns ...func(*ec2.Options))) *MockEc2Client_interfaces_StopInstances_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := make([]func(*ec2.Options), len(args)-2)
+		for i, a := range args[2:] {
+			if a != nil {
+				variadicArgs[i] = a.(func(*ec2.Options))
+			}
+		}
+		run(args[0].(context.Context), args[1].(*ec2.StopInstancesInput), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_StopInstances_Call) Return(_a0 *ec2.StopInstancesOutput, _a1 error) *MockEc2Client_interfaces_StopInstances_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_StopInstances_Call) RunAndReturn(run func(context.Context, *ec2.StopInstancesInput, ...func(*ec2.Options)) (*ec2.StopInstancesOutput, error)) *MockEc2Client_interfaces_StopInstances_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// TerminateInstances provides a mock function with given fields: ctx, params, optFns
+func (_m *MockEc2Client_interfaces) TerminateInstances(ctx context.Context, params *ec2.TerminateInstancesInput, optFns ...func(*ec2.Options)) (*ec2.TerminateInstancesOutput, error) {
+	_va := make([]interface{}, len(optFns))
+	for _i := range optFns {
+		_va[_i] = optFns[_i]
+	}
+	var _ca []interface{}
+	_ca = append(_ca, ctx, params)
+	_ca = append(_ca, _va...)
+	ret := _m.Called(_ca...)
+
+	if len(ret) == 0 {
+		panic("no return value specified for TerminateInstances")
+	}
+
+	var r0 *ec2.TerminateInstancesOutput
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.TerminateInstancesInput, ...func(*ec2.Options)) (*ec2.TerminateInstancesOutput, error)); ok {
+		return rf(ctx, params, optFns...)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *ec2.TerminateInstancesInput, ...func(*ec2.Options)) *ec2.TerminateInstancesOutput); ok {
+		r0 = rf(ctx, params, optFns...)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ec2.TerminateInstancesOutput)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *ec2.TerminateInstancesInput, ...func(*ec2.Options)) error); ok {
+		r1 = rf(ctx, params, optFns...)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockEc2Client_interfaces_TerminateInstances_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'TerminateInstances'
+type MockEc2Client_interfaces_TerminateInstances_Call struct {
+	*mock.Call
+}
+
+// TerminateInstances is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params *ec2.TerminateInstancesInput
+//   - optFns ...func(*ec2.Options)
+func (_e *MockEc2Client_interfaces_Expecter) TerminateInstances(ctx interface{}, params interface{}, optFns ...interface{}) *MockEc2Client_interfaces_TerminateInstances_Call {
+	return &MockEc2Client_interfaces_TerminateInstances_Call{Call: _e.mock.On("TerminateInstances",
+		append([]interface{}{ctx, params}, optFns...)...)}
+}
+
+func (_c *MockEc2Client_interfaces_TerminateInstances_Call) Run(run func(ctx context.Context, params *ec2.TerminateInstancesInput, optFns ...func(*ec2.Options))) *MockEc2Client_interfaces_TerminateInstances_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		variadicArgs := make([]func(*ec2.Options), len(args)-2)
+		for i, a := range args[2:] {
+			if a != nil {
+				variadicArgs[i] = a.(func(*ec2.Options))
+			}
+		}
+		run(args[0].(context.Context), args[1].(*ec2.TerminateInstancesInput), variadicArgs...)
+	})
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_TerminateInstances_Call) Return(_a0 *ec2.TerminateInstancesOutput, _a1 error) *MockEc2Client_interfaces_TerminateInstances_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockEc2Client_interfaces_TerminateInstances_Call) RunAndReturn(run func(context.Context, *ec2.TerminateInstancesInput, ...func(*ec2.Options)) (*ec2.TerminateInstancesOutput, error)) *MockEc2Client_interfaces_TerminateInstances_Call {
 	_c.Call.Return(run)
 	return _c
 }

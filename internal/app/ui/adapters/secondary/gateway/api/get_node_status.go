@@ -18,15 +18,15 @@ func (g *ApiGateway) GetNodeStatus(ctx context.Context, id node.Identifier) (nod
 		return node.StatusUnknown, errors.Wrap(gateway.ErrInternalServerError, err.Error())
 	}
 
-	switch resp.(type) {
+	switch resp := resp.(type) {
 	case *texit.GetNodeStatusResponseContent:
-		status := translateNodeStatus(resp.(*texit.GetNodeStatusResponseContent).Status)
+		status := translateNodeStatus(resp.Status)
 
 		return status, nil
 	case *texit.ResourceNotFoundErrorResponseContent:
-		return node.StatusUnknown, errors.Wrap(gateway.ErrResourceNotFoundError, resp.(*texit.ResourceNotFoundErrorResponseContent).Message)
+		return node.StatusUnknown, errors.Wrap(gateway.ErrResourceNotFoundError, resp.Message)
 	case *texit.InvalidInputErrorResponseContent:
-		return node.StatusUnknown, errors.Wrap(gateway.ErrInvalidInputError, resp.(*texit.InvalidInputErrorResponseContent).Message)
+		return node.StatusUnknown, errors.Wrap(gateway.ErrInvalidInputError, resp.Message)
 	default:
 		return node.StatusUnknown, gateway.ErrInternalServerError
 	}

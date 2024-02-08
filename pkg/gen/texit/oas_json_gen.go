@@ -1841,6 +1841,8 @@ func (s *ProviderType) Decode(d *jx.Decoder) error {
 	switch ProviderType(v) {
 	case ProviderTypeAWSEcs:
 		*s = ProviderTypeAWSEcs
+	case ProviderTypeAWSEc2:
+		*s = ProviderTypeAWSEc2
 	case ProviderTypeUnknown:
 		*s = ProviderTypeUnknown
 	default:

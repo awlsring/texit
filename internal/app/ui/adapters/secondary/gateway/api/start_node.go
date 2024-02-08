@@ -19,13 +19,13 @@ func (g *ApiGateway) StartNode(ctx context.Context, id node.Identifier) error {
 		return errors.Wrap(gateway.ErrInternalServerError, err.Error())
 	}
 
-	switch resp.(type) {
+	switch resp := resp.(type) {
 	case *texit.StartNodeResponseContent:
 		return nil
 	case *texit.ResourceNotFoundErrorResponseContent:
-		return errors.Wrap(gateway.ErrResourceNotFoundError, resp.(*texit.ResourceNotFoundErrorResponseContent).Message)
+		return errors.Wrap(gateway.ErrResourceNotFoundError, resp.Message)
 	case *texit.InvalidInputErrorResponseContent:
-		return errors.Wrap(gateway.ErrInvalidInputError, resp.(*texit.InvalidInputErrorResponseContent).Message)
+		return errors.Wrap(gateway.ErrInvalidInputError, resp.Message)
 	default:
 		return gateway.ErrInternalServerError
 	}

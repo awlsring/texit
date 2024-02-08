@@ -19,17 +19,18 @@ func (g *ApiGateway) DeprovisionNode(ctx context.Context, id node.Identifier) (w
 	if err != nil {
 		return "", errors.Wrap(gateway.ErrInternalServerError, err.Error())
 	}
-	switch resp.(type) {
+
+	switch resp := resp.(type) {
 	case *texit.DeprovisionNodeResponseContent:
-		exId, err := workflow.ExecutionIdentifierFromString(resp.(*texit.DeprovisionNodeResponseContent).Execution)
+		exId, err := workflow.ExecutionIdentifierFromString(resp.Execution)
 		if err != nil {
 			return "", errors.Wrap(gateway.ErrInternalServerError, err.Error())
 		}
 		return exId, nil
 	case *texit.ResourceNotFoundErrorResponseContent:
-		return "nil", errors.Wrap(gateway.ErrResourceNotFoundError, resp.(*texit.ResourceNotFoundErrorResponseContent).Message)
+		return "nil", errors.Wrap(gateway.ErrResourceNotFoundError, resp.Message)
 	case *texit.InvalidInputErrorResponseContent:
-		return "", errors.Wrap(gateway.ErrInvalidInputError, resp.(*texit.InvalidInputErrorResponseContent).Message)
+		return "", errors.Wrap(gateway.ErrInvalidInputError, resp.Message)
 	default:
 		return "", gateway.ErrInternalServerError
 	}

@@ -7,6 +7,6 @@ type PlatformAwsEcsGatewayOptions func(*PlatformAwsEcsGateway)
 func WithKeyPair(accessKey, secretKey string) PlatformAwsEcsGatewayOptions {
 	return func(g *PlatformAwsEcsGateway) {
 		credProvider := credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")
-		g.creds = &credProvider
+		g.Creds = &credProvider
 	}
 }

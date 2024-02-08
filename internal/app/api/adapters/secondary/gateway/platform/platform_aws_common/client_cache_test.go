@@ -1,4 +1,4 @@
-package platform_aws_ecs
+package platform_aws
 
 import (
 	"context"
@@ -33,12 +33,12 @@ func TestGetClientForLocation(t *testing.T) {
 		return &MockClient{}
 	}
 
-	client, err := getClientForLocation(ctx, clientFunc, ch, loc, creds)
+	client, err := GetClientForLocation(ctx, clientFunc, ch, loc, creds)
 
 	assert.NoError(t, err)
 	assert.IsType(t, &MockClient{}, client)
 
-	client2, err := getClientForLocation(ctx, clientFunc, ch, loc, creds)
+	client2, err := GetClientForLocation(ctx, clientFunc, ch, loc, creds)
 
 	assert.NoError(t, err)
 	assert.Equal(t, client, client2)

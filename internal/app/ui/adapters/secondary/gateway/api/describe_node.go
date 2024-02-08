@@ -17,17 +17,17 @@ func (g *ApiGateway) DescribeNode(ctx context.Context, id node.Identifier) (*nod
 	if err != nil {
 		return nil, errors.Wrap(gateway.ErrInternalServerError, err.Error())
 	}
-	switch resp.(type) {
+	switch resp := resp.(type) {
 	case *texit.DescribeNodeResponseContent:
-		n, err := SummaryToNode(resp.(*texit.DescribeNodeResponseContent).Summary)
+		n, err := SummaryToNode(resp.Summary)
 		if err != nil {
 			return nil, errors.Wrap(gateway.ErrInternalServerError, err.Error())
 		}
 		return n, nil
 	case *texit.ResourceNotFoundErrorResponseContent:
-		return nil, errors.Wrap(gateway.ErrResourceNotFoundError, resp.(*texit.ResourceNotFoundErrorResponseContent).Message)
+		return nil, errors.Wrap(gateway.ErrResourceNotFoundError, resp.Message)
 	case *texit.InvalidInputErrorResponseContent:
-		return nil, errors.Wrap(gateway.ErrInvalidInputError, resp.(*texit.InvalidInputErrorResponseContent).Message)
+		return nil, errors.Wrap(gateway.ErrInvalidInputError, resp.Message)
 	default:
 		return nil, gateway.ErrInternalServerError
 	}

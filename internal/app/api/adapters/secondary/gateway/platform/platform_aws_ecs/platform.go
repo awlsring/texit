@@ -3,6 +3,7 @@ package platform_aws_ecs
 import (
 	"time"
 
+	platform_aws "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_common"
 	"github.com/awlsring/texit/internal/app/api/ports/gateway"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/patrickmn/go-cache"
@@ -17,9 +18,8 @@ type PlatformAwsEcsGateway struct {
 	// account  interfaces.AwsAccountClient
 	ssmCache *cache.Cache // TODO: consolidate these caches into one
 	ecsCache *cache.Cache
-	ec2Cache *cache.Cache
 	iamCache *cache.Cache
-	creds    *credentials.StaticCredentialsProvider
+	*platform_aws.BasePlatformAws
 }
 
 func New(accessKey, secretKey string) gateway.Platform {
@@ -34,7 +34,9 @@ func New(accessKey, secretKey string) gateway.Platform {
 		iamCache: iamCache,
 		ssmCache: ssmCache,
 		ecsCache: ecsCache,
-		ec2Cache: ec2Cache,
-		creds:    &creds,
+		BasePlatformAws: &platform_aws.BasePlatformAws{
+			Ec2Cache: ec2Cache,
+			Creds:    &creds,
+		},
 	}
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/mocks"
 	"github.com/awlsring/texit/pkg/gen/texit"
-	"github.com/ogen-go/ogen/validate"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -66,7 +65,7 @@ func TestGetNode(t *testing.T) {
 	t.Run("returns error when get node isn't found", func(t *testing.T) {
 		mockClient := mocks.NewMockInvoker_texit(t)
 		g := New(mockClient)
-		mockClient.EXPECT().DescribeNode(ctx, req).Return(nil, &validate.UnexpectedStatusCodeError{StatusCode: 404})
+		mockClient.EXPECT().DescribeNode(ctx, req).Return(&texit.ResourceNotFoundErrorResponseContent{}, nil)
 
 		n, err := g.DescribeNode(ctx, id)
 

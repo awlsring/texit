@@ -10,6 +10,7 @@ import (
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen"
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/auth"
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/handler"
+	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ec2"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ecs"
 	headscale_v0_22_3_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/headscale/v0.22.3"
 	tailscale_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/tailscale"
@@ -62,6 +63,9 @@ func initProviderGateways(providers []*config.ProviderConfig) map[string]gateway
 		switch provider.Type {
 		case "aws-ecs":
 			p := platform_aws_ecs.New(provider.AccessKey, provider.SecretKey)
+			gateways[provider.Name] = p
+		case "aws-ec2":
+			p := platform_aws_ec2.New(provider.AccessKey, provider.SecretKey)
 			gateways[provider.Name] = p
 		default:
 			return nil
