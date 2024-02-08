@@ -18,7 +18,6 @@ func TestCreatePreauthKey(t *testing.T) {
 	mockClient := mocks.NewMockTailscale_interfaces(t)
 	g := &TailscaleGateway{
 		client: mockClient,
-		user:   testUser,
 	}
 
 	testKey := "test-key"

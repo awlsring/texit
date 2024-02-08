@@ -7,6 +7,10 @@ import (
 	"github.com/tailscale/tailscale-client-go/tailscale"
 )
 
+const (
+	autogroup = "autogroup:admin"
+)
+
 func setAutoApprover(acl *tailscale.ACL) bool {
 	exitNodes := acl.AutoApprovers.ExitNode
 	for _, exitNode := range exitNodes {
@@ -18,14 +22,14 @@ func setAutoApprover(acl *tailscale.ACL) bool {
 	return true
 }
 
-func setTagOwners(acl *tailscale.ACL, user string) bool {
+func setTagOwners(acl *tailscale.ACL) bool {
 	owners := acl.TagOwners[tagCloudExitNode]
 	for _, owner := range owners {
-		if owner == user {
+		if owner == autogroup {
 			return false
 		}
 	}
-	acl.TagOwners[tagCloudExitNode] = append(owners, user)
+	acl.TagOwners[tagCloudExitNode] = append(owners, autogroup)
 	return true
 }
 
@@ -41,7 +45,7 @@ func (g *TailscaleGateway) updateAcl(ctx context.Context) error {
 	}
 
 	log.Debug().Msg("Setting tag owner in ACL")
-	ownersUpdated := setTagOwners(acl, g.user)
+	ownersUpdated := setTagOwners(acl)
 
 	log.Debug().Msg("Configuring tag as auto approver")
 	approversUpdated := setAutoApprover(acl)

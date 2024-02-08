@@ -5,7 +5,6 @@ tailnets:
   - apiKey: "tskey-api-keep-me-secret"
     tailnet: "user.service"
     type: "tailscale"
-    user: "user@service"
 providers:
   - type: aws-ecs
     accessKey: "abcdthisnotakey"

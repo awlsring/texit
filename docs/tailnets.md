@@ -6,7 +6,6 @@ All tailnets have the following configuration options.
 
 - **Tailnet**: This is the name of your tailnet and how you will specify it when calling the texit api. Implementation is different for each tailnet type, so see the corresponding section for more details.
 - **Type**: This is the type of tailnet you are configuring. This must match the type of provider you are specifying.
-- **User**: This is the user you want to authenticate as when calling the tailnet api.
 - **ApiKey**: This is the api key you want to authenticate as when calling the tailnet api. This can also be set with an env variable of `<tailnet-name>_TAILNET_API_KEY`. If your tailnet includes `.`, replace them with `_`in the env variable name. For example,`my.tailnet`would be`my_tailnet_TAILNET_API_KEY`.
 - **ControlServer**: This is the control server that will be specified when configuring nodes. This is optional based on the provider.
 
@@ -27,7 +26,6 @@ $ texit tailnet init -t tailscale
 To include a Tailscale tailnet for your texit, you must follow the extra configurations when setting the tailnet fields in your `tailnets` block in your config file.
 
 - **Tailnet**: This is the organization name you see on the admin panel. This is NOT your network id, which will look something like `tailssdfsdf.ts.net`.
-- **User**: This is your tailscale user, something like `user@provider`.
 - **ControlServer**: You dont need to set this, tailscale's is set by default
 
 #### Example
@@ -37,7 +35,6 @@ tailnets:
   - apiKey: "tskey-api-XXXXXX-XXXXXXXXXXX"
     tailnet: "user.provider"
     type: "tailscale"
-    user: "user@provider"
 ```
 
 ## Headscale
@@ -53,7 +50,7 @@ $ texit tailnet init -t headscale
 To include a Headscale tailnet for your texit, you must follow the extra configurations when setting the tailnet fields in your `tailnets` block in your config file.
 
 - **Tailnet**: This is just used to identify your tailnet. It needs to be unique amoungst your tailnets, but it can really be whatever you want.
-- **User**: This is your headscale user.
+- **User**: This is your headscale user. This is required for headscale.
 - **ControlServer**: This is the URL for your headscale server. Something like `https://headscale.example.com`.
 
 #### Example

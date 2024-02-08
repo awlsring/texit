@@ -9,10 +9,6 @@ import (
 	"github.com/tailscale/tailscale-client-go/tailscale"
 )
 
-const (
-	testUser = "test-user"
-)
-
 func TestUpdateAcl(t *testing.T) {
 	ctx := context.Background()
 
@@ -30,14 +26,13 @@ func TestUpdateAcl(t *testing.T) {
 
 	g := &TailscaleGateway{
 		client: mockClient,
-		user:   testUser,
 	}
 
 	err := g.updateAcl(ctx)
 
 	assert.NoError(t, err)
 	assert.Contains(t, mockAcl.AutoApprovers.ExitNode, tagCloudExitNode)
-	assert.Contains(t, mockAcl.TagOwners[tagCloudExitNode], g.user)
+	assert.Contains(t, mockAcl.TagOwners[tagCloudExitNode], autogroup)
 }
 
 func TestUpdateAcl_NoUpdateNeeded(t *testing.T) {
@@ -48,18 +43,17 @@ func TestUpdateAcl_NoUpdateNeeded(t *testing.T) {
 		AutoApprovers: &tailscale.ACLAutoApprovers{
 			ExitNode: []string{tagCloudExitNode},
 		},
-		TagOwners: map[string][]string{tagCloudExitNode: {testUser}},
+		TagOwners: map[string][]string{tagCloudExitNode: {autogroup}},
 	}
 	mockClient.EXPECT().ACL(ctx).Return(mockAcl, nil)
 
 	g := &TailscaleGateway{
 		client: mockClient,
-		user:   testUser,
 	}
 
 	err := g.updateAcl(ctx)
 
 	assert.NoError(t, err)
 	assert.Contains(t, mockAcl.AutoApprovers.ExitNode, tagCloudExitNode)
-	assert.Contains(t, mockAcl.TagOwners[tagCloudExitNode], g.user)
+	assert.Contains(t, mockAcl.TagOwners[tagCloudExitNode], autogroup)
 }

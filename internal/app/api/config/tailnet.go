@@ -65,7 +65,7 @@ func (c *TailnetConfig) Validate() error {
 		c.ApiKey = key
 	}
 
-	if c.User == "" {
+	if c.User == "" && c.Type == TailnetTypeHeadscale {
 		return ErrMissingUser
 	}
 

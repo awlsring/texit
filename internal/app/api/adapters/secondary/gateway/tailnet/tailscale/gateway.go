@@ -10,13 +10,11 @@ const (
 )
 
 type TailscaleGateway struct {
-	user   string
 	client interfaces.Tailscale
 }
 
-func New(user string, client interfaces.Tailscale) gateway.Tailnet {
+func New(client interfaces.Tailscale) gateway.Tailnet {
 	return &TailscaleGateway{
-		user:   user,
 		client: client,
 	}
 }
