@@ -31,8 +31,8 @@ func TestUpdateAcl(t *testing.T) {
 	err := g.updateAcl(ctx)
 
 	assert.NoError(t, err)
-	assert.Contains(t, mockAcl.AutoApprovers.ExitNode, tagCloudExitNode)
-	assert.Contains(t, mockAcl.TagOwners[tagCloudExitNode], autogroup)
+	assert.Contains(t, mockAcl.AutoApprovers.ExitNode, tagTexitNode)
+	assert.Contains(t, mockAcl.TagOwners[tagTexitNode], autogroup)
 }
 
 func TestUpdateAcl_NoUpdateNeeded(t *testing.T) {
@@ -41,9 +41,9 @@ func TestUpdateAcl_NoUpdateNeeded(t *testing.T) {
 	mockClient := mocks.NewMockTailscale_interfaces(t)
 	mockAcl := &tailscale.ACL{
 		AutoApprovers: &tailscale.ACLAutoApprovers{
-			ExitNode: []string{tagCloudExitNode},
+			ExitNode: []string{tagTexitNode},
 		},
-		TagOwners: map[string][]string{tagCloudExitNode: {autogroup}},
+		TagOwners: map[string][]string{tagTexitNode: {autogroup}},
 	}
 	mockClient.EXPECT().ACL(ctx).Return(mockAcl, nil)
 
@@ -54,6 +54,6 @@ func TestUpdateAcl_NoUpdateNeeded(t *testing.T) {
 	err := g.updateAcl(ctx)
 
 	assert.NoError(t, err)
-	assert.Contains(t, mockAcl.AutoApprovers.ExitNode, tagCloudExitNode)
-	assert.Contains(t, mockAcl.TagOwners[tagCloudExitNode], autogroup)
+	assert.Contains(t, mockAcl.AutoApprovers.ExitNode, tagTexitNode)
+	assert.Contains(t, mockAcl.TagOwners[tagTexitNode], autogroup)
 }

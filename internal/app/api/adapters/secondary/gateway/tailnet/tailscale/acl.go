@@ -14,22 +14,22 @@ const (
 func setAutoApprover(acl *tailscale.ACL) bool {
 	exitNodes := acl.AutoApprovers.ExitNode
 	for _, exitNode := range exitNodes {
-		if exitNode == tagCloudExitNode {
+		if exitNode == tagTexitNode {
 			return false
 		}
 	}
-	acl.AutoApprovers.ExitNode = append(exitNodes, tagCloudExitNode)
+	acl.AutoApprovers.ExitNode = append(exitNodes, tagTexitNode)
 	return true
 }
 
 func setTagOwners(acl *tailscale.ACL) bool {
-	owners := acl.TagOwners[tagCloudExitNode]
+	owners := acl.TagOwners[tagTexitNode]
 	for _, owner := range owners {
 		if owner == autogroup {
 			return false
 		}
 	}
-	acl.TagOwners[tagCloudExitNode] = append(owners, autogroup)
+	acl.TagOwners[tagTexitNode] = append(owners, autogroup)
 	return true
 }
 

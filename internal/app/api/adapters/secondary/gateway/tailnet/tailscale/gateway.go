@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	tagCloudExitNode = "tag:cloud-exit-node"
+	tagTexitNode = "tag:texit"
 )
 
 type TailscaleGateway struct {

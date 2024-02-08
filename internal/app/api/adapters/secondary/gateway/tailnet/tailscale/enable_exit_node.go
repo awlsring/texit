@@ -19,7 +19,7 @@ func (g *TailscaleGateway) EnableExitNode(ctx context.Context, tid tailnet.Devic
 	}
 
 	log.Debug().Msg("setting device tags")
-	err = g.client.SetDeviceTags(ctx, tid.String(), []string{tagCloudExitNode})
+	err = g.client.SetDeviceTags(ctx, tid.String(), []string{tagTexitNode})
 	if err != nil {
 		log.Error().Err(err).Msg("failed to enable exit node")
 		return err
