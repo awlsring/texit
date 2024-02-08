@@ -176,12 +176,23 @@ func (h *Handler) ProviderLocationAutoComplete(ctx *comctx.CommandContext, name,
 	choices := []tempest.Choice{}
 
 	for _, l := range locations {
-		if strings.Contains(l.Name, filter) || strings.Contains(l.Geolocation, filter) || strings.Contains(strings.ToLower(l.Provider), filter) {
-			log.Debug().Str("location_name", l.Name).Msg("Adding location to choices")
-			choices = append(choices, tempest.Choice{
-				Name:  l.Display(),
-				Value: l.Name,
-			})
+		filteredFields := []string{
+			l.Name,
+			l.Geolocation,
+			strings.ToLower(l.Geolocation),
+			l.Provider,
+			strings.ToLower(l.Provider),
+		}
+
+		for _, field := range filteredFields {
+			if strings.Contains(field, filter) {
+				log.Debug().Str("location_name", l.Name).Msg("Adding location to choices")
+				choices = append(choices, tempest.Choice{
+					Name:  l.Display(),
+					Value: l.Name,
+				})
+				break
+			}
 		}
 	}
 
