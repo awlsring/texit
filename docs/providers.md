@@ -35,3 +35,32 @@ providers:
     secretKey: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     name: "my-ecs-provider"
 ```
+
+## AWS-EC2
+
+AWS-EC2 provider allows for launching exit nodes as ec2 instances. Its type is `aws-ecs`.
+
+This provider launches exit nodes with the instance type `t4g.nano`.
+
+You must create an IAM user to use this provider. You can get instructions for how to set up this provider with texit cli running the following command.
+
+```
+$ texit provider init -t aws-ec2
+```
+
+### Configuration
+
+To include a AWS-EC2 provider for your texit, you must include the following extra fieilds in your `provider` configuration block config file.
+
+- **AccessKey**: This is an access key for the IAM user texit authenticates as when calling AWS apis. This can also be set with an env variable of `<provider-name>_AWS_ACCESS_KEY_ID`.
+- **SecretKey**: This is the secrey key for the IAM user texit authenticates as when calling AWS apis. This can also be set with an env variable of `<provider-name>_AWS_SECRET_ACCESS_KEY`.
+
+#### Example
+
+```yaml
+providers:
+  - type: aws-ec2
+    accessKey: "XXXXXXXXXXXX"
+    secretKey: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    name: "my-ec2-provider"
+```
