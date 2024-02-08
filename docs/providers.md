@@ -38,7 +38,7 @@ providers:
 
 ## AWS-EC2
 
-AWS-EC2 provider allows for launching exit nodes as ec2 instances. Its type is `aws-ecs`.
+AWS-EC2 provider allows for launching exit nodes as ec2 instances. Its type is `aws-ec2`.
 
 This provider launches exit nodes with the instance type `t4g.nano`.
 
