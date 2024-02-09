@@ -18,6 +18,7 @@ Texit is designed to allow for launching exit nodes on various tailnets and prov
 - Providers
   - [AWS-ECS](/docs/providers.md#AWS-ECS)
   - [AWS-EC2](/docs/providers.md#AWS-EC2)
+  - [Linode/Akamai](/docs/providers.md#Linode/Akamai)
 
 If you have a request to support a new tailnet or provider, please open an issue.
 

@@ -64,3 +64,26 @@ providers:
     secretKey: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     name: "my-ec2-provider"
 ```
+
+## Linode/Akamai
+
+The Linode (Akamai) provider allows for launching exit nodes as linodes. Its type is `linode`.
+
+This provider launches exit nodes with the linode type `g6-nanode-1` using Debian 12.
+
+You must create a Linode API token to use this provider. This token needs to have Read/Write scopes for `Linodes` and `StackScripts`.
+
+### Configuration
+
+To include a Linode provider for your texit, you must include the following extra fieilds in your `provider` configuration block config file.
+
+- **ApiKey**: This is an access token you can create on the Linode console. This can also be set with the env variable `<provider-name>_API_KEY`.
+
+#### Example
+
+```yaml
+providers:
+  - type: linode
+    apiKey: "XXXXXXXXXXXX"
+    name: "my-linode-provider"
+```
