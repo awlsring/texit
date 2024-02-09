@@ -3,15 +3,15 @@ package platform_aws_ec2
 import (
 	"context"
 	"encoding/base64"
-	"fmt"
 	"time"
 
-	platform_aws "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_common"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/interfaces"
 	"github.com/awlsring/texit/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/platform"
+	platform_aws "github.com/awlsring/texit/internal/pkg/platform/aws"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
@@ -98,6 +98,5 @@ func runInstance(ctx context.Context, client interfaces.Ec2Client, ami, typee, c
 }
 
 func formCloudInit(ctx context.Context, authKey, location string, tid tailnet.DeviceName) string {
-	cloudInit := fmt.Sprintf("#!/bin/bash\necho 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf\necho 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.conf\nsudo sysctl -p /etc/sysctl.conf\n\ncurl -fsSL https://tailscale.com/install.sh | sh\n\nsudo tailscale up --auth-key=%s --hostname=%s --advertise-exit-node", authKey, tid.String())
-	return base64.StdEncoding.EncodeToString([]byte(cloudInit))
+	return base64.StdEncoding.EncodeToString([]byte(platform.TailscaleCloudInit(authKey, tid.String())))
 }

@@ -12,6 +12,7 @@ const (
 	TypeUnknown Type = iota
 	TypeAwsEcs
 	TypeAwsEc2
+	TypeLinode
 )
 
 var (
@@ -24,6 +25,8 @@ func (t Type) String() string {
 		return "aws-ecs"
 	case TypeAwsEc2:
 		return "aws-ec2"
+	case TypeLinode:
+		return "linode"
 	default:
 		return "unknown"
 	}
@@ -35,6 +38,8 @@ func TypeFromString(s string) (Type, error) {
 		return TypeAwsEcs, nil
 	case "aws-ec2":
 		return TypeAwsEc2, nil
+	case "linode":
+		return TypeLinode, nil
 	default:
 		return TypeUnknown, errors.Wrap(ErrUnknownType, s)
 	}

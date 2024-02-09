@@ -531,6 +531,8 @@ func (s ProviderType) Validate() error {
 		return nil
 	case "aws-ec2":
 		return nil
+	case "linode":
+		return nil
 	case "unknown":
 		return nil
 	default:

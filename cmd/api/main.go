@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net"
+	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
@@ -12,6 +13,7 @@ import (
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/handler"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ec2"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ecs"
+	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_linode"
 	headscale_v0_22_3_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/headscale/v0.22.3"
 	tailscale_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/tailscale"
 	sqlite_execution_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/execution/sqlite"
@@ -31,8 +33,10 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/jmoiron/sqlx"
+	"github.com/linode/linodego"
 	"github.com/rs/zerolog"
 	"github.com/tailscale/tailscale-client-go/tailscale"
+	"golang.org/x/oauth2"
 	_ "modernc.org/sqlite"
 )
 
@@ -66,6 +70,16 @@ func initProviderGateways(providers []*config.ProviderConfig) map[string]gateway
 			gateways[provider.Name] = p
 		case "aws-ec2":
 			p := platform_aws_ec2.New(provider.AccessKey, provider.SecretKey)
+			gateways[provider.Name] = p
+		case "linode":
+			tokenSource := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: provider.ApiKey})
+			oauth2Client := &http.Client{
+				Transport: &oauth2.Transport{
+					Source: tokenSource,
+				},
+			}
+			client := linodego.NewClient(oauth2Client)
+			p := platform_linode.New(&client)
 			gateways[provider.Name] = p
 		default:
 			return nil

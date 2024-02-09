@@ -156,6 +156,126 @@ var (
 			Geolocation: "Hong Kong",
 			Provider:    "AWS",
 		},
+		{
+			Name:        "ap-west",
+			Geolocation: "Mumbai, India",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "ca-central",
+			Geolocation: "Toronto, Canada",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "ap-southeast",
+			Geolocation: "Sydney, Australia",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "us-iad",
+			Geolocation: "Virginia, USA",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "us-ord",
+			Geolocation: "Illinois, USA",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "fr-par",
+			Geolocation: "Paris, France",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "us-sea",
+			Geolocation: "Washington, USA",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "br-gru",
+			Geolocation: "Sao Paulo, Brazil",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "nl-ams",
+			Geolocation: "Amsterdam, Netherlands",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "se-sto",
+			Geolocation: "Stockholm, Sweden",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "in-maa",
+			Geolocation: "Chennai, India",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "jp-osa",
+			Geolocation: "Osaka, Japan",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "it-mil",
+			Geolocation: "Milan, Italy",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "us-mia",
+			Geolocation: "Florida, USA",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "id-cgk",
+			Geolocation: "Jakarta, Indonesia",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "us-lax",
+			Geolocation: "California (South), USA",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "us-central",
+			Geolocation: "Texas, USA",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "us-west",
+			Geolocation: "California (North), USA",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "us-southeast",
+			Geolocation: "Georgia, USA",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "us-east",
+			Geolocation: "New Jersey, USA",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "eu-west",
+			Geolocation: "London, UK",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "ap-south",
+			Geolocation: "Singapore",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "eu-central",
+			Geolocation: "Frankfurt, Germany",
+			Provider:    "Linode",
+		},
+		{
+			Name:        "ap-northeast",
+			Geolocation: "Tokyo, Japan",
+			Provider:    "Linode",
+		},
 	}
 )
 

@@ -21,6 +21,7 @@ require (
 	github.com/go-openapi/validate v0.23.0
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/linode/linodego v1.28.0
 	github.com/ogen-go/ogen v0.81.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
@@ -32,6 +33,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.23.0
 	go.opentelemetry.io/otel/trace v1.23.0
 	go.uber.org/multierr v1.11.0
+	golang.org/x/oauth2 v0.16.0
 	gopkg.in/yaml.v2 v2.4.0
 	modernc.org/sqlite v1.28.0
 	tailscale.com v1.58.2
@@ -72,6 +74,7 @@ require (
 	github.com/go-openapi/jsonreference v0.20.4 // indirect
 	github.com/go-openapi/loads v0.21.5 // indirect
 	github.com/go-openapi/spec v0.20.14 // indirect
+	github.com/go-resty/resty/v2 v2.11.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.1-0.20230522191255-76236955d466 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
@@ -133,7 +136,6 @@ require (
 	golang.org/x/exp v0.0.0-20240205201215-2c58cdc269a3 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
-	golang.org/x/oauth2 v0.16.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/term v0.16.0 // indirect
@@ -144,6 +146,7 @@ require (
 	golang.zx2c4.com/wireguard/windows v0.5.3 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
+	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gvisor.dev/gvisor v0.0.0-20230928000133-4fe30062272c // indirect
 	inet.af/peercred v0.0.0-20210906144145-0893ea02156a // indirect

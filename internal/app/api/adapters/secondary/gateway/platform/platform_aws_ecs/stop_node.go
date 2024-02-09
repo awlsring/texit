@@ -3,9 +3,9 @@ package platform_aws_ecs
 import (
 	"context"
 
-	platform_aws "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_common"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/logger"
+	platform_aws "github.com/awlsring/texit/internal/pkg/platform/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 )
 

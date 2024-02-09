@@ -14,7 +14,7 @@ import (
 
 const (
 	deprovisionPollAmount = 20
-	deprovisionPollDelay  = 1
+	deprovisionPollDelay  = 5
 )
 
 func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
@@ -56,6 +56,7 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 			ExecutionInternalErrorResponse(ctx)
 			return
 		}
+		log.Debug().Interface("execution", ex).Msg("Execution")
 		output, err := workflow.DeserializeExecutionResult[workflow.DeprovisionNodeExecutionResult](ex.Results)
 		if err != nil {
 			log.Error().Err(err).Msg("Error polling execution")
@@ -64,7 +65,7 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 		}
 		if ex.Status == workflow.StatusComplete {
 			log.Debug().Msg("Execution is complete, writing bot response")
-			_, err = ctx.SendRequesterPrivateMessage("The deprovision node workflow you requested has completed succesfully")
+			_, err = ctx.SendRequesterPrivateMessage("The deprovision node workflow you requested has completed successfully")
 			if err != nil {
 				log.Error().Err(err).Msg("Failed to write bot response")
 			}
