@@ -19,9 +19,26 @@ func (h *Handler) ProviderInit(c *cli.Context) error {
 		return h.initAwsEcsProvider(c)
 	case provider.TypeAwsEc2:
 		return h.initAwsEc2Provider(c)
+	case provider.TypeLinode:
+		return h.initLinodeProvider(c)
 	default:
 		return fmt.Errorf("unknown provider type: %s", t.String())
 	}
+}
+
+func (h *Handler) initLinodeProvider(ctx *cli.Context) error {
+	fmt.Println("To use a Linode provider, you must have a Linode account and an API key.")
+	fmt.Println("To create an API key, go to the Linode Cloud Manager and navigate to the 'My Profile' section.")
+	fmt.Println("Then, click on 'API Tokens' and create a new token. This token needs Read/Write scopes for Linodes and StackScripts.")
+	fmt.Println("Finally, configure the provider with the API key in the texit configuration file")
+	fmt.Print(`
+providers:
+  ...
+  - type: linode
+    apiKey: <YOUR API KEY>
+	name: <SOME UNIQUE NAME TO CALL THIS PROVIDER>
+`)
+	return nil
 }
 
 func (h *Handler) initAwsEc2Provider(ctx *cli.Context) error {
