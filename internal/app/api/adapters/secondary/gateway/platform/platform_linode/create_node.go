@@ -3,7 +3,6 @@ package platform_linode
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
@@ -15,8 +14,7 @@ import (
 )
 
 const (
-	DefaultImage    = "linode/debian12"
-	PostCreateDelay = 90
+	DefaultImage = "linode/debian12"
 )
 
 func (p *PlatformLinode) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, pid *provider.Provider, loc provider.Location, tn *tailnet.Tailnet, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
@@ -49,9 +47,6 @@ func (p *PlatformLinode) CreateNode(ctx context.Context, id node.Identifier, tid
 		log.Error().Err(err).Msg("Failed to create Linode instance")
 		return "", err
 	}
-
-	log.Debug().Msgf("Instance created. Sleeping for %d seconds", PostCreateDelay)
-	time.Sleep(PostCreateDelay * time.Second)
 
 	log.Debug().Msgf("Linode instance created with id %d", resp.ID)
 	return node.PlatformIdentifier(fmt.Sprintf("%d", resp.ID)), nil

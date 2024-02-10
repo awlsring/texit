@@ -4,15 +4,18 @@ import (
 	"context"
 	"time"
 
+	"github.com/awlsring/texit/internal/app/api/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/logger"
+	"github.com/pkg/errors"
 )
 
 const (
-	postCreationWaitTime = 5 * time.Second
+	postCreationPollAmount = 40
+	postCreationInterval   = 10 * time.Second
 )
 
 func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provider.Provider, location provider.Location, tn *tailnet.Tailnet, ephemeral bool) (workflow.ExecutionIdentifier, error) {
@@ -87,18 +90,31 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, prov *provide
 			return
 		}
 
-		log.Debug().Msgf("Sleeping for %s to wait for device registration on tailnet", postCreationWaitTime)
-		time.Sleep(postCreationWaitTime)
-
 		step = "get-tailnet-device-id"
 		log.Debug().Msg("Getting the tailnet device id")
-		tid, err := tailnetGw.GetDeviceId(ctx, tailName)
-		if err != nil {
-			results.Errors = append(results.Errors, err.Error())
-			results.FailedStep = &step
-			log.Error().Err(err).Msg("Failed to get tailnet device id")
-			s.closeWorkflow(ctx, exId, workflow.StatusFailed, results)
-			return
+		var tid tailnet.DeviceIdentifier
+		for i := 0; i < postCreationPollAmount; i++ {
+			tid, err = tailnetGw.GetDeviceId(ctx, tailName)
+			if err != nil {
+				if errors.Is(err, gateway.ErrUnknownDevice) {
+					if i < postCreationPollAmount-1 {
+						log.Debug().Msg("Device not found, sleeping and retrying")
+						time.Sleep(postCreationInterval)
+						continue
+					} else {
+						results.Errors = append(results.Errors, "timed out waiting for device registration")
+						results.FailedStep = &step
+						log.Error().Err(err).Msg("Failed to get tailnet device id before timeout")
+						s.closeWorkflow(ctx, exId, workflow.StatusFailed, results)
+						return
+					}
+				}
+				results.Errors = append(results.Errors, err.Error())
+				results.FailedStep = &step
+				log.Error().Err(err).Msg("Failed to get tailnet device id")
+				s.closeWorkflow(ctx, exId, workflow.StatusFailed, results)
+				return
+			}
 		}
 
 		step = "enable-exit-node"

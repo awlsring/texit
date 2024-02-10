@@ -3,7 +3,6 @@ package platform_aws_ec2
 import (
 	"context"
 	"encoding/base64"
-	"time"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
@@ -15,10 +14,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
-)
-
-const (
-	postCreationSleep = 60
 )
 
 func (g *PlatformAwsEc2Gateway) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, pid *provider.Provider, loc provider.Location, tn *tailnet.Tailnet, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
@@ -57,9 +52,6 @@ func (g *PlatformAwsEc2Gateway) CreateNode(ctx context.Context, id node.Identifi
 		log.Error().Err(err).Msg("Failed to poll for instance to be ready")
 		return "", err
 	}
-
-	log.Debug().Msg("EC2 node created, sleeping while it inits")
-	time.Sleep(postCreationSleep * time.Second)
 
 	log.Debug().Msg("EC2 node created")
 	return node.PlatformIdentifier(instanceId), nil
