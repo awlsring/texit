@@ -9,14 +9,15 @@ import (
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	comctx "github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/handler"
-	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 type Bot struct {
 	logLevel   zerolog.Level
 	tmpst      *tempest.Client
 	hdl        *handler.Handler
+	mux        *http.ServeMux
 	lis        net.Listener
 	authorized []tempest.Snowflake
 	guildIds   []tempest.Snowflake
@@ -34,10 +35,9 @@ func (b *Bot) LogLevel() zerolog.Level {
 	return b.logLevel
 }
 
-func NewBot(lis net.Listener, hdl *handler.Handler, tmpst *tempest.Client, opts ...BotOption) *Bot {
+func NewBot(hdl *handler.Handler, tmpst *tempest.Client, opts ...BotOption) *Bot {
 	b := &Bot{
 		logLevel: zerolog.InfoLevel,
-		lis:      lis,
 		tmpst:    tmpst,
 		hdl:      hdl,
 	}
@@ -158,11 +158,8 @@ func (b *Bot) registerCommands() error {
 	return nil
 }
 
-func (b *Bot) Start(ctx context.Context) error {
-	log := logger.FromContext(ctx)
-
+func (b *Bot) Init() error {
 	if err := b.registerCommands(); err != nil {
-		log.Error().Err(err).Msg("Failed to register commands")
 		return err
 	}
 
@@ -170,18 +167,28 @@ func (b *Bot) Start(ctx context.Context) error {
 		return err
 	}
 
-	go func() {
-		// take control of lifecycle so we can use our own serve methodology
-		httpHdl, err := b.tmpst.Hijack()
-		if err != nil {
-			log.Error().Err(err).Msg("Failed to hijack Tempest client")
-			return
-		}
-		mux := http.NewServeMux()
-		mux.HandleFunc("/", httpHdl)
+	httpHdl, err := b.tmpst.Hijack()
+	if err != nil {
+		return err
+	}
+	b.mux = http.NewServeMux()
+	b.mux.HandleFunc("/", httpHdl)
 
-		log.Debug().Msgf("server listening at %v", b.lis.Addr())
-		if err := http.Serve(b.lis, mux); err != nil {
+	return nil
+}
+
+func (b *Bot) HttpHandler() http.Handler {
+	return b.mux
+}
+
+func (b *Bot) Serve(ctx context.Context, lis net.Listener) error {
+	err := b.Init()
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		if err := http.Serve(lis, b.mux); err != nil {
 			log.Error().Err(err).Msg("Server error")
 		}
 	}()

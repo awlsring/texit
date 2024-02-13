@@ -5,7 +5,8 @@ import "errors"
 type DatabaseEngine string
 
 const (
-	DatabaseEngineSqlite DatabaseEngine = "sqlite"
+	DatabaseEngineSqlite   DatabaseEngine = "sqlite"
+	DatabaseEngineDynamoDb DatabaseEngine = "dynamodb"
 )
 
 const (
@@ -39,6 +40,10 @@ type DatabaseConfig struct {
 }
 
 func (c *DatabaseConfig) Validate() error {
+	if c.Engine == DatabaseEngineDynamoDb {
+		return nil
+	}
+
 	if c.Engine == "" {
 		c.Engine = DatabaseEngineSqlite
 	}

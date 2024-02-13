@@ -7,27 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestExtraArgsTailscal(t *testing.T) {
-	tn := &tailnet.Tailnet{
-		Name: "tailnet@toes",
-		Type: tailnet.TypeTailscale,
-	}
+func TestExtraArgs(t *testing.T) {
+	tcs := tailnet.ControlServer("https://tailscale.toes.com")
 
-	predicatedString := "--advertise-exit-node"
-	args := makeExtraArgs(tn)
-
-	assert.Equal(t, predicatedString, *args.Value)
-}
-
-func TestExtraArgsHeadscale(t *testing.T) {
-	tn := &tailnet.Tailnet{
-		Name:          "headscale.toes",
-		Type:          tailnet.TypeHeadscale,
-		ControlServer: tailnet.ControlServer("https://headscale.toes.com"),
-	}
-
-	predicatedString := "--advertise-exit-node --login-server=https://headscale.toes.com"
-	args := makeExtraArgs(tn)
+	predicatedString := "--advertise-exit-node --login-server=https://tailscale.toes.com"
+	args := makeExtraArgs(tcs)
 
 	assert.Equal(t, predicatedString, *args.Value)
 }

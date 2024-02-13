@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/signal"
 
+	"github.com/awlsring/texit/internal/app/api/adapters/primary/mem_workflow"
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen"
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/auth"
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/handler"
@@ -16,17 +17,20 @@ import (
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_linode"
 	headscale_v0_22_3_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/headscale/v0.22.3"
 	tailscale_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/tailscale"
+	local_workflow "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/workflow/local"
 	sqlite_execution_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/execution/sqlite"
 	sqlite_node_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/node/sqlite"
 	"github.com/awlsring/texit/internal/app/api/config"
+	"github.com/awlsring/texit/internal/app/api/core/service/activity"
 	"github.com/awlsring/texit/internal/app/api/core/service/node"
 	provSvc "github.com/awlsring/texit/internal/app/api/core/service/provider"
 	tailnetSvc "github.com/awlsring/texit/internal/app/api/core/service/tailnet"
-	"github.com/awlsring/texit/internal/app/api/core/service/workflow"
+	workflowSvc "github.com/awlsring/texit/internal/app/api/core/service/workflow"
 	"github.com/awlsring/texit/internal/app/api/ports/gateway"
 	"github.com/awlsring/texit/internal/app/api/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/internal/pkg/tsn"
 	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client"
@@ -195,14 +199,22 @@ func main() {
 	err = excRepo.Init(ctx)
 	panicOnErr(err)
 
-	log.Info().Msg("Initializing tailnet gateway")
-	tailnetGateways := initTailnetGateways(cfg.Tailnets)
-
 	log.Info().Msg("Initializing provider gateways")
 	providerGateways := initProviderGateways(cfg.Providers)
 
+	log.Info().Msg("Initializing tailnet gateways")
+	tailnetGateways := initTailnetGateways(cfg.Tailnets)
+
+	log.Info().Msg("Initializing activity service")
+	activitySvc := activity.NewService(tailnetGateways, providerGateways, nodeRepo, excRepo)
+
+	workChan := make(chan workflow.ExecutionInput)
+
+	log.Info().Msg("Initializing workflow gateways")
+	workGw := local_workflow.New(workChan)
+
 	log.Info().Msg("Initializing workflow service")
-	workflowSvc := workflow.NewService(nodeRepo, excRepo, tailnetGateways, providerGateways)
+	workflowSvc := workflowSvc.NewService(nodeRepo, excRepo, workGw)
 
 	log.Info().Msg("Initializing provider service")
 	providerSvc := initProviderService(cfg.Providers)
@@ -224,9 +236,17 @@ func main() {
 	log.Info().Msg("Creating ogen server")
 	srv := ogen.NewServer(lis, hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(zerolog.DebugLevel))
 
+	log.Info().Msg("Initializing workflow worker")
+	worker := mem_workflow.NewWorker(activitySvc, workChan)
+
 	log.Info().Msg("Starting server")
 	go func() {
 		panicOnErr(srv.Start(ctx))
+	}()
+
+	log.Info().Msg("Starting worker")
+	go func() {
+		panicOnErr(worker.Start(ctx))
 	}()
 
 	c := make(chan os.Signal, 1)
@@ -239,8 +259,8 @@ func main() {
 	log.Info().Msg("Waiting for server to shutdown")
 	<-ctx.Done()
 
-	err = db.Close()
-	panicOnErr(err)
+	panicOnErr(worker.Close(context.Background()))
+	panicOnErr(db.Close())
 
 	log.Info().Msg("Exiting")
 }

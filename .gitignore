@@ -17,3 +17,4 @@ go.work
 *.db
 model/**/build
 dist/
+__debug*

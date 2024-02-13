@@ -102,7 +102,7 @@ func (h *Handler) ProvisionNode(c *cli.Context) error {
 		}
 
 		if ex.Status == workflow.StatusFailed {
-			fmt.Printf("Provision node workflow failed on step %s. Errors: %s\n", output.GetFailedStep(), output.Errors)
+			fmt.Printf("Provision node workflow failed. Errors: %s\n", output.GetError())
 			return nil
 		} else {
 			if output.Node == nil {
@@ -140,7 +140,7 @@ func (h *Handler) DeprovisionNode(c *cli.Context) error {
 		}
 
 		if ex.Status == workflow.StatusFailed {
-			fmt.Printf("Deprovision node workflow failed on step %s. Errors: %s\n", output.GetFailedStep(), output.Errors)
+			fmt.Printf("Deprovision node workflow failed. Error: %s\n", output.GetError())
 			return nil
 		}
 

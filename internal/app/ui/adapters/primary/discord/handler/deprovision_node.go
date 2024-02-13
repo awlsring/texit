@@ -2,7 +2,6 @@ package handler
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
@@ -74,7 +73,7 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 		if ex.Status == workflow.StatusFailed {
 
 			log.Debug().Msg("Execution is failed, writing bot response")
-			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf("The deprovision node workflow you request failed :(\n\nIt failed on step %s\nErrors: %s", output.GetFailedStep(), strings.Join(output.Errors, ", ")))
+			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf("The deprovision node workflow you request failed :(\n\nIt failed on step %s\nError: %s", output.GetError()))
 			if err != nil {
 				log.Error().Err(err).Msg("Failed to write bot response")
 			}

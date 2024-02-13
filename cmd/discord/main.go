@@ -11,11 +11,11 @@ import (
 	discfg "github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/config"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/handler"
 	api_gateway "github.com/awlsring/texit/internal/app/ui/adapters/secondary/gateway/api"
-	"github.com/awlsring/texit/internal/app/ui/config"
 	"github.com/awlsring/texit/internal/app/ui/core/service/api"
 	"github.com/awlsring/texit/internal/app/ui/core/service/node"
 	"github.com/awlsring/texit/internal/app/ui/core/service/provider"
 	"github.com/awlsring/texit/internal/app/ui/core/service/tailnet"
+	"github.com/awlsring/texit/internal/pkg/config"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/internal/pkg/tsn"
 	"github.com/awlsring/texit/pkg/gen/texit"
@@ -124,11 +124,11 @@ func main() {
 	}
 
 	log.Info().Msg("Initing Discord Bot")
-	bot := discord.NewBot(lis, hdl, client, discord.WithAuthorizedUsers(authorized), discord.WithGuilds(guilds), discord.WithLogLevel(zerolog.DebugLevel))
+	bot := discord.NewBot(hdl, client, discord.WithAuthorizedUsers(authorized), discord.WithGuilds(guilds), discord.WithLogLevel(zerolog.DebugLevel))
 
 	go func() {
 		log.Info().Msg("Starting Bot")
-		panicOnErr(bot.Start(ctx))
+		panicOnErr(bot.Serve(ctx, lis))
 	}()
 
 	c := make(chan os.Signal, 1)

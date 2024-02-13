@@ -17,7 +17,7 @@ const (
 	DefaultImage = "linode/debian12"
 )
 
-func (p *PlatformLinode) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, pid *provider.Provider, loc provider.Location, tn *tailnet.Tailnet, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
+func (p *PlatformLinode) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, loc provider.Location, tcs tailnet.ControlServer, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating Linode node")
 

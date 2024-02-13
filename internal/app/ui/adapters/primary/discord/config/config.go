@@ -1,6 +1,8 @@
 package config
 
-import "github.com/awlsring/texit/internal/app/ui/config"
+import (
+	"github.com/awlsring/texit/internal/app/ui/config"
+)
 
 type Config struct {
 	Api     config.ApiConfig `yaml:"api"`

@@ -5,6 +5,7 @@ import (
 
 	cliconfig "github.com/awlsring/texit/internal/app/ui/adapters/primary/cli/config"
 	"github.com/awlsring/texit/internal/app/ui/config"
+	cconfig "github.com/awlsring/texit/internal/pkg/config"
 	"gopkg.in/yaml.v2"
 )
 
@@ -53,7 +54,7 @@ func LoadConfig() (*cliconfig.Config, error) {
 		configPath = override
 	}
 
-	cfg, err := config.LoadFromFile[cliconfig.Config](configPath)
+	cfg, err := cconfig.LoadFromFile[cliconfig.Config](configPath)
 	if err != nil {
 		return nil, err
 	}

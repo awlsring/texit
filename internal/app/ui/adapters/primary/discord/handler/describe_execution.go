@@ -59,8 +59,7 @@ func writeProvisionNodeExecutionSummary(ctx *context.CommandContext, ex *workflo
 
 	msg := fmt.Sprintf("### Execution %s\n**Workflow**: %s\n**Status**: %s\n", ex.Identifier.String(), ex.Workflow.String(), ex.Status.String())
 	if ex.Status == workflow.StatusFailed {
-		msg += fmt.Sprintf("**Failed Step**: %s", output.GetFailedStep())
-		msg += fmt.Sprintf("**Error**: %s", strings.Join(output.Errors, ","))
+		msg += fmt.Sprintf("**Error**: %s", output.GetError())
 	}
 	if ex.Status == workflow.StatusComplete {
 		msg += fmt.Sprintf("**Node**: %s", output.GetNode())
@@ -76,8 +75,7 @@ func writeDeprovisionNodeExecutionSummary(ctx *context.CommandContext, ex *workf
 
 	msg := fmt.Sprintf("### Execution %s\n**Workflow**: %s\n**Status**: %s\n", ex.Identifier.String(), ex.Workflow.String(), ex.Status.String())
 	if ex.Status == workflow.StatusFailed {
-		msg += fmt.Sprintf("**Failed Step**: %s", output.GetFailedStep())
-		msg += fmt.Sprintf("**Error**: %s", strings.Join(output.Errors, ","))
+		msg += fmt.Sprintf("**Error**: %s", output.GetError())
 	}
 	if len(output.ResourcesFailedToDelete) > 0 {
 		msg += fmt.Sprintf("**Resources Failed to Delete**: %s", strings.Join(output.ResourcesFailedToDelete, ","))

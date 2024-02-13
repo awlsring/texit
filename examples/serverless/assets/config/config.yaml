@@ -1,0 +1,23 @@
+server:
+  address: :443
+  apiKey: abcyouneedtochangeme
+tailnets:
+  - apiKey: "00000000000000000000000000000"
+    tailnet: "my.tailnet"
+    type: "tailscale"
+  - apiKey: "00000000000000000000000000000"
+    tailnet: headscale.tailnet
+    type: "headscale"
+    user: "awlsring"
+    controlServer: "https://headscale.texit.com"
+providers:
+  - type: aws-ecs
+    accessKey: "00000000000000000000000000000"
+    secretKey: "00000000000000000000000000000"
+    name: "provider-ecs"
+  - type: aws-ec2
+    accessKey: "00000000000000000000000000000"
+    secretKey: "00000000000000000000000000000"
+    name: "provider-ec2"
+database:
+  engine: dynamodb

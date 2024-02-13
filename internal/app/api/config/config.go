@@ -14,15 +14,9 @@ type Config struct {
 	Providers []*ProviderConfig `yaml:"providers"`
 }
 
-// Loads the application config from a file at the specified path.
-func LoadFromFile(path string) (*Config, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
+func LoadFromData(data []byte) (*Config, error) {
 	var cfg Config
-	err = yaml.Unmarshal(data, &cfg)
+	err := yaml.Unmarshal(data, &cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -58,4 +52,14 @@ func LoadFromFile(path string) (*Config, error) {
 	}
 
 	return &cfg, nil
+}
+
+// Loads the application config from a file at the specified path.
+func LoadFromFile(path string) (*Config, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	return LoadFromData(data)
 }

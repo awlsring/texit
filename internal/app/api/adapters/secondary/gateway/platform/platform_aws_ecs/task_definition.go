@@ -29,18 +29,16 @@ const (
 	keyTsUserspaceRoutes   = "TS_USERSPACE"
 )
 
-func makeExtraArgs(tn *tailnet.Tailnet) types.KeyValuePair {
+func makeExtraArgs(tcs tailnet.ControlServer) types.KeyValuePair {
 	extraArgs := valueAdvertiseExitNode
-	if tn.Type == tailnet.TypeHeadscale {
-		extraArgs = extraArgs + " --login-server=" + tn.ControlServer.String()
-	}
+	extraArgs = extraArgs + " --login-server=" + tcs.String()
 	return types.KeyValuePair{
 		Name:  aws.String(keyTsExtraArgs),
 		Value: aws.String(extraArgs),
 	}
 }
 
-func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, id node.Identifier, tn *tailnet.Tailnet, tid tailnet.DeviceName, authkey tailnet.PreauthKey, execRole, taskRole, param string) error {
+func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, id node.Identifier, tcs tailnet.ControlServer, tid tailnet.DeviceName, authkey tailnet.PreauthKey, execRole, taskRole, param string) error {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Creating new ECS task definition")
@@ -54,7 +52,7 @@ func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, id n
 				Essential: aws.Bool(true),
 
 				Environment: []types.KeyValuePair{
-					makeExtraArgs(tn),
+					makeExtraArgs(tcs),
 					{
 						Name:  aws.String(keyTsAuthkey),
 						Value: aws.String(authkey.String()),

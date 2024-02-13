@@ -1,0 +1,12 @@
+server:
+  address: :443
+api:
+  apiKey: abcyouneedtochangeme
+discord:
+  authorized:
+    - "00000000000000000"
+  guildIds:
+    - "00000000000000000"
+  applicationId: "000000000000000"
+  publicKey: "000000000000000000000000"
+  token: "000000000000000000000000000000000000000000000000"

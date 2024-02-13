@@ -37,53 +37,52 @@ func serializeExecutionResult[T ExecutionResult](r T) (SerializedExecutionResult
 	return SerializedExecutionResult(raw), nil
 }
 
-func getFailureStep(failedStep *string) string {
-	if failedStep == nil {
-		return "unknown"
-	}
-	return *failedStep
-}
-
 type DeprovisionNodeExecutionResult struct {
 	ResourcesFailedToDelete []string `json:"resourcesFailedToDelete,omitempty"`
-	FailedStep              *string  `json:"failedStep,omitempty"`
-	Errors                  []string `json:"errors,omitempty"`
+	Error                   *string  `json:"error,omitempty"`
 }
 
-func NewDeprovisionNodeExecutionResult(step string) DeprovisionNodeExecutionResult {
-	return DeprovisionNodeExecutionResult{
-		FailedStep: &step,
-		Errors:     []string{},
-	}
+func NewDeprovisionNodeExecutionResult() DeprovisionNodeExecutionResult {
+	return DeprovisionNodeExecutionResult{}
 }
 
 func (r DeprovisionNodeExecutionResult) Serialize() (SerializedExecutionResult, error) {
 	return serializeExecutionResult(r)
 }
 
-func (r DeprovisionNodeExecutionResult) GetFailedStep() string {
-	return getFailureStep(r.FailedStep)
+func (r *DeprovisionNodeExecutionResult) SetError(err string) {
+	r.Error = &err
+}
+
+func (r *DeprovisionNodeExecutionResult) GetError() string {
+	if r.Error == nil {
+		return "unknown"
+	}
+	return *r.Error
 }
 
 type ProvisionNodeExecutionResult struct {
-	Node       *string  `json:"nodeId,omitempty"`
-	FailedStep *string  `json:"failedStep,omitempty"`
-	Errors     []string `json:"errors,omitempty"`
+	Node  *string `json:"nodeId,omitempty"`
+	Error *string `json:"error,omitempty"`
 }
 
-func NewProvisionNodeExecutionResult(step string) ProvisionNodeExecutionResult {
-	return ProvisionNodeExecutionResult{
-		FailedStep: &step,
-		Errors:     []string{},
-	}
+func NewProvisionNodeExecutionResult() ProvisionNodeExecutionResult {
+	return ProvisionNodeExecutionResult{}
 }
 
 func (r ProvisionNodeExecutionResult) Serialize() (SerializedExecutionResult, error) {
 	return serializeExecutionResult(r)
 }
 
-func (r ProvisionNodeExecutionResult) GetFailedStep() string {
-	return getFailureStep(r.FailedStep)
+func (r *ProvisionNodeExecutionResult) SetError(err string) {
+	r.Error = &err
+}
+
+func (r *ProvisionNodeExecutionResult) GetError() string {
+	if r.Error == nil {
+		return "unknown"
+	}
+	return *r.Error
 }
 
 func (r ProvisionNodeExecutionResult) GetNode() string {
