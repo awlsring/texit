@@ -8,6 +8,7 @@ import (
 )
 
 type Config struct {
+	LogLevel  string            `yaml:"logLevel"`
 	Server    *ServerConfig     `yaml:"server"`
 	Tailnets  []*TailnetConfig  `yaml:"tailnets"`
 	Database  *DatabaseConfig   `yaml:"database"`
@@ -19,6 +20,10 @@ func LoadFromData(data []byte) (*Config, error) {
 	err := yaml.Unmarshal(data, &cfg)
 	if err != nil {
 		return nil, err
+	}
+
+	if cfg.LogLevel == "" {
+		cfg.LogLevel = "info"
 	}
 
 	err = cfg.Database.Validate()

@@ -182,10 +182,16 @@ func main() {
 	defer cancel()
 	ctx = logger.InitContextLogger(ctx, zerolog.DebugLevel)
 	log = logger.FromContext(ctx)
+
 	log.Info().Msg("Initializing")
 
 	log.Info().Msg("Loading config")
 	cfg, err := config.LoadFromFile(getConfigPath())
+	panicOnErr(err)
+
+	logLevel, err := zerolog.ParseLevel(cfg.LogLevel)
+	log.Info().Msgf("Setting log level to %s", logLevel.String())
+	zerolog.SetGlobalLevel(logLevel)
 	panicOnErr(err)
 
 	log.Info().Msg("Connecting to database")
@@ -234,7 +240,7 @@ func main() {
 	sec := auth.NewSecurityHandler([]string{cfg.Server.APIKey})
 
 	log.Info().Msg("Creating ogen server")
-	srv := ogen.NewServer(lis, hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(zerolog.DebugLevel))
+	srv := ogen.NewServer(lis, hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(logLevel))
 
 	log.Info().Msg("Initializing workflow worker")
 	worker := mem_workflow.NewWorker(activitySvc, workChan)
