@@ -12,6 +12,8 @@ import (
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen"
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/auth"
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/handler"
+	mqtt_notification_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/notification/mqtt"
+	sns_notification_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/notification/sns"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ec2"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ecs"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_linode"
@@ -23,6 +25,7 @@ import (
 	"github.com/awlsring/texit/internal/app/api/config"
 	"github.com/awlsring/texit/internal/app/api/core/service/activity"
 	"github.com/awlsring/texit/internal/app/api/core/service/node"
+	"github.com/awlsring/texit/internal/app/api/core/service/notification"
 	provSvc "github.com/awlsring/texit/internal/app/api/core/service/provider"
 	tailnetSvc "github.com/awlsring/texit/internal/app/api/core/service/tailnet"
 	workflowSvc "github.com/awlsring/texit/internal/app/api/core/service/workflow"
@@ -34,6 +37,10 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/internal/pkg/tsn"
 	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client"
+	awscfg "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/sns"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/jmoiron/sqlx"
@@ -177,6 +184,41 @@ func initListener(cfg *config.ServerConfig) net.Listener {
 	return l
 }
 
+func initNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
+	notifiers := make([]gateway.Notification, 0, len(cfg))
+	for _, n := range cfg {
+		switch n.Type {
+		case config.NotifierTypeMqtt:
+			opts := mqtt.NewClientOptions()
+			opts.AddBroker(n.Broker)
+			opts.SetClientID("texit")
+			if n.Username != "" {
+				opts.SetUsername(n.Username)
+			}
+			if n.Password != "" {
+				opts.SetPassword(n.Password)
+			}
+			c := mqtt.NewClient(opts)
+			notifiers = append(notifiers, mqtt_notification_gateway.New(n.Topic, c))
+		case config.NotifierTypeSns:
+			if n.AccessKey == "" || n.SecretKey == "" {
+				panic("missing access key or secret key")
+			}
+			creds := credentials.NewStaticCredentialsProvider(n.AccessKey, n.SecretKey, "")
+			cfg, err := awscfg.LoadDefaultConfig(context.TODO(),
+				awscfg.WithRegion(n.Region),
+				awscfg.WithCredentialsProvider(creds),
+			)
+			panicOnErr(err)
+			client := sns.NewFromConfig(cfg)
+			notifiers = append(notifiers, sns_notification_gateway.New(n.Topic, client))
+		default:
+			panic("unknown notifier type")
+		}
+	}
+	return notifiers
+}
+
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -227,6 +269,12 @@ func main() {
 
 	tailnetSvc := initTailnetService(cfg.Tailnets)
 
+	log.Info().Msg("Initializing notifier gateways")
+	notifiers := initNotifiers(cfg.Notifiers)
+
+	log.Info().Msg("Initializing notification service")
+	notSvc := notification.NewService(notifiers)
+
 	log.Info().Msg("Initializing node service")
 	nodeSvc := node.NewService(nodeRepo, workflowSvc, providerGateways)
 
@@ -243,7 +291,7 @@ func main() {
 	srv := ogen.NewServer(lis, hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(logLevel))
 
 	log.Info().Msg("Initializing workflow worker")
-	worker := mem_workflow.NewWorker(activitySvc, workChan)
+	worker := mem_workflow.NewWorker(activitySvc, notSvc, workChan)
 
 	log.Info().Msg("Starting server")
 	go func() {

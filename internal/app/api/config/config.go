@@ -13,6 +13,7 @@ type Config struct {
 	Tailnets  []*TailnetConfig  `yaml:"tailnets"`
 	Database  *DatabaseConfig   `yaml:"database"`
 	Providers []*ProviderConfig `yaml:"providers"`
+	Notifiers []*NotifierConfig `yaml:"notifiers"`
 }
 
 func LoadFromData(data []byte) (*Config, error) {
@@ -53,6 +54,15 @@ func LoadFromData(data []byte) (*Config, error) {
 		err = p.Validate()
 		if err != nil {
 			return nil, err
+		}
+	}
+
+	if len(cfg.Notifiers) != 0 {
+		for _, n := range cfg.Notifiers {
+			err = n.Validate()
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 

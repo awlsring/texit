@@ -11,12 +11,14 @@ import (
 
 type SfnActivityHandler struct {
 	actSvc   service.Activity
+	notSvc   service.Notification
 	logLevel zerolog.Level
 }
 
-func New(actSvc service.Activity) *SfnActivityHandler {
+func New(notSvc service.Notification, actSvc service.Activity) *SfnActivityHandler {
 	return &SfnActivityHandler{
 		actSvc: actSvc,
+		notSvc: notSvc,
 	}
 }
 

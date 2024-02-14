@@ -20,6 +20,12 @@ func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Closing execution request")
 
+	wf, err := workflow.WorkflowNameFromString(input.WorkflowName)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse workflow name")
+		return err
+	}
+
 	resultsRaw, err := json.Marshal(input.Results)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to marshal results")
@@ -40,8 +46,8 @@ func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *
 	}
 
 	var res workflow.ExecutionResult
-	switch input.WorkflowName {
-	case "provision-node":
+	switch wf {
+	case workflow.WorkflowNameProvisionNode:
 		r, err := workflow.DeserializeExecutionResult[workflow.ProvisionNodeExecutionResult](workflow.SerializedExecutionResult(resultsRaw))
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to deserialize results")
@@ -51,7 +57,7 @@ func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *
 			r.SetError(input.Error)
 		}
 		res = r
-	case "deprovision-node":
+	case workflow.WorkflowNameDeprovisionNode:
 		r, err := workflow.DeserializeExecutionResult[workflow.DeprovisionNodeExecutionResult](workflow.SerializedExecutionResult(resultsRaw))
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to deserialize results")
@@ -67,6 +73,12 @@ func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to close execution")
 		return err
+	}
+
+	log.Debug().Msg("Signaling execution compplete")
+	err = h.notSvc.NotifyExecutionCompletion(ctx, executionId, wf, status, res)
+	if err != nil {
+		log.Warn().Err(err).Msg("Failed to signal execution complete")
 	}
 
 	return nil

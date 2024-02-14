@@ -16,11 +16,12 @@ import (
 type Worker struct {
 	logger      zerolog.Logger
 	actSvc      service.Activity
+	notSvc      service.Notification
 	workChan    chan workflow.ExecutionInput
 	activeTasks uint32
 }
 
-func NewWorker(actSvc service.Activity, c chan workflow.ExecutionInput) *Worker {
+func NewWorker(actSvc service.Activity, notSvc service.Notification, c chan workflow.ExecutionInput) *Worker {
 	log := logger.FromContext(logger.InitContextLogger(context.Background(), zerolog.DebugLevel))
 	return &Worker{
 		logger:      log,
@@ -91,12 +92,15 @@ func (w *Worker) runExecution(input workflow.ExecutionInput) {
 
 	var status workflow.Status
 	var result workflow.ExecutionResult
+	var wf workflow.WorkflowName
 
 	log.Debug().Msg("Running execution")
 	switch input := input.(type) {
 	case *workflow.ProvisionNodeInput:
+		wf = workflow.WorkflowNameProvisionNode
 		status, result = w.provisionNodeWorkflow(ctx, input)
 	case *workflow.DeprovisionNodeInput:
+		wf = workflow.WorkflowNameDeprovisionNode
 		status, result = w.deprovisionNodeWorkflow(ctx, input)
 	default:
 		err = errors.New("unknown execution type")
@@ -109,4 +113,12 @@ func (w *Worker) runExecution(input workflow.ExecutionInput) {
 		log.Error().Err(err).Msg("Failed to close execution")
 		return
 	}
+
+	log.Debug().Msg("Signaling execution compplete")
+	err = w.notSvc.NotifyExecutionCompletion(ctx, exId, wf, status, result)
+	if err != nil {
+		log.Warn().Err(err).Msg("Failed to signal execution complete")
+	}
+
+	log.Debug().Msg("Execution complete")
 }

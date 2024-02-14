@@ -8,6 +8,8 @@ import (
 	"os"
 
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/sfn_activities"
+	mqtt_notification_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/notification/mqtt"
+	sns_notification_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/notification/sns"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ec2"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ecs"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_linode"
@@ -17,6 +19,7 @@ import (
 	dynamo_node_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/node/dynamo"
 	"github.com/awlsring/texit/internal/app/api/config"
 	"github.com/awlsring/texit/internal/app/api/core/service/activity"
+	"github.com/awlsring/texit/internal/app/api/core/service/notification"
 	provSvc "github.com/awlsring/texit/internal/app/api/core/service/provider"
 	tailnetSvc "github.com/awlsring/texit/internal/app/api/core/service/tailnet"
 	"github.com/awlsring/texit/internal/app/api/ports/gateway"
@@ -29,6 +32,8 @@ import (
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/sns"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/linode/linodego"
@@ -60,6 +65,34 @@ func loadAppConfig(acfg aws.Config) *config.Config {
 	cfg, err := config.LoadFromData(bytes)
 	panicOnErr(err)
 	return cfg
+}
+
+func initNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
+	notifiers := make([]gateway.Notification, 0, len(cfg))
+	for _, n := range cfg {
+		switch n.Type {
+		case config.NotifierTypeMqtt:
+			opts := mqtt.NewClientOptions()
+			opts.AddBroker(n.Broker)
+			opts.SetClientID("texit")
+			if n.Username != "" {
+				opts.SetUsername(n.Username)
+			}
+			if n.Password != "" {
+				opts.SetPassword(n.Password)
+			}
+			c := mqtt.NewClient(opts)
+			notifiers = append(notifiers, mqtt_notification_gateway.New(n.Topic, c))
+		case config.NotifierTypeSns:
+			cfg, err := awsconfig.LoadDefaultConfig(context.Background(), awsconfig.WithRegion(n.Region))
+			panicOnErr(err)
+			client := sns.NewFromConfig(cfg)
+			notifiers = append(notifiers, sns_notification_gateway.New(n.Topic, client))
+		default:
+			panic("unknown notifier type")
+		}
+	}
+	return notifiers
 }
 
 func initProviderGateways(providers []*config.ProviderConfig) map[string]gateway.Platform {
@@ -185,8 +218,14 @@ func main() {
 	log.Info().Msg("Creating activity service")
 	actSvc := activity.NewService(tailnetGateways, providerGateways, nodeRepo, execRepo)
 
+	log.Info().Msg("Initializing notifier gateways")
+	notifiers := initNotifiers(cfg.Notifiers)
+
+	log.Info().Msg("Initializing notification service")
+	notSvc := notification.NewService(notifiers)
+
 	log.Info().Msg("Creating activity handler")
-	act := sfn_activities.New(actSvc)
+	act := sfn_activities.New(notSvc, actSvc)
 
 	log.Info().Msg("Starting lambda handler")
 	lambda.Start(act.HandleRequest)
