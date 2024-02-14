@@ -35,11 +35,11 @@ func (g *PlatformAwsEc2Gateway) CreateNode(ctx context.Context, id node.Identifi
 	}
 
 	log.Debug().Msg("Forming cloud-init")
-	cloudInit := formCloudInit(ctx, key.String(), loc.String(), tid)
+	cloudInit := formCloudInit(ctx, key.String(), tid, tcs)
 	log.Debug().Str("cloud_init", cloudInit).Msg("Cloud-init formed")
 
 	log.Debug().Msg("Creating EC2 instance")
-	instanceId, err := runInstance(ctx, ec2Client, ami, DefaultInstanceType, cloudInit)
+	instanceId, err := runInstance(ctx, ec2Client, id, tid, ami, DefaultInstanceType, cloudInit)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create EC2 instance")
 		return "", err
@@ -57,7 +57,7 @@ func (g *PlatformAwsEc2Gateway) CreateNode(ctx context.Context, id node.Identifi
 	return node.PlatformIdentifier(instanceId), nil
 }
 
-func runInstance(ctx context.Context, client interfaces.Ec2Client, ami, typee, cloudInit string) (string, error) {
+func runInstance(ctx context.Context, client interfaces.Ec2Client, id node.Identifier, tid tailnet.DeviceName, ami, typee, cloudInit string) (string, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating EC2 instance")
 
@@ -68,6 +68,7 @@ func runInstance(ctx context.Context, client interfaces.Ec2Client, ami, typee, c
 		UserData:     &cloudInit,
 		MaxCount:     aws.Int32(1),
 		MinCount:     aws.Int32(1),
+		ClientToken:  aws.String(id.String()),
 		TagSpecifications: []types.TagSpecification{
 			{
 				ResourceType: types.ResourceTypeInstance,
@@ -75,6 +76,14 @@ func runInstance(ctx context.Context, client interfaces.Ec2Client, ami, typee, c
 					{
 						Key:   aws.String("created-by"),
 						Value: aws.String("texit"),
+					},
+					{
+						Key:   aws.String("node-id"),
+						Value: aws.String(id.String()),
+					},
+					{
+						Key:   aws.String("tailnet-device-name"),
+						Value: aws.String(tid.String()),
 					},
 				},
 			},
@@ -89,6 +98,7 @@ func runInstance(ctx context.Context, client interfaces.Ec2Client, ami, typee, c
 	return *resp.Instances[0].InstanceId, nil
 }
 
-func formCloudInit(ctx context.Context, authKey, location string, tid tailnet.DeviceName) string {
-	return base64.StdEncoding.EncodeToString([]byte(platform.TailscaleCloudInit(authKey, tid.String())))
+func formCloudInit(ctx context.Context, authKey string, tid tailnet.DeviceName, tcs tailnet.ControlServer) string {
+	userData := platform.TailscaleCloudInit(authKey, tid.String(), tcs.String())
+	return base64.StdEncoding.EncodeToString([]byte(userData))
 }

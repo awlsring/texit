@@ -60,7 +60,7 @@ func (m *Worker) Start(ctx context.Context) error {
 }
 
 func (m *Worker) Close(ctx context.Context) error {
-	timeout := time.After(10 * time.Second)
+	timeout := time.After(120 * time.Second)
 	for {
 		if m.RunningTasks() == 0 {
 			return nil

@@ -26,7 +26,7 @@ func (p *PlatformLinode) CreateNode(ctx context.Context, id node.Identifier, tid
 		Label:    id.String(),
 		Images:   []string{"any/all"},
 		IsPublic: false,
-		Script:   platform.TailscaleCloudInit(key.String(), tid.String()),
+		Script:   platform.TailscaleCloudInit(key.String(), tid.String(), tcs.String()),
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create Linode stackscript")
@@ -38,7 +38,7 @@ func (p *PlatformLinode) CreateNode(ctx context.Context, id node.Identifier, tid
 		Region:        loc.String(),
 		Type:          DefaultInstanceType,
 		Label:         id.String(),
-		Tags:          []string{"texit"},
+		Tags:          []string{"texit", fmt.Sprintf("tailnet:%s", tid.String()), fmt.Sprintf("node-id:%s", id.String())},
 		StackScriptID: stack.ID,
 		Image:         DefaultImage,
 		RootPass:      uuid.New().String(),

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/interfaces"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -112,7 +113,7 @@ func getDefaultSecurityGroupId(ctx context.Context, client interfaces.Ec2Client)
 	return *resp.SecurityGroups[0].GroupId, nil
 }
 
-func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client interfaces.Ec2Client, id node.Identifier) error {
+func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client interfaces.Ec2Client, id node.Identifier, tid tailnet.DeviceName) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Making ECS service")
 
@@ -155,6 +156,14 @@ func makeService(ctx context.Context, ecsClient interfaces.EcsClient, ec2Client 
 			{
 				Key:   aws.String("created-by"),
 				Value: aws.String("texit"),
+			},
+			{
+				Key:   aws.String("node-id"),
+				Value: aws.String(id.String()),
+			},
+			{
+				Key:   aws.String("tailnet-device-name"),
+				Value: aws.String(tid.String()),
 			},
 		},
 	})

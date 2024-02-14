@@ -83,7 +83,7 @@ func (g *PlatformAwsEcsGateway) CreateNode(ctx context.Context, id node.Identifi
 	}
 
 	log.Debug().Msg("Creating service")
-	err = makeService(ctx, ecsClient, ec2Client, id)
+	err = makeService(ctx, ecsClient, ec2Client, id, tid)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create service")
 		return "", err
