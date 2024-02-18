@@ -2,19 +2,12 @@ package handler
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
-	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/logger"
-)
-
-const (
-	pollAmount = 120
-	pollDelay  = 5
 )
 
 func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
@@ -77,41 +70,9 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 		log.Error().Err(err).Msg("Failed to write bot response")
 	}
 
-	log.Debug().Msg("Polling execution")
-	for i := 0; i < pollAmount; i++ {
-		log.Debug().Int("poll_count", i).Msg("Polling execution")
-		ex, err := h.apiSvc.GetExecution(ctx, exId)
-		if err != nil {
-			log.Error().Err(err).Msg("Error polling execution")
-			ExecutionInternalErrorResponse(ctx)
-			return
-		}
-		log.Debug().Interface("execution", ex).Msg("Execution")
-		output, err := workflow.DeserializeExecutionResult[workflow.ProvisionNodeExecutionResult](ex.Results)
-		if err != nil {
-			log.Error().Err(err).Msg("Error polling execution")
-			ExecutionInternalErrorResponse(ctx)
-			return
-		}
-		if ex.Status == workflow.StatusComplete {
-			predicatedTailId := fmt.Sprintf("%s-%s", pl, output.GetNode())
-			log.Debug().Msg("Execution is complete, writing bot response")
-			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf("The provision node workflow you requested has completed succesfully.\n\nThe id of your new node is `%s`. (It should appear as something like `%s` on your tailnet)", output.GetNode(), predicatedTailId))
-			if err != nil {
-				log.Error().Err(err).Msg("Failed to write bot response")
-			}
-			return
-		}
-		if ex.Status == workflow.StatusFailed {
-			log.Debug().Msg("Execution is failed, writing bot response")
-			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf("The provision node workflow you request failed :sad:.\n\nIt failed on step %s\nErrors encountered: %s", output.GetError()))
-			if err != nil {
-				log.Error().Err(err).Msg("Failed to write bot response")
-			}
-			return
-		}
-		log.Debug().Msg("Execution is not complete, waiting")
-		time.Sleep(pollDelay * time.Second)
+	log.Debug().Msg("Tracking execution")
+	err = h.tracker.AddExecution(ctx, exId.String(), ctx.Requester())
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to track execution")
 	}
-
 }

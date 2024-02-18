@@ -8,6 +8,7 @@ import (
 	"github.com/a-h/awsapigatewayv2handler"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord"
 	discfg "github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/config"
+	pending_execution "github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/execution"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/handler"
 	api_gateway "github.com/awlsring/texit/internal/app/ui/adapters/secondary/gateway/api"
 	"github.com/awlsring/texit/internal/app/ui/core/service/api"
@@ -18,6 +19,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/clients"
 	cconfig "github.com/awlsring/texit/internal/pkg/config"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -46,6 +48,7 @@ func main() {
 	if cfg.Server.Address != ":443" {
 		panic("Only :443 is supported as a server address")
 	}
+	ddbClient := dynamodb.NewFromConfig(awsCfg)
 
 	log.Info().Msg("Initing Texit API client")
 	texit, err := clients.CreateTexitClient(texitEndpoint(cfg), cfg.Api.ApiKey)
@@ -64,8 +67,11 @@ func main() {
 	log.Info().Msg("Initing node service")
 	nodeSvc := node.NewService(apiGw, tailSvc, provSvc)
 
+	log.Info().Msg("Initing tracker")
+	tracker := pending_execution.NewDdbTracker("TrackedExecutions", ddbClient)
+
 	log.Info().Msg("Initing handler")
-	hdl := handler.New(apiSvc, nodeSvc, provSvc, tailSvc)
+	hdl := handler.New(apiSvc, nodeSvc, provSvc, tailSvc, tracker)
 
 	log.Info().Msg("Creating new Tempest client...")
 	client := tempest.NewClient(tempest.ClientOptions{

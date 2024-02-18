@@ -2,18 +2,11 @@ package handler
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
-	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/logger"
-)
-
-const (
-	deprovisionPollAmount = 20
-	deprovisionPollDelay  = 5
 )
 
 func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
@@ -46,41 +39,9 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 		log.Error().Err(err).Msg("Failed to write bot response")
 	}
 
-	log.Debug().Msg("Polling execution")
-	for i := 0; i < deprovisionPollAmount; i++ {
-		log.Debug().Int("poll_count", i).Msg("Polling execution")
-		ex, err := h.apiSvc.GetExecution(ctx, exId)
-		if err != nil {
-			log.Error().Err(err).Msg("Error polling execution")
-			ExecutionInternalErrorResponse(ctx)
-			return
-		}
-		log.Debug().Interface("execution", ex).Msg("Execution")
-		output, err := workflow.DeserializeExecutionResult[workflow.DeprovisionNodeExecutionResult](ex.Results)
-		if err != nil {
-			log.Error().Err(err).Msg("Error polling execution")
-			ExecutionInternalErrorResponse(ctx)
-			return
-		}
-		if ex.Status == workflow.StatusComplete {
-			log.Debug().Msg("Execution is complete, writing bot response")
-			_, err = ctx.SendRequesterPrivateMessage("The deprovision node workflow you requested has completed successfully")
-			if err != nil {
-				log.Error().Err(err).Msg("Failed to write bot response")
-			}
-			return
-		}
-		if ex.Status == workflow.StatusFailed {
-
-			log.Debug().Msg("Execution is failed, writing bot response")
-			_, err = ctx.SendRequesterPrivateMessage(fmt.Sprintf("The deprovision node workflow you request failed :(\n\nIt failed on step %s\nError: %s", output.GetError()))
-			if err != nil {
-				log.Error().Err(err).Msg("Failed to write bot response")
-			}
-			return
-		}
-		log.Debug().Msg("Execution is not complete, waiting")
-		time.Sleep(deprovisionPollDelay * time.Second)
+	log.Debug().Msg("Tracking execution")
+	err = h.tracker.AddExecution(ctx, exId.String(), ctx.Requester())
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to track execution")
 	}
-
 }

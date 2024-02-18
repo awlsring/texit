@@ -21,6 +21,15 @@ func (e ExecutionMessage) Serialize() (string, error) {
 	return string(j), nil
 }
 
+func DeserializeExecutionMessage(b []byte) (ExecutionMessage, error) {
+	var e ExecutionMessage
+	err := json.Unmarshal(b, &e)
+	if err != nil {
+		return e, err
+	}
+	return e, nil
+}
+
 func NewExecutionMessage(e workflow.ExecutionIdentifier, w workflow.WorkflowName, status workflow.Status, msg, results string) ExecutionMessage {
 	return ExecutionMessage{
 		WorkflowName: w.String(),
