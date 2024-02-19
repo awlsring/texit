@@ -26,10 +26,12 @@ import (
 	"github.com/awlsring/texit/internal/app/api/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/sns"
@@ -37,6 +39,7 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/linode/linodego"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/tailscale/tailscale-client-go/tailscale"
 	"golang.org/x/oauth2"
@@ -84,7 +87,14 @@ func initNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
 			c := mqtt.NewClient(opts)
 			notifiers = append(notifiers, mqtt_notification_gateway.New(n.Topic, c))
 		case config.NotifierTypeSns:
-			cfg, err := awsconfig.LoadDefaultConfig(context.Background(), awsconfig.WithRegion(n.Region))
+			opts := []func(*awsconfig.LoadOptions) error{
+				awsconfig.WithRegion(n.Region),
+			}
+			if n.AccessKey != "" && n.SecretKey != "" {
+				creds := credentials.NewStaticCredentialsProvider(n.AccessKey, n.SecretKey, "")
+				opts = append(opts, awsconfig.WithCredentialsProvider(creds))
+			}
+			cfg, err := awsconfig.LoadDefaultConfig(context.Background(), opts...)
 			panicOnErr(err)
 			client := sns.NewFromConfig(cfg)
 			notifiers = append(notifiers, sns_notification_gateway.New(n.Topic, client))
@@ -202,8 +212,13 @@ func main() {
 		log.Error().Err(err).Msg("Error loading AWS config")
 		panicOnErr(err)
 	}
-
 	cfg := loadAppConfig(awsCfg)
+
+	lvl, err := zerolog.ParseLevel(cfg.LogLevel)
+	log := logger.InitLogger(lvl)
+	log.Info().Msgf("Setting log level to %s", lvl.String())
+	zerolog.SetGlobalLevel(lvl)
+	panicOnErr(err)
 
 	ddb := dynamodb.NewFromConfig(awsCfg)
 	nodeRepo := dynamo_node_repository.New("TexitNodes", ddb)

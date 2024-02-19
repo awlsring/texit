@@ -21,6 +21,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var lvl zerolog.Level
 var lisHdl *callback.CallbackHandler
 
 func handleRecord(ctx context.Context, record events.SNSEventRecord) {
@@ -35,7 +36,7 @@ func handleRecord(ctx context.Context, record events.SNSEventRecord) {
 }
 
 func handler(ctx context.Context, event events.SNSEvent) {
-	ctx = logger.InitContextLogger(ctx, zerolog.InfoLevel)
+	ctx = logger.InitContextLogger(ctx, lvl)
 
 	var wg sync.WaitGroup
 	for _, record := range event.Records {
@@ -60,6 +61,8 @@ func main() {
 	s3Client := s3.NewFromConfig(awsCfg)
 	ddbClient := dynamodb.NewFromConfig(awsCfg)
 	cfg, err := cconfig.LoadFromS3[discfg.Config](s3Client, os.Getenv("CONFIG_BUCKET"), os.Getenv("CONFIG_OBJECT"))
+	appinit.PanicOnErr(err)
+	lvl, err = zerolog.ParseLevel(cfg.LogLevel)
 	appinit.PanicOnErr(err)
 
 	log.Info().Msg("Creating new Tempest client...")

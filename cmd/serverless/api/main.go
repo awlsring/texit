@@ -29,6 +29,7 @@ import (
 	"github.com/awlsring/texit/internal/app/api/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client"
 	"github.com/awlsring/texit/pkg/gen/texit"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -197,6 +198,12 @@ func main() {
 		panic("Only DynamoDB is supported as a database engine")
 	}
 
+	lvl, err := zerolog.ParseLevel(cfg.LogLevel)
+	log = logger.InitLogger(lvl)
+	log.Info().Msgf("Setting log level to %s", lvl.String())
+	zerolog.SetGlobalLevel(lvl)
+	panicOnErr(err)
+
 	ddb := dynamodb.NewFromConfig(awsCfg)
 
 	nodeRepo := dynamo_node_repository.New("TexitNodes", ddb)
@@ -225,9 +232,9 @@ func main() {
 	log.Info().Msg("Initializing security handler")
 	sec := auth.NewSecurityHandler([]string{cfg.Server.APIKey})
 	opts := []texit.ServerOption{
-		texit.WithMiddleware(middleware.LoggingMiddleware(zerolog.DebugLevel)),
+		texit.WithMiddleware(middleware.LoggingMiddleware(lvl)),
 		texit.WithNotFound(smithy_errors.UnknownOperationHandler),
-		texit.WithErrorHandler(smithy_errors.ResponseHandlerWithLogger(zerolog.DebugLevel)),
+		texit.WithErrorHandler(smithy_errors.ResponseHandlerWithLogger(lvl)),
 	}
 	srv, err := texit.NewServer(hdl, sec, opts...)
 	if err != nil {

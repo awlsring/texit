@@ -50,6 +50,10 @@ func main() {
 	}
 	ddbClient := dynamodb.NewFromConfig(awsCfg)
 
+	lvl, err := zerolog.ParseLevel(cfg.LogLevel)
+	appinit.PanicOnErr(err)
+	zerolog.SetGlobalLevel(lvl)
+
 	log.Info().Msg("Initing Texit API client")
 	texit, err := clients.CreateTexitClient(texitEndpoint(cfg), cfg.Api.ApiKey)
 	appinit.PanicOnErr(err)
@@ -87,7 +91,7 @@ func main() {
 	appinit.PanicOnErr(err)
 
 	log.Info().Msg("Initing Discord Bot")
-	bot := discord.NewBot(hdl, client, discord.WithAuthorizedUsers(authorized), discord.WithGuilds(guilds), discord.WithLogLevel(zerolog.DebugLevel))
+	bot := discord.NewBot(hdl, client, discord.WithAuthorizedUsers(authorized), discord.WithGuilds(guilds), discord.WithLogLevel(lvl))
 
 	appinit.PanicOnErr(bot.Init())
 
