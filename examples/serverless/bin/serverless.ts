@@ -36,8 +36,10 @@ const texit = new TexitApiStack(app, "TexitApiStack", {
 });
 
 new TexitDiscordBotStack(app, "TexitDiscordBotStack", {
-  binary: Code.fromAsset("assets/bin/texit-discord"),
+  botBinary: Code.fromAsset("assets/bin/texit-discord"),
+  callbackBinary: Code.fromAsset("assets/bin/texit-discord-callback"),
   configBucket: resources.configBucket,
   configObject: "bot-config.yaml",
   texitEndpoint: texit.api.url!,
+  callbackTopic: texit.notifierTopic!,
 });

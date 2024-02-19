@@ -5,6 +5,7 @@
     "serverless": "bin/serverless.js"
   },
   "scripts": {
+    "get-assets": "scripts/get-assets.sh",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
@@ -23,6 +24,6 @@
     "aws-cdk-lib": "2.127.0",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.21",
-    "texit-constructs": "^0.0.3"
+    "texit-constructs": "^0.0.12"
   }
 }
