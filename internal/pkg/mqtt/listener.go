@@ -48,6 +48,7 @@ func (l *listener) Subscribe(ctx context.Context, t string) error {
 func NewListener(addr string, hdl ListenHandler, opts ...ListenerOption) (Listener, error) {
 	l := &listener{
 		lvl: zerolog.InfoLevel,
+		log: log.Logger,
 		hdl: hdl,
 	}
 

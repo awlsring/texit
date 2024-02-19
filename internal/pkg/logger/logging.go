@@ -12,31 +12,36 @@ import (
 
 var DefaultLogger zerolog.Logger = log.With().Logger()
 
-type LoggingOpt func(zctx zerolog.Context, ctx context.Context) zerolog.Context
+type LoggingOpt func(zctx zerolog.Context) zerolog.Context
 
 func WithField(key string, value interface{}) LoggingOpt {
-	return func(zctx zerolog.Context, ctx context.Context) zerolog.Context {
+	return func(zctx zerolog.Context) zerolog.Context {
 		return zctx.Interface(key, value)
 	}
 }
 
-func InitContextLogger(ctx context.Context, lvl zerolog.Level, opts ...LoggingOpt) context.Context {
+func InitLogger(lvl zerolog.Level, opts ...LoggingOpt) zerolog.Logger {
 	buildInfo, _ := debug.ReadBuildInfo()
 	logger := zerolog.New(os.Stderr)
 	logger = logger.Level(lvl)
 	logger = logger.With().
 		Caller().
 		Timestamp().
-		Caller().
 		Int("pid", os.Getpid()).
 		Str("go_version", buildInfo.GoVersion).
 		Logger()
 
 	for _, opt := range opts {
 		logger.UpdateContext(func(zctx zerolog.Context) zerolog.Context {
-			return opt(zctx, ctx)
+			return opt(zctx)
 		})
 	}
+
+	return logger
+}
+
+func InitContextLogger(ctx context.Context, lvl zerolog.Level, opts ...LoggingOpt) context.Context {
+	logger := InitLogger(lvl, opts...)
 
 	ctx = logger.WithContext(ctx)
 

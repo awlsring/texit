@@ -13,7 +13,16 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+type WorkerOpt func(*Worker)
+
+func WithLogLevel(lvl zerolog.Level) WorkerOpt {
+	return func(w *Worker) {
+		w.logger = w.logger.Level(lvl)
+	}
+}
+
 type Worker struct {
+	logLevel    zerolog.Level
 	logger      zerolog.Logger
 	actSvc      service.Activity
 	notSvc      service.Notification
@@ -21,14 +30,22 @@ type Worker struct {
 	activeTasks uint32
 }
 
-func NewWorker(actSvc service.Activity, notSvc service.Notification, c chan workflow.ExecutionInput) *Worker {
-	log := logger.FromContext(logger.InitContextLogger(context.Background(), zerolog.DebugLevel))
-	return &Worker{
-		logger:      log,
+func NewWorker(actSvc service.Activity, notSvc service.Notification, c chan workflow.ExecutionInput, opts ...WorkerOpt) *Worker {
+	w := &Worker{
+		logLevel:    zerolog.InfoLevel,
 		workChan:    c,
 		actSvc:      actSvc,
+		notSvc:      notSvc,
 		activeTasks: 0,
 	}
+
+	for _, o := range opts {
+		o(w)
+	}
+	log := logger.InitLogger(w.logLevel, logger.WithField("component", "worker"))
+	w.logger = log
+
+	return w
 }
 
 func (w *Worker) incrementRunningTasks() {
@@ -114,7 +131,7 @@ func (w *Worker) runExecution(input workflow.ExecutionInput) {
 		return
 	}
 
-	log.Debug().Msg("Signaling execution compplete")
+	log.Debug().Msg("Signaling execution complete")
 	err = w.notSvc.NotifyExecutionCompletion(ctx, exId, wf, status, result)
 	if err != nil {
 		log.Warn().Err(err).Msg("Failed to signal execution complete")

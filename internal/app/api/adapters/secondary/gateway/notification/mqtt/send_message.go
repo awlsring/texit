@@ -11,14 +11,10 @@ func (g *MqttGateway) SendMessage(ctx context.Context, message string) error {
 	log.Debug().Msg("Sending message to MQTT")
 
 	t := g.client.Publish(g.topic, 0, false, message)
-	go func() {
-		<-t.Done()
-		if err := t.Error(); err != nil {
-			log.Err(err).Msg("Error sending message")
-		} else {
-			log.Debug().Msg("Message sent")
-		}
-	}()
+	if t.Wait() && t.Error() != nil {
+		log.Error().Err(t.Error()).Msg("Failed to send message to MQTT")
+		return t.Error()
+	}
 
 	log.Debug().Msg("Message sent")
 	return nil

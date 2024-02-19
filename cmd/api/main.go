@@ -199,6 +199,9 @@ func initNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
 				opts.SetPassword(n.Password)
 			}
 			c := mqtt.NewClient(opts)
+			if token := c.Connect(); token.Wait() && token.Error() != nil {
+				panicOnErr(token.Error())
+			}
 			notifiers = append(notifiers, mqtt_notification_gateway.New(n.Topic, c))
 		case config.NotifierTypeSns:
 			if n.AccessKey == "" || n.SecretKey == "" {
@@ -222,18 +225,16 @@ func initNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	ctx = logger.InitContextLogger(ctx, zerolog.DebugLevel)
-	log = logger.FromContext(ctx)
-
 	log.Info().Msg("Initializing")
 
 	log.Info().Msg("Loading config")
 	cfg, err := config.LoadFromFile(getConfigPath())
 	panicOnErr(err)
 
-	logLevel, err := zerolog.ParseLevel(cfg.LogLevel)
-	log.Info().Msgf("Setting log level to %s", logLevel.String())
-	zerolog.SetGlobalLevel(logLevel)
+	lvl, err := zerolog.ParseLevel(cfg.LogLevel)
+	log = logger.InitLogger(lvl)
+	log.Info().Msgf("Setting log level to %s", lvl.String())
+	zerolog.SetGlobalLevel(lvl)
 	panicOnErr(err)
 
 	log.Info().Msg("Connecting to database")
@@ -288,10 +289,10 @@ func main() {
 	sec := auth.NewSecurityHandler([]string{cfg.Server.APIKey})
 
 	log.Info().Msg("Creating ogen server")
-	srv := ogen.NewServer(lis, hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(logLevel))
+	srv := ogen.NewServer(lis, hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(lvl))
 
 	log.Info().Msg("Initializing workflow worker")
-	worker := mem_workflow.NewWorker(activitySvc, notSvc, workChan)
+	worker := mem_workflow.NewWorker(activitySvc, notSvc, workChan, mem_workflow.WithLogLevel(lvl))
 
 	log.Info().Msg("Starting server")
 	go func() {

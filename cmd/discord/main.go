@@ -148,7 +148,7 @@ func main() {
 	}()
 
 	go func() {
-		log.Info().Msg("Starting MQTT Listener")
+		log.Info().Msg("Starting MQTT Listener on topic " + cfg.Notification.Topic)
 		panicOnErr(lsn.Subscribe(ctx, cfg.Notification.Topic))
 		log.Info().Msg("Subscribed to MQTT topic")
 	}()

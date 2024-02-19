@@ -75,7 +75,7 @@ func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *
 		return err
 	}
 
-	log.Debug().Msg("Signaling execution compplete")
+	log.Debug().Msg("Signaling execution complete")
 	err = h.notSvc.NotifyExecutionCompletion(ctx, executionId, wf, status, res)
 	if err != nil {
 		log.Warn().Err(err).Msg("Failed to signal execution complete")
