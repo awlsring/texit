@@ -24,6 +24,7 @@ const workflows = new TexitWorkflowsStack(app, "TexitWorkflowsStack", {
   configBucket: resources.configBucket,
   nodeTable: resources.nodesTable,
   executionTable: resources.executionsTable,
+  notifierTopic: resources.notifierTopic,
 });
 
 const texit = new TexitApiStack(app, "TexitApiStack", {
@@ -33,6 +34,7 @@ const texit = new TexitApiStack(app, "TexitApiStack", {
   executionTable: resources.executionsTable,
   provisionNodeWorkflow: workflows.provisionNodeWorkflow,
   deployNodeWorkflow: workflows.deprovisionNodeWorkflow,
+  notifierTopic: resources.notifierTopic,
 });
 
 new TexitDiscordBotStack(app, "TexitDiscordBotStack", {
@@ -41,5 +43,5 @@ new TexitDiscordBotStack(app, "TexitDiscordBotStack", {
   configBucket: resources.configBucket,
   configObject: "bot-config.yaml",
   texitEndpoint: texit.api.url!,
-  callbackTopic: texit.notifierTopic!,
+  callbackTopic: resources.notifierTopic,
 });

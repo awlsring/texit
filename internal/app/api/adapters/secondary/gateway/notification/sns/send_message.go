@@ -9,7 +9,7 @@ import (
 
 func (g *SnsGateway) SendMessage(ctx context.Context, message string) error {
 	log := logger.FromContext(ctx)
-	log.Debug().Msg("Sending message to MQTT")
+	log.Debug().Msg("Sending message to SNS")
 
 	_, err := g.client.Publish(ctx, &sns.PublishInput{
 		Message:  &message,

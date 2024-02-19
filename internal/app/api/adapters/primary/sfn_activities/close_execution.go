@@ -16,9 +16,20 @@ type CloseExecutionInput struct {
 	Error        string      `json:"error"`
 }
 
+func serializeResults(results interface{}) (workflow.SerializedExecutionResult, error) {
+	if results == nil {
+		return workflow.SerializedExecutionResult(""), nil
+	}
+	resultsRaw, err := json.Marshal(results)
+	if err != nil {
+		return "", err
+	}
+	return workflow.SerializedExecutionResult(resultsRaw), nil
+}
+
 func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *CloseExecutionInput) error {
 	log := logger.FromContext(ctx)
-	log.Debug().Msg("Closing execution request")
+	log.Debug().Interface("input", input).Msg("Closing execution request")
 
 	wf, err := workflow.WorkflowNameFromString(input.WorkflowName)
 	if err != nil {
@@ -26,11 +37,13 @@ func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *
 		return err
 	}
 
-	resultsRaw, err := json.Marshal(input.Results)
+	log.Debug().Msg("Marshalling results")
+	resultsRaw, err := serializeResults(input.Results)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to marshal results")
 		return err
 	}
+	log.Debug().Interface("results", resultsRaw).Msg("Results marshalled")
 
 	log.Debug().Msg("Parsing execution id")
 	executionId, err := workflow.ExecutionIdentifierFromString(input.ExecutionId)
@@ -48,7 +61,7 @@ func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *
 	var res workflow.ExecutionResult
 	switch wf {
 	case workflow.WorkflowNameProvisionNode:
-		r, err := workflow.DeserializeExecutionResult[workflow.ProvisionNodeExecutionResult](workflow.SerializedExecutionResult(resultsRaw))
+		r, err := workflow.DeserializeExecutionResult[workflow.ProvisionNodeExecutionResult](resultsRaw)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to deserialize results")
 			return err
@@ -58,7 +71,7 @@ func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *
 		}
 		res = r
 	case workflow.WorkflowNameDeprovisionNode:
-		r, err := workflow.DeserializeExecutionResult[workflow.DeprovisionNodeExecutionResult](workflow.SerializedExecutionResult(resultsRaw))
+		r, err := workflow.DeserializeExecutionResult[workflow.DeprovisionNodeExecutionResult](resultsRaw)
 		if err != nil {
 			log.Error().Err(err).Msg("Failed to deserialize results")
 			return err
@@ -66,7 +79,9 @@ func (h *SfnActivityHandler) closeExecutionActivity(ctx context.Context, input *
 		if input.Error != "" {
 			r.SetError(input.Error)
 		}
+		res = r
 	}
+	log.Debug().Interface("results", res).Msg("Results deserialized")
 
 	log.Debug().Msg("Closing execution")
 	err = h.actSvc.CloseExecution(ctx, executionId, status, res)

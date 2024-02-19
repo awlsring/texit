@@ -14,6 +14,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/domain/notification"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -37,6 +38,8 @@ func handleRecord(ctx context.Context, record events.SNSEventRecord) {
 
 func handler(ctx context.Context, event events.SNSEvent) {
 	ctx = logger.InitContextLogger(ctx, lvl)
+	log := logger.FromContext(ctx)
+	log.Debug().Interface("event", event).Msg("Handling event")
 
 	var wg sync.WaitGroup
 	for _, record := range event.Records {
@@ -53,7 +56,7 @@ func handler(ctx context.Context, event events.SNSEvent) {
 }
 
 func main() {
-	log.Info().Msg("Starting bot")
+	log.Info().Msg("Starting bot callback")
 	awsCfg, err := awsconfig.LoadDefaultConfig(context.Background())
 	appinit.PanicOnErr(err)
 
@@ -76,4 +79,6 @@ func main() {
 
 	log.Info().Msg("Initing Callback Handler")
 	lisHdl = callback.NewCallbackHandler(client, tracker)
+
+	lambda.Start(handler)
 }

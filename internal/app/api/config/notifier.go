@@ -1,6 +1,9 @@
 package config
 
-import "errors"
+import (
+	"errors"
+	"os"
+)
 
 type NotifierType string
 
@@ -50,7 +53,11 @@ func (c *NotifierConfig) Validate() error {
 
 func (c *NotifierConfig) validateSns() error {
 	if c.Topic == "" {
-		return ErrMissingNotifierTopic
+		topic := os.Getenv("SNS_NOTIFIER_ARN")
+		if topic == "" {
+			return ErrMissingNotifierTopic
+		}
+		c.Topic = topic
 	}
 	if c.Region == "" {
 		return ErrMissiningNotifierRegion

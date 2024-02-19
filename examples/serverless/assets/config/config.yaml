@@ -19,5 +19,8 @@ providers:
     accessKey: "00000000000000000000000000000"
     secretKey: "00000000000000000000000000000"
     name: "provider-ec2"
+notifiers:
+  - type: sns
+    region: "us-west-2"
 database:
   engine: dynamodb
