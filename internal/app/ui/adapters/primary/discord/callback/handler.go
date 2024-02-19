@@ -9,7 +9,6 @@ import (
 	"github.com/awlsring/texit/internal/pkg/domain/notification"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/logger"
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 type CallbackHandler struct {
@@ -87,25 +86,17 @@ func (h *CallbackHandler) SendProvisionFollowUp(ctx context.Context, msg notific
 	}
 }
 
-func (h *CallbackHandler) Handle(ctx context.Context, msg mqtt.Message) {
+func (h *CallbackHandler) Handle(ctx context.Context, msg notification.ExecutionMessage) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Received message")
 
-	log.Debug().Msg("Deserializing message")
-	m, err := notification.DeserializeExecutionMessage(msg.Payload())
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to deserialize message")
-		return
-	}
-	log.Debug().Interface("message", m).Msg("Deserialized message")
-
-	switch m.WorkflowName {
+	switch msg.WorkflowName {
 	case workflow.WorkflowNameDeprovisionNode.String():
-		h.SendDeprovisionFollowUp(ctx, m)
+		h.SendDeprovisionFollowUp(ctx, msg)
 	case workflow.WorkflowNameProvisionNode.String():
-		h.SendProvisionFollowUp(ctx, m)
+		h.SendProvisionFollowUp(ctx, msg)
 	default:
-		log.Error().Str("workflow_name", m.WorkflowName).Msg("Unknown workflow")
+		log.Error().Str("workflow_name", msg.WorkflowName).Msg("Unknown workflow")
 	}
 
 }

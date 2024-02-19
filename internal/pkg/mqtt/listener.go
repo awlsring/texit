@@ -3,6 +3,7 @@ package mqtt
 import (
 	"context"
 
+	"github.com/awlsring/texit/internal/pkg/domain/notification"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/rs/zerolog"
@@ -10,7 +11,7 @@ import (
 )
 
 type ListenHandler interface {
-	Handle(context.Context, mqtt.Message)
+	Handle(context.Context, notification.ExecutionMessage)
 }
 
 type Listener interface {
@@ -26,7 +27,14 @@ type listener struct {
 
 func (l *listener) publishHandler(client mqtt.Client, msg mqtt.Message) {
 	ctx := logger.InitContextLogger(context.Background(), l.lvl)
-	l.hdl.Handle(ctx, msg)
+	log.Debug().Msg("Deserializing message")
+	m, err := notification.DeserializeExecutionMessage(msg.Payload())
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to deserialize message")
+		return
+	}
+	log.Debug().Interface("message", m).Msg("Deserialized message")
+	l.hdl.Handle(ctx, m)
 }
 
 func (l *listener) connectHandler(mqtt.Client) {
