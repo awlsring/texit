@@ -40,37 +40,41 @@ builds:
 
   - id: texit-lambda
     main: ./cmd/serverless/api/main.go
-    binary: texit-lambda
+    binary: bootstrap
     env:
       - CGO_ENABLED=0
     goos:
       - linux
-    goarch:
-      - arm64
     ignore:
       - goarch: "386"
 
   - id: texit-lambda-sfn-activities
     main: ./cmd/serverless/sfn_activities/main.go
-    binary: texit-lambda-sfn-activities
+    binary: bootstrap
     env:
       - CGO_ENABLED=0
     goos:
       - linux
-    goarch:
-      - arm64
     ignore:
       - goarch: "386"
 
   - id: texit-discord-lambda
     main: ./cmd/serverless/discord/main.go
-    binary: texit-discord-lambda
+    binary: bootstrap
     env:
       - CGO_ENABLED=0
     goos:
       - linux
-    goarch:
-      - arm64
+    ignore:
+      - goarch: "386"
+
+  - id: texit-discord-callback-lambda
+    main: ./cmd/serverless/discord_callback/main.go
+    binary: bootstrap
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
     ignore:
       - goarch: "386"
 
@@ -129,6 +133,7 @@ docker_manifests:
 archives:
   - id: api
     format: tar.gz
+    builds: [api]
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
@@ -140,6 +145,7 @@ archives:
 
   - id: texit-lambda
     format: tar.gz
+    builds: [texit-lambda]
     name_template: >-
       {{ .ProjectName }}_lambda_
       {{- title .Os }}_
@@ -151,6 +157,7 @@ archives:
 
   - id: texit-discord-lambda
     format: tar.gz
+    builds: [texit-discord-lambda]
     name_template: >-
       {{ .ProjectName }}_discord_lambda_
       {{- title .Os }}_
@@ -160,8 +167,21 @@ archives:
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     allow_different_binary_count: true
 
+  - id: texit-discord-callback-lambda
+    format: tar.gz
+    builds: [texit-discord-callback-lambda]
+    name_template: >-
+      {{ .ProjectName }}_discord_callback_lambda_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    allow_different_binary_count: true
+
   - id: texit-lambda-sfn-activities
     format: tar.gz
+    builds: [texit-lambda-sfn-activities]
     name_template: >-
       {{ .ProjectName }}_lambda_sfn_activities_
       {{- title .Os }}_
@@ -173,6 +193,7 @@ archives:
 
   - id: discord
     format: tar.gz
+    builds: [discord]
     name_template: >-
       {{ .ProjectName }}_discord_
       {{- title .Os }}_
@@ -184,6 +205,7 @@ archives:
 
   - id: cli
     format: tar.gz
+    builds: [cli]
     name_template: >-
       {{ .ProjectName }}_cli_
       {{- title .Os }}_
