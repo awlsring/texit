@@ -11,11 +11,12 @@ import (
 )
 
 type CommandContext struct {
-	log            zerolog.Logger
-	requester      tempest.Snowflake
-	requesterRoles []tempest.Snowflake
-	ctx            context.Context
-	tempest        *tempest.Client
+	log              zerolog.Logger
+	requester        tempest.Snowflake
+	requesterRoles   []tempest.Snowflake
+	ctx              context.Context
+	tempest          *tempest.Client
+	isPrivateMessage bool
 	*tempest.CommandInteraction
 }
 
@@ -31,6 +32,14 @@ func getUserId(itx *tempest.CommandInteraction) (tempest.Snowflake, error) {
 	}
 
 	return 0, errors.New("Failed to get user ID")
+}
+
+func isPrivateMessage(itx *tempest.CommandInteraction) bool {
+	if itx.User != nil {
+		return true
+	}
+
+	return false
 }
 
 func getRoles(itx *tempest.CommandInteraction) []tempest.Snowflake {
@@ -57,6 +66,7 @@ func InitContext(client *tempest.Client, itx *tempest.CommandInteraction, lvl ze
 		CommandInteraction: itx,
 		requester:          user,
 		requesterRoles:     getRoles(itx),
+		isPrivateMessage:   isPrivateMessage(itx),
 		ctx:                ctx,
 		tempest:            client,
 	}
@@ -77,10 +87,14 @@ func (t *CommandContext) RequesterRoles() []tempest.Snowflake {
 	return t.requesterRoles
 }
 
-func (t *CommandContext) EditResponse(message string, ephemeral bool) error {
+func (t *CommandContext) DeferResponse() error {
+	return t.Defer(!t.isPrivateMessage)
+}
+
+func (t *CommandContext) EditResponse(message string) error {
 	return t.EditReply(tempest.ResponseMessageData{
 		Content: message,
-	}, ephemeral)
+	}, !t.isPrivateMessage)
 }
 
 func (t *CommandContext) SendRequesterPrivateMessage(msg string) (tempest.Message, error) {

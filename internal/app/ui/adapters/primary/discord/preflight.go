@@ -49,7 +49,7 @@ func (b *Bot) CommandPreflight(comFunc CommandFunc) func(itx *tempest.CommandInt
 		}
 		log := ctx.Logger()
 		log.Debug().Msg("Deferring command interaction")
-		if err := itx.Defer(true); err != nil {
+		if err := ctx.DeferResponse(); err != nil {
 			log.Error().Err(err).Msg("Failed to defer command interaction")
 			if err = ctx.SendLinearReply("Command failed with an unknown error!", true); err != nil {
 				log.Error().Err(err).Msg("Failed to write bot response")

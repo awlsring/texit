@@ -16,7 +16,7 @@ func (h *Handler) StopNode(ctx *context.CommandContext) {
 	nodeIdStr, ok := ctx.GetOptionValue(command.OptionNodeId)
 	if !ok {
 		log.Error().Msg("Failed to get node ID from interaction")
-		_ = ctx.EditResponse("Please specify an node id to stop", true)
+		_ = ctx.EditResponse("Please specify an node id to stop")
 		return
 	}
 	nodeId, err := node.IdentifierFromString(nodeIdStr.(string))
@@ -39,5 +39,5 @@ func (h *Handler) StopNode(ctx *context.CommandContext) {
 	}
 
 	log.Debug().Msg("Sending bot response")
-	_ = ctx.EditResponse("The node is now stopping!", true)
+	_ = ctx.EditResponse("The node is now stopping!")
 }

@@ -20,7 +20,7 @@ func (h *Handler) ListNodes(ctx *context.CommandContext) {
 
 	if len(nodes) == 0 {
 		log.Debug().Msg("No nodes found")
-		_ = ctx.EditResponse("No nodes found", true)
+		_ = ctx.EditResponse("No nodes found")
 		return
 	}
 

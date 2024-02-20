@@ -17,7 +17,7 @@ func (h *Handler) DescribeExecution(ctx *context.CommandContext) {
 	exIdStr, ok := ctx.GetOptionValue(command.OptionExecutionId)
 	if !ok {
 		log.Error().Msg("Failed to get execution ID from interaction")
-		_ = ctx.EditResponse("Please specify an execution id to describe", true)
+		_ = ctx.EditResponse("Please specify an execution id to describe")
 		return
 	}
 	exId, err := workflow.ExecutionIdentifierFromString(exIdStr.(string))
@@ -48,7 +48,7 @@ func (h *Handler) DescribeExecution(ctx *context.CommandContext) {
 		return
 	}
 
-	_ = ctx.EditResponse(msg, true)
+	_ = ctx.EditResponse(msg)
 }
 
 func writeProvisionNodeExecutionSummary(ctx *context.CommandContext, ex *workflow.Execution) (string, error) {

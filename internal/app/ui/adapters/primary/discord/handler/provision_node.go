@@ -18,7 +18,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	providerName, ok := ctx.GetOptionValue(command.OptionProviderName)
 	if !ok {
 		log.Error().Msg("Failed to get provider name from interaction")
-		_ = ctx.EditResponse("Please specify a provider name.", true)
+		_ = ctx.EditResponse("Please specify a provider name.")
 		return
 	}
 	pr, err := provider.IdentifierFromString(providerName.(string))
@@ -32,7 +32,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	tailnetName, ok := ctx.GetOptionValue(command.OptionTailnetName)
 	if !ok {
 		log.Error().Msg("Failed to get tailnet name from interaction")
-		_ = ctx.EditResponse("Please specify a tailnet name.", true)
+		_ = ctx.EditResponse("Please specify a tailnet name.")
 		return
 	}
 	tn, err := tailnet.IdentifierFromString(tailnetName.(string))
@@ -46,7 +46,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	providerLocation, ok := ctx.GetOptionValue(command.OptionProviderLocation)
 	if !ok {
 		log.Error().Msg("Failed to get provider location from interaction")
-		_ = ctx.EditResponse("Please specify a provider location.", true)
+		_ = ctx.EditResponse("Please specify a provider location.")
 		return
 	}
 	pl := provider.Location(providerLocation.(string))
@@ -66,7 +66,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	}
 
 	log.Debug().Msg("Provisioned node, writing bot response")
-	if err = ctx.EditResponse(fmt.Sprintf("Provision node workflow started. The execution id is %s.\n\nYou'll be sent a message when its ready! This usually takes a few minutes.", fmt.Sprintf("`%s`", exId.String())), true); err != nil {
+	if err = ctx.EditResponse(fmt.Sprintf("Provision node workflow started. The execution id is %s.\n\nYou'll be sent a message when its ready! This usually takes a few minutes.", fmt.Sprintf("`%s`", exId.String()))); err != nil {
 		log.Error().Err(err).Msg("Failed to write bot response")
 	}
 

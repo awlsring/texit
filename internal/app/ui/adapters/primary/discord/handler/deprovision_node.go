@@ -17,7 +17,7 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 	nodeId, ok := ctx.GetOptionValue(command.OptionNodeId)
 	if !ok {
 		log.Error().Msg("Failed to get node id from interaction")
-		_ = ctx.EditResponse("Please specify a node id.", true)
+		_ = ctx.EditResponse("Please specify a node id.")
 		return
 	}
 	n, err := node.IdentifierFromString(nodeId.(string))
@@ -35,7 +35,7 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 	}
 
 	log.Debug().Msg("Deprovision node workflow started, writing bot response")
-	if err = ctx.EditResponse(fmt.Sprintf("Deprovision node workflow started. The execution id is %s\n\nYou'll be sent a message when its finished! This usually takes a few seconds.", fmt.Sprintf("`%s`", exId.String())), true); err != nil {
+	if err = ctx.EditResponse(fmt.Sprintf("Deprovision node workflow started. The execution id is %s\n\nYou'll be sent a message when its finished! This usually takes a few seconds.", fmt.Sprintf("`%s`", exId.String()))); err != nil {
 		log.Error().Err(err).Msg("Failed to write bot response")
 	}
 

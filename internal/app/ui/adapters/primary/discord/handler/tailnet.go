@@ -18,7 +18,7 @@ func (h *Handler) DescribeTailnet(ctx *context.CommandContext) {
 	tailnetName, ok := ctx.GetOptionValue(command.OptionTailnetName)
 	if !ok {
 		log.Error().Msg("Failed to get tailnet name from interaction")
-		_ = ctx.EditResponse("Please specify a tailnet name.", true)
+		_ = ctx.EditResponse("Please specify a tailnet name.")
 		return
 	}
 
@@ -46,7 +46,7 @@ func (h *Handler) DescribeTailnet(ctx *context.CommandContext) {
 	msg += fmt.Sprintf("Name: %s\n", p.Name.String())
 	msg += fmt.Sprintf("Type: %s\n", p.Type.String())
 
-	_ = ctx.EditResponse(msg, true)
+	_ = ctx.EditResponse(msg)
 }
 
 func (h *Handler) ListTailnets(ctx *context.CommandContext) {
@@ -63,7 +63,7 @@ func (h *Handler) ListTailnets(ctx *context.CommandContext) {
 
 	if len(ps) == 0 {
 		log.Debug().Msg("No tailnets found")
-		_ = ctx.EditResponse("No tailnets found", true)
+		_ = ctx.EditResponse("No tailnets found")
 		return
 	}
 
@@ -73,5 +73,5 @@ func (h *Handler) ListTailnets(ctx *context.CommandContext) {
 		msg += fmt.Sprintf("- %s (%s)\n", p.Name.String(), p.Type.String())
 	}
 
-	_ = ctx.EditResponse(msg, true)
+	_ = ctx.EditResponse(msg)
 }

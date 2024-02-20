@@ -18,7 +18,7 @@ func (h *Handler) DescribeProvider(ctx *context.CommandContext) {
 	providerName, ok := ctx.GetOptionValue(command.OptionProviderName)
 	if !ok {
 		log.Error().Msg("Failed to get provider name from interaction")
-		_ = ctx.EditResponse("Please specify a provider name.", true)
+		_ = ctx.EditResponse("Please specify a provider name.")
 		return
 	}
 
@@ -46,7 +46,7 @@ func (h *Handler) DescribeProvider(ctx *context.CommandContext) {
 	msg += fmt.Sprintf("Name: %s\n", p.Name.String())
 	msg += fmt.Sprintf("Platform: %s\n", p.Platform.String())
 
-	_ = ctx.EditResponse(msg, true)
+	_ = ctx.EditResponse(msg)
 }
 
 func (h *Handler) ListProviders(ctx *context.CommandContext) {
@@ -63,7 +63,7 @@ func (h *Handler) ListProviders(ctx *context.CommandContext) {
 
 	if len(ps) == 0 {
 		log.Debug().Msg("No providers found")
-		_ = ctx.EditResponse("No providers found", true)
+		_ = ctx.EditResponse("No providers found")
 		return
 	}
 
@@ -73,5 +73,5 @@ func (h *Handler) ListProviders(ctx *context.CommandContext) {
 		msg += fmt.Sprintf("- %s (%s)\n", p.Name.String(), p.Platform.String())
 	}
 
-	_ = ctx.EditResponse(msg, true)
+	_ = ctx.EditResponse(msg)
 }

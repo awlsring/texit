@@ -18,7 +18,7 @@ func (h *Handler) DescribeNode(ctx *context.CommandContext) {
 	nodeIdStr, ok := ctx.GetOptionValue(command.OptionNodeId)
 	if !ok {
 		log.Error().Msg("Failed to get node ID from interaction")
-		_ = ctx.EditResponse("Please specify an node id to describe", true)
+		_ = ctx.EditResponse("Please specify an node id to describe")
 		return
 	}
 	nodeId, err := node.IdentifierFromString(nodeIdStr.(string))
