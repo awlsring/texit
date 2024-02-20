@@ -24,8 +24,6 @@ type NotifierConfig struct {
 	Type NotifierType `yaml:"type"`
 	// the topic to publish to
 	Topic string `yaml:"topic"`
-	// the endpoint to publish to
-	Endpoint string `yaml:"endpoint"`
 	// username for the notifier
 	Username string `yaml:"username"`
 	// password for the notifier
@@ -61,6 +59,19 @@ func (c *NotifierConfig) validateSns() error {
 	}
 	if c.Region == "" {
 		return ErrMissiningNotifierRegion
+	}
+	if c.AccessKey == "" {
+		key := os.Getenv("SNS_AWS_ACCESS_KEY_ID")
+		if key == "" {
+			c.AccessKey = key
+		}
+	}
+
+	if c.SecretKey == "" {
+		key := os.Getenv("SNS_AWS_SECRET_ACCESS_KEY")
+		if key != "" {
+			c.SecretKey = key
+		}
 	}
 	return nil
 }
