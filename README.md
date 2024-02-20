@@ -2,7 +2,7 @@
 
 Texit is an api that allows for creating exit nodes in a cloud provider on demand for your tailnet.
 
-This repo contains all code related to texit, which includes the API server, the CLI, and a Discord Bot for remote management.
+This repo contains code related to texit, which includes the API server, the CLI, and a Discord Bot for remote management.
 
 Currently this project is in early stages so expect potentially breaking changes between releases.
 
@@ -24,10 +24,8 @@ If you have a request to support a new tailnet or provider, please open an issue
 
 ## Getting Started
 
-For a quick setup, see the [Getting Started](docs/getting-started.md) guide for information on how to stand up the API and using the CLI.
+For a quick setup to run a local Texit instance, see the [getting started](docs/getting-started.md) guide for information on how to stand up the API and how to interact with it via the CLI.
 
-Examples of setting up with docker can be found in the [examples](/examples/api/docker) directory.
+An optional Discord bot is also available for remote management. See the [Discord Bot](docs/discord-bot.md) guide for more information.
 
-If you want to setup the Discord Bot, see the [Discord Bot](/docs/discord-bot.md) guide.
-
-Docker examples for the bot can also be found in the [examples](/examples/discord/docker) directory.
+Texit and the Discord bot can be deployed as a serverless application to AWS. See the [serverless](docs/serverless/serverless.md) guide for more information.
