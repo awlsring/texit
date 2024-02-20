@@ -1,6 +1,6 @@
 module github.com/awlsring/texit
 
-go 1.21.5
+go 1.22
 
 require (
 	github.com/Amatsagu/Tempest v1.1.6
@@ -33,6 +33,7 @@ require (
 	github.com/go-openapi/validate v0.23.0
 	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.3.5
+	github.com/lib/pq v1.10.9
 	github.com/linode/linodego v1.28.0
 	github.com/ogen-go/ogen v0.81.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
@@ -116,7 +117,6 @@ require (
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/klauspost/compress v1.17.6 // indirect
 	github.com/kortschak/wol v0.0.0-20200729010619-da482cc4850a // indirect
-	github.com/lib/pq v1.10.9 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
