@@ -1,4 +1,4 @@
-package sqlite_node_repository
+package sql_node_repository
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (r *SqliteNodeRepository) initTables(ctx context.Context) error {
+func (r *SqlNodeRepository) initTables(ctx context.Context) error {
 	log := logger.FromContext(ctx)
 	nodeTable := `
 		CREATE TABLE IF NOT EXISTS nodes (

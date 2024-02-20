@@ -1,4 +1,4 @@
-package sqlite_execution_repository
+package sql_execution_repository
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (r *SqliteExecutionRepository) initTables(ctx context.Context) error {
+func (r *SqlExecutionRepository) initTables(ctx context.Context) error {
 	log := logger.FromContext(ctx)
 	nodeTable := `
 		CREATE TABLE IF NOT EXISTS executions (

@@ -1,10 +1,12 @@
-package sqlite_node_repository
+package sql_node_repository
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
+	"github.com/awlsring/texit/internal/app/api/ports/repository"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
@@ -13,7 +15,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-func TestCreate(t *testing.T) {
+func TestGet(t *testing.T) {
 	ctx := context.Background()
 
 	db, err := sqlx.Connect("sqlite", ":memory:")
@@ -22,7 +24,7 @@ func TestCreate(t *testing.T) {
 	}
 	defer db.Close()
 
-	r := &SqliteNodeRepository{db: db}
+	r := &SqlNodeRepository{db: db}
 	err = r.initTables(ctx)
 	assert.NoError(t, err)
 
@@ -41,11 +43,28 @@ func TestCreate(t *testing.T) {
 	}
 
 	err = r.Create(ctx, testNode)
-
 	assert.NoError(t, err)
 
-	var count int
-	err = db.Get(&count, "SELECT COUNT(*) FROM nodes WHERE identifier = ?", testNode.Identifier.String())
+	retrievedNode, err := r.Get(ctx, testNode.Identifier)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, count)
+	assert.NotNil(t, retrievedNode)
+	assert.Equal(t, testNode.Identifier, retrievedNode.Identifier)
+}
+
+func TestGet_NotFound(t *testing.T) {
+	ctx := context.Background()
+
+	db, err := sqlx.Connect("sqlite", ":memory:")
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	r := &SqlNodeRepository{db: db}
+	err = r.initTables(ctx)
+	assert.NoError(t, err)
+
+	_, err = r.Get(ctx, node.Identifier("non-existent-id"))
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, repository.ErrNodeNotFound))
 }

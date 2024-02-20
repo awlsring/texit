@@ -1,4 +1,4 @@
-package sqlite_execution_repository
+package sql_execution_repository
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (r *SqliteExecutionRepository) CreateExecution(ctx context.Context, ex *workflow.Execution) error {
+func (r *SqlExecutionRepository) CreateExecution(ctx context.Context, ex *workflow.Execution) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("creating execution in repo")
 

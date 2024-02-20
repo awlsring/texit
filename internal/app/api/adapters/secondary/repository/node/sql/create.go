@@ -1,4 +1,4 @@
-package sqlite_node_repository
+package sql_node_repository
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (r *SqliteNodeRepository) Create(ctx context.Context, node *node.Node) error {
+func (r *SqlNodeRepository) Create(ctx context.Context, node *node.Node) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating node in sqlite database")
 

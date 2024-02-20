@@ -1,4 +1,4 @@
-package sqlite_node_repository
+package sql_node_repository
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (r *SqliteNodeRepository) Delete(ctx context.Context, id node.Identifier) error {
+func (r *SqlNodeRepository) Delete(ctx context.Context, id node.Identifier) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Deleting node from sqlite database")
 

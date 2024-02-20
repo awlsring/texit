@@ -22,6 +22,38 @@ func (_m *MockNode_repository) EXPECT() *MockNode_repository_Expecter {
 	return &MockNode_repository_Expecter{mock: &_m.Mock}
 }
 
+// Close provides a mock function with given fields:
+func (_m *MockNode_repository) Close() {
+	_m.Called()
+}
+
+// MockNode_repository_Close_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Close'
+type MockNode_repository_Close_Call struct {
+	*mock.Call
+}
+
+// Close is a helper method to define mock.On call
+func (_e *MockNode_repository_Expecter) Close() *MockNode_repository_Close_Call {
+	return &MockNode_repository_Close_Call{Call: _e.mock.On("Close")}
+}
+
+func (_c *MockNode_repository_Close_Call) Run(run func()) *MockNode_repository_Close_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockNode_repository_Close_Call) Return() *MockNode_repository_Close_Call {
+	_c.Call.Return()
+	return _c
+}
+
+func (_c *MockNode_repository_Close_Call) RunAndReturn(run func()) *MockNode_repository_Close_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Create provides a mock function with given fields: ctx, _a1
 func (_m *MockNode_repository) Create(ctx context.Context, _a1 *node.Node) error {
 	ret := _m.Called(ctx, _a1)

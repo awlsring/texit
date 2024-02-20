@@ -1,4 +1,4 @@
-package sqlite_node_repository
+package sql_node_repository
 
 import (
 	"context"
@@ -21,7 +21,7 @@ func TestList(t *testing.T) {
 	}
 	defer db.Close()
 
-	r := &SqliteNodeRepository{db: db}
+	r := &SqlNodeRepository{db: db}
 	err = r.initTables(ctx)
 	assert.NoError(t, err)
 
@@ -61,7 +61,7 @@ func TestListEmpty(t *testing.T) {
 	}
 	defer db.Close()
 
-	r := &SqliteNodeRepository{db: db}
+	r := &SqlNodeRepository{db: db}
 	err = r.initTables(ctx)
 	assert.NoError(t, err)
 

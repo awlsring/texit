@@ -6,6 +6,7 @@ type DatabaseEngine string
 
 const (
 	DatabaseEngineSqlite   DatabaseEngine = "sqlite"
+	DatabaseEnginePostgres DatabaseEngine = "postgres"
 	DatabaseEngineDynamoDb DatabaseEngine = "dynamodb"
 )
 
@@ -37,6 +38,8 @@ type DatabaseConfig struct {
 	Database string `yaml:"database"`
 	// Location of the database file. For sqlite only
 	Location string `yaml:"location"`
+	// Whether to use SSL for the connection
+	Ssl bool `yaml:"ssl"`
 }
 
 func (c *DatabaseConfig) Validate() error {

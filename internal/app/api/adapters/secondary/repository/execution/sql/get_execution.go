@@ -1,4 +1,4 @@
-package sqlite_execution_repository
+package sql_execution_repository
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (r *SqliteExecutionRepository) GetExecution(ctx context.Context, id workflow.ExecutionIdentifier) (*workflow.Execution, error) {
+func (r *SqlExecutionRepository) GetExecution(ctx context.Context, id workflow.ExecutionIdentifier) (*workflow.Execution, error) {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Getting execution from sqlite")

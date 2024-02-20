@@ -1,4 +1,4 @@
-package sqlite_execution_repository
+package sql_execution_repository
 
 import (
 	"time"

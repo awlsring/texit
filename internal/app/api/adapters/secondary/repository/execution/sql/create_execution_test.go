@@ -1,4 +1,4 @@
-package sqlite_execution_repository
+package sql_execution_repository
 
 import (
 	"context"
@@ -20,7 +20,7 @@ func TestCreateExecution(t *testing.T) {
 	}
 	defer db.Close()
 
-	r := &SqliteExecutionRepository{db: db}
+	r := &SqlExecutionRepository{db: db}
 	err = r.initTables(ctx)
 	assert.NoError(t, err)
 

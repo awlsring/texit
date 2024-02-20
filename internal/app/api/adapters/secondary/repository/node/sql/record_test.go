@@ -1,4 +1,4 @@
-package sqlite_node_repository
+package sql_node_repository
 
 import (
 	"testing"

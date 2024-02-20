@@ -1,4 +1,4 @@
-package sqlite_execution_repository
+package sql_node_repository
 
 import (
 	"context"
@@ -8,17 +8,21 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-type SqliteExecutionRepository struct {
+type SqlNodeRepository struct {
 	db interfaces.SqlDatabase
 }
 
-func New(db interfaces.SqlDatabase) repository.Execution {
-	return &SqliteExecutionRepository{
+func New(db interfaces.SqlDatabase) repository.Node {
+	return &SqlNodeRepository{
 		db: db,
 	}
 }
 
-func (r *SqliteExecutionRepository) Init(ctx context.Context) error {
+func (r *SqlNodeRepository) Close() {
+	r.db.Close()
+}
+
+func (r *SqlNodeRepository) Init(ctx context.Context) error {
 	err := r.initTables(ctx)
 	if err != nil {
 		return err

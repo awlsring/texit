@@ -20,8 +20,8 @@ import (
 	headscale_v0_22_3_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/headscale/v0.22.3"
 	tailscale_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/tailscale"
 	local_workflow "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/workflow/local"
-	sqlite_execution_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/execution/sqlite"
-	sqlite_node_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/node/sqlite"
+	sql_execution_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/execution/sql"
+	sql_node_repository "github.com/awlsring/texit/internal/app/api/adapters/secondary/repository/node/sql"
 	"github.com/awlsring/texit/internal/app/api/config"
 	"github.com/awlsring/texit/internal/app/api/core/service/activity"
 	"github.com/awlsring/texit/internal/app/api/core/service/node"
@@ -30,7 +30,10 @@ import (
 	tailnetSvc "github.com/awlsring/texit/internal/app/api/core/service/tailnet"
 	workflowSvc "github.com/awlsring/texit/internal/app/api/core/service/workflow"
 	"github.com/awlsring/texit/internal/app/api/ports/gateway"
+	"github.com/awlsring/texit/internal/app/api/ports/repository"
 	"github.com/awlsring/texit/internal/app/api/ports/service"
+	"github.com/awlsring/texit/internal/pkg/appinit"
+	"github.com/awlsring/texit/internal/pkg/db"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -44,6 +47,7 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/linode/linodego"
 	"github.com/rs/zerolog"
 	"github.com/tailscale/tailscale-client-go/tailscale"
@@ -222,6 +226,47 @@ func initNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
 	return notifiers
 }
 
+func initRepositories(cfg *config.DatabaseConfig) (repository.Node, repository.Execution) {
+	switch cfg.Engine {
+	case config.DatabaseEngineSqlite:
+		return initSqliteRepositories(cfg)
+	case config.DatabaseEnginePostgres:
+		return initPostgresRepositories(cfg)
+	case config.DatabaseEngineDynamoDb:
+		return initDynamoRepositories(cfg)
+	default:
+		panic("unknown database engine")
+	}
+}
+
+func initSqliteRepositories(cfg *config.DatabaseConfig) (repository.Node, repository.Execution) {
+	db, err := sqlx.Connect("sqlite", cfg.Location)
+	panicOnErr(err)
+	nodeRepo := sql_node_repository.New(db)
+	err = nodeRepo.Init(context.Background())
+	panicOnErr(err)
+	excRepo := sql_execution_repository.New(db)
+	err = excRepo.Init(context.Background())
+	panicOnErr(err)
+	return nodeRepo, excRepo
+}
+
+func initPostgresRepositories(cfg *config.DatabaseConfig) (repository.Node, repository.Execution) {
+	db, err := sqlx.Connect("postgres", db.CreatePostgresConnectionURI(cfg.Host, cfg.Port, cfg.Username, cfg.Password, cfg.Database, cfg.Ssl))
+	appinit.PanicOnErr(err)
+	nodeRepo := sql_node_repository.New(db)
+	err = nodeRepo.Init(context.Background())
+	panicOnErr(err)
+	excRepo := sql_execution_repository.New(db)
+	err = excRepo.Init(context.Background())
+	panicOnErr(err)
+	return nodeRepo, excRepo
+}
+
+func initDynamoRepositories(cfg *config.DatabaseConfig) (repository.Node, repository.Execution) {
+	panic("not implemented")
+}
+
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -238,15 +283,7 @@ func main() {
 	panicOnErr(err)
 
 	log.Info().Msg("Connecting to database")
-	db, err := sqlx.Connect("sqlite", cfg.Database.Location)
-	panicOnErr(err)
-	nodeRepo := sqlite_node_repository.New(db)
-	err = nodeRepo.Init(ctx)
-	panicOnErr(err)
-
-	excRepo := sqlite_execution_repository.New(db)
-	err = excRepo.Init(ctx)
-	panicOnErr(err)
+	nodeRepo, excRepo := initRepositories(cfg.Database)
 
 	log.Info().Msg("Initializing provider gateways")
 	providerGateways := initProviderGateways(cfg.Providers)
@@ -315,7 +352,8 @@ func main() {
 	<-ctx.Done()
 
 	panicOnErr(worker.Close(context.Background()))
-	panicOnErr(db.Close())
+	nodeRepo.Close()
+	excRepo.Close()
 
 	log.Info().Msg("Exiting")
 }

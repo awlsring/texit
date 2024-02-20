@@ -1,4 +1,4 @@
-package sqlite_execution_repository
+package sql_execution_repository
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (r *SqliteExecutionRepository) CloseExecution(ctx context.Context, id workflow.ExecutionIdentifier, result workflow.Status, output workflow.SerializedExecutionResult) error {
+func (r *SqlExecutionRepository) CloseExecution(ctx context.Context, id workflow.ExecutionIdentifier, result workflow.Status, output workflow.SerializedExecutionResult) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Closing execution in sqlite")
 

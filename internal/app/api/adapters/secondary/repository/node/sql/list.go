@@ -1,4 +1,4 @@
-package sqlite_node_repository
+package sql_node_repository
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (r *SqliteNodeRepository) List(ctx context.Context) ([]*node.Node, error) {
+func (r *SqlNodeRepository) List(ctx context.Context) ([]*node.Node, error) {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Listing nodes from sqlite database")

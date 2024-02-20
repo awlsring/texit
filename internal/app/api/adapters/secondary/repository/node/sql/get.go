@@ -1,4 +1,4 @@
-package sqlite_node_repository
+package sql_node_repository
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (r *SqliteNodeRepository) Get(ctx context.Context, id node.Identifier) (*node.Node, error) {
+func (r *SqlNodeRepository) Get(ctx context.Context, id node.Identifier) (*node.Node, error) {
 	log := logger.FromContext(ctx)
 
 	log.Debug().Msg("Getting node from sqlite")
