@@ -13,6 +13,7 @@ Running Texit as a serverless application on AWS involves using the following se
 - Lambda: Provides the compute for requests. 3 lambdas are deployed, an API handler, a Discord handler, and a Step Functions activities handler. All of these load their config from S3.
 - DynamoDB: Database for storing nodes and executions.
 - Step Functions: Orchestrates the execution of the Texit workflow.
+- SNS: Used to notify of workflow completions.
 
 The following diagram shows the architecture of the serverless deployment.
 
@@ -42,10 +43,12 @@ As example, here is how the `TexitDiscordBotStack` is configured to pull its con
 
 ```typescript
 new TexitDiscordBotStack(app, "TexitDiscordBotStack", {
-  binary: Code.fromAsset("assets/bin/texit-discord"),
+  botBinary: Code.fromAsset("assets/bin/texit-discord"),
+  callbackBinary: Code.fromAsset("assets/bin/texit-discord-callback"),
   configBucket: resources.configBucket,
   configObject: "bot-config.yaml",
   texitEndpoint: texit.api.url!,
+  callbackTopic: resources.notifierTopic,
 });
 ```
 
@@ -60,6 +63,7 @@ The binaries that are need are...
 - `texit-lambda_Linux_arm64.tar.gz` - This will be used as the binary for the Texit API handler.
 - `texit-lambda_sfn_activities_Linux_arm64.tar.gz` - This will be used as the binary for the Step Functions activities.
 - `texit_discord_lambda_Linux_arm64.tar.gz` - This will be used as the binary for the Discord handler.
+- `texit_discord_callback_lambda_Linux_arm64.tar.gz` - This will be used as the binary for the Discord callback handler.
 
 **Note:** Arm binaries are specified as these constructs default to deploying to the `arm64` architecture. If you have some reason to use `x86_64` you can specify this in the `architecture` property of the lambda.
 
@@ -74,7 +78,9 @@ assets
     │   └── bootstrap
     ├── texit-activities
     │   └── bootstrap
-    └── texit-discord
+    ├── texit-discord
+    │   └── bootstrap
+    └── texit-discord-callback
         └── bootstrap
 ```
 
