@@ -16,10 +16,12 @@ func (s *Service) DescribeNode(ctx context.Context, id cnode.Identifier) (*node.
 	n, err := s.apiGw.DescribeNode(ctx, id)
 	if err != nil {
 		if errors.Is(err, gateway.ErrResourceNotFoundError) {
+			log.Warn().Err(err).Msg("node not found")
 			return nil, service.ErrUnknownNode
 		}
 		if errors.Is(err, gateway.ErrInvalidInputError) {
 			base := errors.Unwrap(err)
+			log.Warn().Err(err).Msg("invalid input")
 			return nil, errors.Wrap(service.ErrInvalidInputError, base.Error())
 		}
 		return nil, err

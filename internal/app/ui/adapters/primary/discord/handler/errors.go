@@ -25,23 +25,23 @@ func WriteErrorResponse(ctx *context.CommandContext, err error, msg string) {
 }
 
 func UnknownNodeResponse(ctx *context.CommandContext, n string) {
-	_ = ctx.EditResponse(fmt.Sprintf("The node %s isn't found", n))
+	_ = ctx.EditResponse(fmt.Sprintf("The node `%s` isn't found", n))
 }
 
 func UnknownProviderResponse(ctx *context.CommandContext, p string) {
-	_ = ctx.EditResponse(fmt.Sprintf("The provider %s isn't found", p))
+	_ = ctx.EditResponse(fmt.Sprintf("The provider `%s` isn't found", p))
 }
 
 func UnknownTailnetResponse(ctx *context.CommandContext, t string) {
-	_ = ctx.EditResponse(fmt.Sprintf("The tailnet %s isn't found", t))
+	_ = ctx.EditResponse(fmt.Sprintf("The tailnet `%s` isn't found", t))
 }
 
 func UnknownExecutionResponse(ctx *context.CommandContext, e string) {
-	_ = ctx.EditResponse(fmt.Sprintf("The execution %s isn't found", e))
+	_ = ctx.EditResponse(fmt.Sprintf("The execution `%s` isn't found", e))
 }
 
 func InvalidInputErrorResponse(ctx *context.CommandContext, err error) {
-	_ = ctx.EditResponse("Your request has invalid input, check your inputs again to see if everything is right.")
+	_ = ctx.EditResponse("Your request has invalid input, double check your inputs.")
 }
 
 func NodeIdInvalidConstraintsResponse(ctx *context.CommandContext) {

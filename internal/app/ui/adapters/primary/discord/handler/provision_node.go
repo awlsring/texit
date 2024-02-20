@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
+	"github.com/awlsring/texit/internal/app/ui/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/logger"
@@ -60,7 +62,11 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 	log.Debug().Msg("Calling provision node method")
 	exId, err := h.apiSvc.ProvisionNode(ctx, pr, pl, tn, ephemeral)
 	if err != nil {
-		log.Error().Err(err).Msg("Error provisioning node")
+		if errors.Is(err, service.ErrInvalidInputError) {
+			InvalidInputErrorResponse(ctx, err)
+			return
+		}
+		log.Warn().Err(err).Msg("Error deprovisioning node")
 		InternalErrorResponse(ctx)
 		return
 	}

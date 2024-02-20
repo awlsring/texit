@@ -33,6 +33,10 @@ func (h *Handler) StartNode(ctx *context.CommandContext) {
 			UnknownNodeResponse(ctx, nodeId.String())
 			return
 		}
+		if errors.Is(err, service.ErrInvalidInputError) {
+			InvalidInputErrorResponse(ctx, err)
+			return
+		}
 		log.Warn().Err(err).Msg("Error starting node")
 		InternalErrorResponse(ctx)
 		return

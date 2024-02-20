@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
+	"github.com/awlsring/texit/internal/app/ui/ports/service"
 	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
@@ -30,7 +32,16 @@ func (h *Handler) DeprovisionNode(ctx *context.CommandContext) {
 	log.Debug().Msg("Calling deprovision node method")
 	exId, err := h.apiSvc.DeprovisionNode(ctx, n)
 	if err != nil {
-		WriteErrorResponse(ctx, err, n.String())
+		if errors.Is(err, service.ErrUnknownNode) {
+			UnknownNodeResponse(ctx, n.String())
+			return
+		}
+		if errors.Is(err, service.ErrInvalidInputError) {
+			InvalidInputErrorResponse(ctx, err)
+			return
+		}
+		log.Warn().Err(err).Msg("Error deprovisioning node")
+		InternalErrorResponse(ctx)
 		return
 	}
 

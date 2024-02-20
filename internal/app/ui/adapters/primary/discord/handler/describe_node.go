@@ -31,6 +31,10 @@ func (h *Handler) DescribeNode(ctx *context.CommandContext) {
 	log.Debug().Msg("Getting node from service")
 	n, err := h.nodeSvc.DescribeNode(ctx, nodeId)
 	if err != nil {
+		if errors.Is(err, service.ErrInvalidInputError) {
+			InvalidInputErrorResponse(ctx, err)
+			return
+		}
 		if errors.Is(err, service.ErrUnknownNode) {
 			UnknownNodeResponse(ctx, nodeId.String())
 			return

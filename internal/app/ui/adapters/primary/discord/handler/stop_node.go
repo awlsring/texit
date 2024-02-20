@@ -33,6 +33,10 @@ func (h *Handler) StopNode(ctx *context.CommandContext) {
 			UnknownNodeResponse(ctx, nodeId.String())
 			return
 		}
+		if errors.Is(err, service.ErrInvalidInputError) {
+			InvalidInputErrorResponse(ctx, err)
+			return
+		}
 		log.Warn().Err(err).Msg("Error stopping node")
 		InternalErrorResponse(ctx)
 		return
