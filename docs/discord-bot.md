@@ -4,7 +4,9 @@ Texit has a discord bot that can be used to call your Texit API. The bot is base
 
 ## Prerequisites
 
-To install this bot, you must be able to do the following.
+The Discord bot requires an MQTT notifier to be configured in your Texit instance. The bot uses this topic to listen for the completion of workflows. You can configure the MQTT notifier by following the instructions in the [notifiers section](/docs/notifiers.md).
+
+Further, to install this bot, you must be able to do the following.
 
 - Create a discord bot on the [discord developer portal](https://discord.com/developers/applications)
 - Create a publicly accessible endpoint secured with TLS that the bot will listen for connections on.
@@ -49,6 +51,10 @@ discord:
   applicationId: "123123123123123123" # the application ID of your bot
   publicKey: "sdkjgheoirugheirnfjenfjebiyfgewpdfm[oemfpiuebrigfu]" # the public key of your bot
   token: "skdjfhkjsdfjhsgfjhgsdjhfgsjkdfgkjshgdfjhgfjheferf" # the token of your bot
+notifier: # The notifier to use to listen for workflow completion
+  type: mqtt
+  broker: "tcp://10.0.1.2:1883"
+  topic: "texit-workflow"
 ```
 
 Fill out the file with data you collected in the previous steps. If you want to ensure that you scope your bot to only be used by you in your guild, you'll need to get your userId and guildId. You can do this by enabling developer mode in discord and right clicking on your user or guild and clicking "Copy ID".
