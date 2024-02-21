@@ -40,6 +40,12 @@ type DatabaseConfig struct {
 	Location string `yaml:"location"`
 	// Whether to use SSL for the connection
 	Ssl bool `yaml:"ssl"`
+	// The region to use for a ddb table
+	Region string `yaml:"region"`
+	// The access key to use for a ddb table
+	AccessKey string `yaml:"accessKey"`
+	// The secret key to use for a ddb table
+	SecretKey string `yaml:"secretKey"`
 }
 
 func (c *DatabaseConfig) Validate() error {

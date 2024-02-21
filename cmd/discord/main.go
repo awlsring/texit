@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"net"
 	"os"
 	"os/signal"
 
@@ -17,10 +16,10 @@ import (
 	"github.com/awlsring/texit/internal/app/ui/core/service/node"
 	"github.com/awlsring/texit/internal/app/ui/core/service/provider"
 	"github.com/awlsring/texit/internal/app/ui/core/service/tailnet"
+	"github.com/awlsring/texit/internal/pkg/appinit"
 	"github.com/awlsring/texit/internal/pkg/config"
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/internal/pkg/mqtt"
-	"github.com/awlsring/texit/internal/pkg/tsn"
-	"github.com/awlsring/texit/pkg/gen/texit"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -30,46 +29,12 @@ const (
 	defaultConfigLocation = "/etc/texit_discord/config.yaml"
 )
 
-func panicOnErr(err error) {
-	if err != nil {
-		panic(err)
-	}
-}
-
 func getConfigPath() string {
 	path := os.Getenv(configEnvVar)
 	if path == "" {
 		return defaultConfigLocation
 	}
 	return path
-}
-
-type Sec struct {
-	key string
-}
-
-func (s Sec) SmithyAPIHttpApiKeyAuth(ctx context.Context, operationName string) (texit.SmithyAPIHttpApiKeyAuth, error) {
-	return texit.SmithyAPIHttpApiKeyAuth{
-		APIKey: s.key,
-	}, nil
-}
-
-func initClient(address string, key string) texit.Invoker {
-	c, err := texit.NewClient(address, Sec{key: key})
-	panicOnErr(err)
-	return c
-}
-
-func initListener(cfg discfg.ServerConfig) net.Listener {
-	if cfg.Tailnet != nil {
-		l, err := tsn.ListenerFromConfig(*cfg.Tailnet, cfg.Address)
-		panicOnErr(err)
-		return l
-	}
-	log.Info().Msg("Creating net listener")
-	l, err := net.Listen("tcp", cfg.Address)
-	panicOnErr(err)
-	return l
 }
 
 func main() {
@@ -79,13 +44,14 @@ func main() {
 
 	log.Info().Msg("Loading config")
 	cfg, err := config.LoadFromFile[discfg.Config](getConfigPath())
-	panicOnErr(err)
+	appinit.PanicOnErr(err)
 	lvl, err := zerolog.ParseLevel(cfg.LogLevel)
 	zerolog.SetGlobalLevel(lvl)
-	panicOnErr(err)
+	log := logger.InitLogger(lvl)
+	appinit.PanicOnErr(err)
 
 	log.Info().Msg("Initing Texit API client")
-	texit := initClient(cfg.Api.Address, cfg.Api.ApiKey)
+	texit := discord.LoadTexitClient(cfg.Api.Address, cfg.Api.ApiKey)
 
 	log.Info().Msg("Initing api service")
 	apiGw := api_gateway.New(texit)
@@ -113,13 +79,13 @@ func main() {
 	})
 
 	log.Info().Msg("Initing Listener")
-	lis := initListener(cfg.Server)
+	lis := discord.LoadListener(cfg.Server)
 
 	log.Info().Msg("loading authorized snowflakes")
 	authorized := []tempest.Snowflake{}
 	for _, id := range cfg.Discord.Authorized {
 		s, err := tempest.StringToSnowflake(id)
-		panicOnErr(err)
+		appinit.PanicOnErr(err)
 		authorized = append(authorized, s)
 	}
 
@@ -128,7 +94,7 @@ func main() {
 	if len(cfg.Discord.GuildIds) > 0 {
 		for _, id := range cfg.Discord.GuildIds {
 			s, err := tempest.StringToSnowflake(id)
-			panicOnErr(err)
+			appinit.PanicOnErr(err)
 			guilds = append(guilds, s)
 		}
 	}
@@ -137,19 +103,19 @@ func main() {
 	lisHdl := callback.NewCallbackHandler(client, tracker)
 
 	lsn, err := mqtt.NewListener(cfg.Notification.Broker, lisHdl, mqtt.WithLogLevel(zerolog.DebugLevel))
-	panicOnErr(err)
+	appinit.PanicOnErr(err)
 
 	log.Info().Msg("Initing Discord Bot")
 	bot := discord.NewBot(hdl, client, discord.WithAuthorizedUsers(authorized), discord.WithGuilds(guilds), discord.WithLogLevel(lvl))
 
 	go func() {
 		log.Info().Msg("Starting Bot")
-		panicOnErr(bot.Serve(ctx, lis))
+		appinit.PanicOnErr(bot.Serve(ctx, lis))
 	}()
 
 	go func() {
 		log.Info().Msg("Starting MQTT Listener on topic " + cfg.Notification.Topic)
-		panicOnErr(lsn.Subscribe(ctx, cfg.Notification.Topic))
+		appinit.PanicOnErr(lsn.Subscribe(ctx, cfg.Notification.Topic))
 		log.Info().Msg("Subscribed to MQTT topic")
 	}()
 

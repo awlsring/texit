@@ -1,14 +1,15 @@
 package tsn
 
 import (
+	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/rs/zerolog"
 	"tailscale.com/tsnet"
 )
 
 type ServerOption func(*tsnet.Server)
 
-func WithStandardLoggingFunc(log zerolog.Logger) ServerOption {
-	tailog := log.With().Timestamp().Str("process", "tsnet").Logger()
+func WithStandardLoggingFunc(lvl zerolog.Level) ServerOption {
+	tailog := logger.InitLogger(lvl).With().Str("tsn", "server").Logger()
 	return func(s *tsnet.Server) {
 		s.Logf = func(format string, args ...interface{}) {
 			tailog.Debug().Msgf(format, args...)
