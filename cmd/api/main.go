@@ -89,21 +89,22 @@ func main() {
 	log.Info().Msg("Froming ogen handler")
 	hdl := handler.New(nodeSvc, workflowSvc, providerSvc, tailnetSvc)
 
-	log.Info().Msg("Initializing net listener")
-	lis := setup.LoadListener(cfg.Server)
-
 	log.Info().Msg("Initializing security handler")
 	sec := auth.NewSecurityHandler([]string{cfg.Server.APIKey})
 
 	log.Info().Msg("Creating ogen server")
-	srv := ogen.NewServer(lis, hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(lvl))
+	srv, err := ogen.NewServer(hdl, ogen.WithSecurityHandler(sec), ogen.WithLogLevel(lvl))
+	appinit.PanicOnErr(err)
+
+	log.Info().Msg("Initializing net listener")
+	lis := setup.LoadListener(cfg.Server)
 
 	log.Info().Msg("Initializing workflow worker")
 	worker := mem_workflow.NewWorker(activitySvc, notSvc, workChan, mem_workflow.WithLogLevel(lvl))
 
 	log.Info().Msg("Starting server")
 	go func() {
-		appinit.PanicOnErr(srv.Start(ctx))
+		appinit.PanicOnErr(srv.Serve(ctx, lis))
 	}()
 
 	log.Info().Msg("Starting worker")

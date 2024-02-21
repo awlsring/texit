@@ -19,16 +19,15 @@ const (
 type Server struct {
 	logLevel zerolog.Level
 	hdl      texit.Handler
-	lis      net.Listener
 	secHdl   texit.SecurityHandler
 	opts     []texit.ServerOption
+	srv      *texit.Server
 }
 
-func NewServer(lis net.Listener, hdl texit.Handler, opts ...ServerOpt) *Server {
+func NewServer(hdl texit.Handler, opts ...ServerOpt) (*Server, error) {
 	s := &Server{
 		logLevel: defaultLogLevel,
 		hdl:      hdl,
-		lis:      lis,
 		opts: []texit.ServerOption{
 			texit.WithMiddleware(middleware.LoggingMiddleware(zerolog.DebugLevel)),
 			texit.WithNotFound(smithy_errors.UnknownOperationHandler),
@@ -40,22 +39,26 @@ func NewServer(lis net.Listener, hdl texit.Handler, opts ...ServerOpt) *Server {
 		opt(s)
 	}
 
-	return s
+	srv, err := texit.NewServer(s.hdl, s.secHdl, s.opts...)
+	if err != nil {
+		return nil, err
+	}
+	s.srv = srv
+
+	return s, nil
 }
 
-func (s *Server) Start(ctx context.Context) error {
+func (s *Server) HttpHandler() http.Handler {
+	return s.srv
+}
+
+func (s *Server) Serve(ctx context.Context, lis net.Listener) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Starting server...")
 
-	srv, err := texit.NewServer(s.hdl, s.secHdl, s.opts...)
-	if err != nil {
-		log.Error().Err(err).Msg("Error creating server")
-		return err
-	}
-
 	go func() {
-		log.Debug().Msgf("server listening at %v", s.lis.Addr())
-		if err := http.Serve(s.lis, srv); err != nil {
+		log.Debug().Msgf("server listening at %v", lis.Addr())
+		if err := http.Serve(lis, s.srv); err != nil {
 			log.Error().Err(err).Msg("Server error")
 		}
 	}()
