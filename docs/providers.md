@@ -87,3 +87,26 @@ providers:
     apiKey: "XXXXXXXXXXXX"
     name: "my-linode-provider"
 ```
+
+## Hetzner
+
+The Hetzner provider allows for launching exit nodes as linodes. Its type is `hetzner`.
+
+This provider launches exit nodes with the shared server type `cx11` in EU locations and `cpx11` in US location. Either server will use Debian 12. This server will be allocated a public IPv4 address.
+
+You must create a API token to use this provider. This token needs Read and Write access.
+
+### Configuration
+
+To include a Hetzner provider for your texit, you must include the following extra fieilds in your `provider` configuration block config file.
+
+- **ApiKey**: This is an access token you can create on the Linode console. This can also be set with the env variable `<provider-name>_API_KEY`.
+
+#### Example
+
+```yaml
+providers:
+  - type: hetzner
+    apiKey: "XXXXXXXXXXXX"
+    name: "my-hetzner-provider"
+```

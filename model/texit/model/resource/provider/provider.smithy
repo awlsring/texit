@@ -17,6 +17,7 @@ enum ProviderType {
     AWS_ECS = "aws-ecs"
     AWS_EC2 = "aws-ec2"
     LINODE = "linode"
+    HETZNER = "hetzner"
     UNKNOWN = "unknown"
 }
 

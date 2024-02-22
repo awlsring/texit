@@ -9,6 +9,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
+// TODO: Make this not discord specific so it can be used for the API and CLI validation
 var (
 	locations = []LocationChoice{
 		{
@@ -275,6 +276,31 @@ var (
 			Name:        "ap-northeast",
 			Geolocation: "Tokyo, Japan",
 			Provider:    "Linode",
+		},
+		{
+			Name:        "fsn1",
+			Geolocation: "Falkenstein, Germany",
+			Provider:    "Hetzner",
+		},
+		{
+			Name:        "nbg1",
+			Geolocation: "Nuremberg, Germany",
+			Provider:    "Hetzner",
+		},
+		{
+			Name:        "hel1",
+			Geolocation: "Helsinki, Finland",
+			Provider:    "Hetzner",
+		},
+		{
+			Name:        "ash",
+			Geolocation: "Virginia, USA",
+			Provider:    "Hetzner",
+		},
+		{
+			Name:        "hil",
+			Geolocation: "Oregon, USA",
+			Provider:    "Hetzner",
 		},
 	}
 )

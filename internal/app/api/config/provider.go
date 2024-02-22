@@ -12,9 +12,10 @@ func (t ProviderType) String() string {
 }
 
 const (
-	ProviderTypeAwsEcs ProviderType = "aws-ecs"
-	ProviderTypeAwsEc2 ProviderType = "aws-ec2"
-	ProviderTypeLinode ProviderType = "linode"
+	ProviderTypeAwsEcs  ProviderType = "aws-ecs"
+	ProviderTypeAwsEc2  ProviderType = "aws-ec2"
+	ProviderTypeLinode  ProviderType = "linode"
+	ProviderTypeHetzner ProviderType = "hetzner"
 )
 
 const (
@@ -54,9 +55,27 @@ func (c *ProviderConfig) Validate() error {
 		return c.validateAws()
 	case ProviderTypeLinode:
 		return c.validateLinode()
+	case ProviderTypeHetzner:
+		return c.ValidateHetzner()
 	default:
 		return fmt.Errorf("invalid provider type: %s", c.Type)
 	}
+}
+
+func (c *ProviderConfig) ValidateHetzner() error {
+	if c.Name == "" {
+		return ErrMissingProviderName
+	}
+
+	if c.ApiKey == "" {
+		key := os.Getenv(providerSecretEnv(c.Name, ApiKeySuffix))
+		if key == "" {
+			return ErrMissingApiKey
+		}
+		c.ApiKey = key
+	}
+
+	return nil
 }
 
 func (c *ProviderConfig) validateLinode() error {

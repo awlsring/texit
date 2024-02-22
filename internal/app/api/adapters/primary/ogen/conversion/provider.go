@@ -13,6 +13,8 @@ func TranslateProviderType(t provider.Type) texit.ProviderType {
 		return texit.ProviderTypeAWSEc2
 	case provider.TypeLinode:
 		return texit.ProviderTypeLinode
+	case provider.TypeHetzner:
+		return texit.ProviderTypeHetzner
 	default:
 		return texit.ProviderTypeUnknown
 	}

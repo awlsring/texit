@@ -690,6 +690,7 @@ const (
 	ProviderTypeAWSEcs  ProviderType = "aws-ecs"
 	ProviderTypeAWSEc2  ProviderType = "aws-ec2"
 	ProviderTypeLinode  ProviderType = "linode"
+	ProviderTypeHetzner ProviderType = "hetzner"
 	ProviderTypeUnknown ProviderType = "unknown"
 )
 
@@ -699,6 +700,7 @@ func (ProviderType) AllValues() []ProviderType {
 		ProviderTypeAWSEcs,
 		ProviderTypeAWSEc2,
 		ProviderTypeLinode,
+		ProviderTypeHetzner,
 		ProviderTypeUnknown,
 	}
 }
@@ -711,6 +713,8 @@ func (s ProviderType) MarshalText() ([]byte, error) {
 	case ProviderTypeAWSEc2:
 		return []byte(s), nil
 	case ProviderTypeLinode:
+		return []byte(s), nil
+	case ProviderTypeHetzner:
 		return []byte(s), nil
 	case ProviderTypeUnknown:
 		return []byte(s), nil
@@ -730,6 +734,9 @@ func (s *ProviderType) UnmarshalText(data []byte) error {
 		return nil
 	case ProviderTypeLinode:
 		*s = ProviderTypeLinode
+		return nil
+	case ProviderTypeHetzner:
+		*s = ProviderTypeHetzner
 		return nil
 	case ProviderTypeUnknown:
 		*s = ProviderTypeUnknown

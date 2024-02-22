@@ -533,6 +533,8 @@ func (s ProviderType) Validate() error {
 		return nil
 	case "linode":
 		return nil
+	case "hetzner":
+		return nil
 	case "unknown":
 		return nil
 	default:

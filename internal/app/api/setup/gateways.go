@@ -10,6 +10,7 @@ import (
 	sns_notification_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/notification/sns"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ec2"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_aws_ecs"
+	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_hetzner"
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_linode"
 	headscale_v0_22_3_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/headscale/v0.22.3"
 	tailscale_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/tailscale"
@@ -26,6 +27,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	_ "github.com/lib/pq"
 	"github.com/linode/linodego"
 	"github.com/rs/zerolog/log"
@@ -53,6 +55,10 @@ func LoadProviderGateways(providers []*config.ProviderConfig) map[string]gateway
 			}
 			client := linodego.NewClient(oauth2Client)
 			p := platform_linode.New(&client)
+			gateways[provider.Name] = p
+		case "hetzner":
+			client := hcloud.NewClient(hcloud.WithToken(provider.ApiKey))
+			p := platform_hetzner.New(client)
 			gateways[provider.Name] = p
 		default:
 			return nil
