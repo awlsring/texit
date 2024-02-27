@@ -1,10 +1,8 @@
 package setup
 
 import (
-	"context"
 	"net/http"
 	"net/url"
-	"os"
 
 	mqtt_notification_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/notification/mqtt"
 	sns_notification_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/notification/sns"
@@ -14,15 +12,10 @@ import (
 	"github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/platform/platform_linode"
 	headscale_v0_22_3_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/headscale/v0.22.3"
 	tailscale_gateway "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/tailnet/tailscale"
-	step_functions_workflow "github.com/awlsring/texit/internal/app/api/adapters/secondary/gateway/workflow/step_functions"
 	"github.com/awlsring/texit/internal/app/api/config"
 	"github.com/awlsring/texit/internal/app/api/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/appinit"
 	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	awscfg "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/sfn"
 	"github.com/aws/aws-sdk-go-v2/service/sns"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -125,14 +118,7 @@ func LoadNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
 			}
 			notifiers = append(notifiers, mqtt_notification_gateway.New(n.Topic, c))
 		case config.NotifierTypeSns:
-			if n.AccessKey == "" || n.SecretKey == "" {
-				panic("missing access key or secret key")
-			}
-			creds := credentials.NewStaticCredentialsProvider(n.AccessKey, n.SecretKey, "")
-			cfg, err := awscfg.LoadDefaultConfig(context.TODO(),
-				awscfg.WithRegion(n.Region),
-				awscfg.WithCredentialsProvider(creds),
-			)
+			cfg, err := loadAwsConfig(n.AccessKey, n.SecretKey, n.Region)
 			appinit.PanicOnErr(err)
 			client := sns.NewFromConfig(cfg)
 			notifiers = append(notifiers, sns_notification_gateway.New(n.Topic, client))
@@ -141,14 +127,4 @@ func LoadNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
 		}
 	}
 	return notifiers
-}
-
-func LoadStepFunctionsWorkflowGateway(cfg aws.Config) gateway.Workflow {
-	provArn := os.Getenv("PROVISION_NODE_WORKFLOW_ARN")
-	deprovArn := os.Getenv("DEPROVISION_NODE_WORKFLOW_ARN")
-	if provArn == "" || deprovArn == "" {
-		panic("PROVISION_NODE_WORKFLOW_ARN and DEPROVISION_NODE_WORKFLOW_ARN must be set")
-	}
-	states := sfn.NewFromConfig(cfg)
-	return step_functions_workflow.New(provArn, deprovArn, states)
 }

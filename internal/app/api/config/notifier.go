@@ -3,6 +3,8 @@ package config
 import (
 	"errors"
 	"os"
+
+	"github.com/awlsring/texit/internal/pkg/config"
 )
 
 type NotifierType string
@@ -16,6 +18,12 @@ var (
 	ErrMissingNotifierBroker   = errors.New("missing notifier broker")
 	ErrMissingNotifierTopic    = errors.New("missing notifier topic")
 	ErrMissiningNotifierRegion = errors.New("missing notifier region")
+)
+
+const (
+	SnsAccessKeyEnvVar = "SNS_AWS_ACCESS_KEY_ID"
+	SnsSecretKeyEnvVar = "SNS_AWS_SECRET_ACCESS_KEY"
+	SnsRegionEnvVar    = "SNS_AWS_REGION"
 )
 
 // Configuration for the notifier
@@ -58,19 +66,23 @@ func (c *NotifierConfig) validateSns() error {
 		c.Topic = topic
 	}
 	if c.Region == "" {
-		return ErrMissiningNotifierRegion
+		val, err := config.RegionFromEnv(SnsRegionEnvVar)
+		if err != nil {
+			return err
+		}
+		c.Region = val
 	}
 	if c.AccessKey == "" {
-		key := os.Getenv("SNS_AWS_ACCESS_KEY_ID")
-		if key == "" {
-			c.AccessKey = key
+		val, err := config.AwsAccessKeyFromEnv(SnsAccessKeyEnvVar)
+		if err == nil {
+			c.AccessKey = val
 		}
 	}
 
 	if c.SecretKey == "" {
-		key := os.Getenv("SNS_AWS_SECRET_ACCESS_KEY")
-		if key != "" {
-			c.SecretKey = key
+		val, err := config.AwsAccessKeyFromEnv(SnsSecretKeyEnvVar)
+		if err == nil {
+			c.AccessKey = val
 		}
 	}
 	return nil

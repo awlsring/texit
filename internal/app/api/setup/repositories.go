@@ -11,8 +11,6 @@ import (
 	"github.com/awlsring/texit/internal/app/api/ports/repository"
 	"github.com/awlsring/texit/internal/pkg/appinit"
 	"github.com/awlsring/texit/internal/pkg/db"
-	awscfg "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -57,15 +55,7 @@ func LoadPostgresRepositories(cfg *config.DatabaseConfig) (repository.Node, repo
 }
 
 func LoadDynamoRepositories(cfg *config.DatabaseConfig) (repository.Node, repository.Execution) {
-	opts := []func(*awscfg.LoadOptions) error{}
-	if cfg.Region != "" {
-		opts = append(opts, awscfg.WithRegion(cfg.Region))
-	}
-	if cfg.AccessKey != "" && cfg.SecretKey != "" {
-		creds := credentials.NewStaticCredentialsProvider(cfg.AccessKey, cfg.SecretKey, "")
-		opts = append(opts, awscfg.WithCredentialsProvider(creds))
-	}
-	aCfg, err := awscfg.LoadDefaultConfig(context.Background(), opts...)
+	aCfg, err := loadAwsConfig(cfg.AccessKey, cfg.SecretKey, cfg.Region)
 	appinit.PanicOnErr(err)
 
 	ddb := dynamodb.NewFromConfig(aCfg)

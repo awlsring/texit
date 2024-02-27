@@ -18,6 +18,10 @@ func New(c chan workflow.ExecutionInput) gateway.Workflow {
 	}
 }
 
+func (g *LocalWorkflow) Channel() chan workflow.ExecutionInput {
+	return g.workChan
+}
+
 func (g *LocalWorkflow) DeprovisionNode(ctx context.Context, input *workflow.DeprovisionNodeInput) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Scheduling deprovision node workflow")

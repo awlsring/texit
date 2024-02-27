@@ -50,6 +50,7 @@ func loadAppConfig(acfg aws.Config) *config.Config {
 	return cfg
 }
 
+// TODO: Deprecate this is favor of just using the main api binary
 func main() {
 	log.Info().Msg("Starting server...")
 	awsCfg, err := awsconfig.LoadDefaultConfig(context.Background())
@@ -79,7 +80,7 @@ func main() {
 	providerGateways := setup.LoadProviderGateways(cfg.Providers)
 
 	log.Info().Msg("Initializing workflow gateway")
-	workGw := setup.LoadStepFunctionsWorkflowGateway(awsCfg)
+	workGw := setup.LoadWorkflowEngine(cfg.Workflow)
 
 	log.Info().Msg("Initializing workflow service")
 	workflowSvc := workflow.NewService(nodeRepo, execRepo, workGw)

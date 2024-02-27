@@ -14,6 +14,7 @@ type Config struct {
 	Database  *DatabaseConfig   `yaml:"database"`
 	Providers []*ProviderConfig `yaml:"providers"`
 	Notifiers []*NotifierConfig `yaml:"notifiers"`
+	Workflow  *WorkflowConfig   `yaml:"workflow"`
 }
 
 func LoadFromData(data []byte) (*Config, error) {
@@ -27,12 +28,23 @@ func LoadFromData(data []byte) (*Config, error) {
 		cfg.LogLevel = "info"
 	}
 
+	if cfg.Database == nil {
+		cfg.Database = NewDefaultDatabaseConfig()
+	}
 	err = cfg.Database.Validate()
 	if err != nil {
 		return nil, err
 	}
 
 	err = cfg.Server.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	if cfg.Workflow == nil {
+		cfg.Workflow = NewDefaultWorkflowConfig()
+	}
+	err = cfg.Workflow.Validate()
 	if err != nil {
 		return nil, err
 	}

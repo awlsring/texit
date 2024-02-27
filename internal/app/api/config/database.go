@@ -1,6 +1,10 @@
 package config
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/awlsring/texit/internal/pkg/config"
+)
 
 type DatabaseEngine string
 
@@ -20,6 +24,12 @@ var (
 	ErrMissingDatabaseUser = errors.New("missing database user")
 	ErrMissingDatabasePass = errors.New("missing database pass")
 	ErrMissingDatabaseName = errors.New("missing database name")
+)
+
+const (
+	DdbAccessKeyEnvVar = "DDB_AWS_ACCESS_KEY_ID"
+	DdbSecretKeyEnvVar = "DDB_AWS_SECRET_ACCESS_KEY"
+	DdbRegionEnvVar    = "DDB_AWS_REGION"
 )
 
 // Configuration for the database
@@ -48,8 +58,34 @@ type DatabaseConfig struct {
 	SecretKey string `yaml:"secretKey"`
 }
 
+func NewDefaultDatabaseConfig() *DatabaseConfig {
+	return &DatabaseConfig{
+		Engine:   DatabaseEngineSqlite,
+		Location: defaultSqliteDbLocation,
+	}
+}
+
 func (c *DatabaseConfig) Validate() error {
 	if c.Engine == DatabaseEngineDynamoDb {
+		if c.Region == "" {
+			val, err := config.RegionFromEnv(DdbRegionEnvVar)
+			if err != nil {
+				return err
+			}
+			c.Region = val
+		}
+		if c.AccessKey == "" {
+			val, err := config.AwsAccessKeyFromEnv(DdbAccessKeyEnvVar)
+			if err == nil {
+				c.AccessKey = val
+			}
+		}
+		if c.SecretKey == "" {
+			val, err := config.AwsAccessKeyFromEnv(DdbSecretKeyEnvVar)
+			if err == nil {
+				c.AccessKey = val
+			}
+		}
 		return nil
 	}
 
