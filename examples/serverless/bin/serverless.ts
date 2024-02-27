@@ -15,7 +15,7 @@ const resources = new TexitStatefulResourcesStack(
   app,
   "TexitStatefulResourcesStack",
   {
-    configsPath: "assets/config/test",
+    configsPath: "assets/config",
   }
 );
 
