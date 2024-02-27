@@ -60,7 +60,7 @@ You'll need to download these from the releases and locate them somewhere in you
 
 The binaries that are need are...
 
-- `texit-lambda_Linux_arm64.tar.gz` - This will be used as the binary for the Texit API handler.
+- `texit_lambda_Linux_arm64.tar.gz` - This is the main texit api binary.
 - `texit-lambda_sfn_activities_Linux_arm64.tar.gz` - This will be used as the binary for the Step Functions activities.
 - `texit_discord_lambda_Linux_arm64.tar.gz` - This will be used as the binary for the Discord handler.
 - `texit_discord_callback_lambda_Linux_arm64.tar.gz` - This will be used as the binary for the Discord callback handler.

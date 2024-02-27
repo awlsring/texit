@@ -32,6 +32,7 @@ require (
 	github.com/go-openapi/swag v0.22.9
 	github.com/go-openapi/validate v0.23.0
 	github.com/google/uuid v1.6.0
+	github.com/hetznercloud/hcloud-go/v2 v2.6.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
 	github.com/linode/linodego v1.28.0
@@ -110,8 +111,6 @@ require (
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hdevalence/ed25519consensus v0.2.0 // indirect
-	github.com/hetznercloud/hcloud-go v1.53.0 // indirect
-	github.com/hetznercloud/hcloud-go/v2 v2.6.0 // indirect
 	github.com/illarion/gonotify v1.0.1 // indirect
 	github.com/insomniacslk/dhcp v0.0.0-20240204152450-ca2dc33955c1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
