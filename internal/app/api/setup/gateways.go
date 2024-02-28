@@ -15,6 +15,7 @@ import (
 	"github.com/awlsring/texit/internal/app/api/config"
 	"github.com/awlsring/texit/internal/app/api/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/appinit"
+	cconfig "github.com/awlsring/texit/internal/pkg/config"
 	"github.com/awlsring/texit/pkg/gen/headscale/v0.22.3/client"
 	"github.com/aws/aws-sdk-go-v2/service/sns"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -118,7 +119,7 @@ func LoadNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
 			}
 			notifiers = append(notifiers, mqtt_notification_gateway.New(n.Topic, c))
 		case config.NotifierTypeSns:
-			cfg, err := loadAwsConfig(n.AccessKey, n.SecretKey, n.Region)
+			cfg, err := cconfig.LoadAwsConfig(n.AccessKey, n.SecretKey, n.Region)
 			appinit.PanicOnErr(err)
 			client := sns.NewFromConfig(cfg)
 			notifiers = append(notifiers, sns_notification_gateway.New(n.Topic, client))

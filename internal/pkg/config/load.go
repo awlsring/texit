@@ -14,7 +14,7 @@ type Config interface {
 }
 
 // Loads the application config from a file at the specified path.
-func LoadFromFile[C Config](path string) (*C, error) {
+func LoadFromFile[C any](path string) (*C, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func LoadFromFile[C Config](path string) (*C, error) {
 }
 
 // Loads the application config from an S3 bucket.
-func LoadFromS3[C Config](client *s3.Client, bucket, key string) (*C, error) {
+func LoadFromS3[C any](client *s3.Client, bucket, key string) (*C, error) {
 	resp, err := client.GetObject(context.Background(), &s3.GetObjectInput{
 		Bucket: &bucket,
 		Key:    &key,
@@ -41,7 +41,7 @@ func LoadFromS3[C Config](client *s3.Client, bucket, key string) (*C, error) {
 }
 
 // Loads the application config from a byte slice.
-func LoadFromData[C Config](data []byte) (*C, error) {
+func LoadFromData[C any](data []byte) (*C, error) {
 	var cfg C
 	err := yaml.Unmarshal(data, &cfg)
 	if err != nil {

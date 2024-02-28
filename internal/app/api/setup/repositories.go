@@ -10,9 +10,11 @@ import (
 	"github.com/awlsring/texit/internal/app/api/config"
 	"github.com/awlsring/texit/internal/app/api/ports/repository"
 	"github.com/awlsring/texit/internal/pkg/appinit"
+	cconfig "github.com/awlsring/texit/internal/pkg/config"
 	"github.com/awlsring/texit/internal/pkg/db"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/jmoiron/sqlx"
+
 	_ "github.com/lib/pq"
 	_ "modernc.org/sqlite"
 )
@@ -55,7 +57,7 @@ func LoadPostgresRepositories(cfg *config.DatabaseConfig) (repository.Node, repo
 }
 
 func LoadDynamoRepositories(cfg *config.DatabaseConfig) (repository.Node, repository.Execution) {
-	aCfg, err := loadAwsConfig(cfg.AccessKey, cfg.SecretKey, cfg.Region)
+	aCfg, err := cconfig.LoadAwsConfig(cfg.AccessKey, cfg.SecretKey, cfg.Region)
 	appinit.PanicOnErr(err)
 
 	ddb := dynamodb.NewFromConfig(aCfg)

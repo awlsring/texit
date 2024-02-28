@@ -60,9 +60,9 @@ You'll need to download these from the releases and locate them somewhere in you
 
 The binaries that are need are...
 
-- `texit_lambda_Linux_arm64.tar.gz` - This is the main texit api binary.
-- `texit-lambda_sfn_activities_Linux_arm64.tar.gz` - This will be used as the binary for the Step Functions activities.
-- `texit_discord_lambda_Linux_arm64.tar.gz` - This will be used as the binary for the Discord handler.
+- `texit_Linux_arm64.tar.gz` - This is the main texit api binary.
+- `texit_lambda_sfn_activities_Linux_arm64.tar.gz` - This will be used as the binary for the Step Functions activities.
+- `texit_discord_Linux_arm64.tar.gz` - This will be used as the binary for the Discord handler.
 - `texit_discord_callback_lambda_Linux_arm64.tar.gz` - This will be used as the binary for the Discord callback handler.
 
 **Note:** Arm binaries are specified as these constructs default to deploying to the `arm64` architecture. If you have some reason to use `x86_64` you can specify this in the `architecture` property of the lambda.

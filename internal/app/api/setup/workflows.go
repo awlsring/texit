@@ -6,6 +6,7 @@ import (
 	"github.com/awlsring/texit/internal/app/api/config"
 	"github.com/awlsring/texit/internal/app/api/ports/gateway"
 	"github.com/awlsring/texit/internal/pkg/appinit"
+	cconfig "github.com/awlsring/texit/internal/pkg/config"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/aws/aws-sdk-go-v2/service/sfn"
 )
@@ -27,7 +28,7 @@ func LoadLocalWorkflowGateway() gateway.Workflow {
 }
 
 func LoadStepFunctionsWorkflowGateway(cfg *config.WorkflowConfig) gateway.Workflow {
-	awsCfg, err := loadAwsConfig(cfg.AccessKey, cfg.SecretKey, cfg.Region)
+	awsCfg, err := cconfig.LoadAwsConfig(cfg.AccessKey, cfg.SecretKey, cfg.Region)
 	appinit.PanicOnErr(err)
 	states := sfn.NewFromConfig(awsCfg)
 	return step_functions_workflow.New(cfg.ProvisionWorkflowArn, cfg.DeprovisionWorkflowArn, states)

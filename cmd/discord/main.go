@@ -6,6 +6,7 @@ import (
 	"os/signal"
 
 	tempest "github.com/Amatsagu/Tempest"
+	"github.com/a-h/awsapigatewayv2handler"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/callback"
 	discfg "github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/config"
@@ -16,70 +17,75 @@ import (
 	"github.com/awlsring/texit/internal/app/ui/core/service/node"
 	"github.com/awlsring/texit/internal/app/ui/core/service/provider"
 	"github.com/awlsring/texit/internal/app/ui/core/service/tailnet"
+	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
+	"github.com/awlsring/texit/internal/app/ui/ports/service"
 	"github.com/awlsring/texit/internal/pkg/appinit"
-	"github.com/awlsring/texit/internal/pkg/config"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/internal/pkg/mqtt"
+	"github.com/awlsring/texit/internal/pkg/runtime"
+	"github.com/awlsring/texit/pkg/gen/texit"
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
-const (
-	configEnvVar          = "DISCORD_CONFIG_PATH"
-	defaultConfigLocation = "/etc/texit_discord/config.yaml"
+var (
+	log         zerolog.Logger
+	lvl         zerolog.Level
+	cfg         *discfg.Config
+	texitClient texit.Invoker
+	tmpstClient *tempest.Client
+	apiGw       gateway.Api
+	apiSvc      service.Api
+	provSvc     service.Provider
+	tailSvc     service.Tailnet
+	nodeSvc     service.Node
+	tracker     pending_execution.Tracker
+	bot         *discord.Bot
 )
-
-func getConfigPath() string {
-	path := os.Getenv(configEnvVar)
-	if path == "" {
-		return defaultConfigLocation
-	}
-	return path
-}
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	var err error
 	log.Info().Msg("Initializing")
 
 	log.Info().Msg("Loading config")
-	cfg, err := config.LoadFromFile[discfg.Config](getConfigPath())
+	cfg, err = discord.LoadConfig()
 	appinit.PanicOnErr(err)
-	lvl, err := zerolog.ParseLevel(cfg.LogLevel)
+	err = cfg.Validate()
+	appinit.PanicOnErr(err)
+	lvl, err = zerolog.ParseLevel(cfg.LogLevel)
 	zerolog.SetGlobalLevel(lvl)
-	log := logger.InitLogger(lvl)
+	log = logger.InitLogger(lvl)
 	appinit.PanicOnErr(err)
+
+	log.Info().Interface("config", cfg).Msg("Loaded config")
 
 	log.Info().Msg("Initing Texit API client")
-	texit := discord.LoadTexitClient(cfg.Api.Address, cfg.Api.ApiKey)
+	texitClient = discord.LoadTexitClient(cfg.Api.Address, cfg.Api.ApiKey)
 
 	log.Info().Msg("Initing api service")
-	apiGw := api_gateway.New(texit)
-	apiSvc := api.NewService(apiGw)
+	apiGw = api_gateway.New(texitClient)
+	apiSvc = api.NewService(apiGw)
 
 	log.Info().Msg("Initing provider service")
-	provSvc := provider.NewService(apiGw)
+	provSvc = provider.NewService(apiGw)
 
 	log.Info().Msg("Initing tailnet service")
-	tailSvc := tailnet.NewService(apiGw)
+	tailSvc = tailnet.NewService(apiGw)
 
 	log.Info().Msg("Initing node service")
-	nodeSvc := node.NewService(apiGw, tailSvc, provSvc)
+	nodeSvc = node.NewService(apiGw, tailSvc, provSvc)
 
 	log.Info().Msg("Initing tracker")
-	tracker := pending_execution.NewInMemoryTracker()
+	tracker, err = discord.LoadTracker(cfg.Tracker)
+	appinit.PanicOnErr(err)
 
 	log.Info().Msg("Initing handler")
 	hdl := handler.New(apiSvc, nodeSvc, provSvc, tailSvc, tracker)
 
 	log.Info().Msg("Creating new Tempest client...")
-	client := tempest.NewClient(tempest.ClientOptions{
+	tmpstClient = tempest.NewClient(tempest.ClientOptions{
 		PublicKey: cfg.Discord.PublicKey,
 		Rest:      tempest.NewRest(cfg.Discord.Token),
 	})
-
-	log.Info().Msg("Initing Listener")
-	lis := discord.LoadListener(cfg.Server)
 
 	log.Info().Msg("loading authorized snowflakes")
 	authorized := []tempest.Snowflake{}
@@ -99,25 +105,58 @@ func main() {
 		}
 	}
 
-	log.Info().Msg("Initing Callback Handler")
-	lisHdl := callback.NewCallbackHandler(client, tracker)
-
-	lsn, err := mqtt.NewListener(cfg.Notification.Broker, lisHdl, mqtt.WithLogLevel(zerolog.DebugLevel))
-	appinit.PanicOnErr(err)
-
 	log.Info().Msg("Initing Discord Bot")
-	bot := discord.NewBot(hdl, client, discord.WithAuthorizedUsers(authorized), discord.WithGuilds(guilds), discord.WithLogLevel(lvl))
+	bot = discord.NewBot(hdl, tmpstClient, discord.WithAuthorizedUsers(authorized), discord.WithGuilds(guilds), discord.WithLogLevel(lvl))
+
+	if runtime.IsLambda() {
+		startLambdaServer()
+	} else {
+		startServer()
+	}
+}
+
+func startLambdaServer() {
+	log.Info().Msg("Starting lambda bot")
+	if cfg.Server.Address != ":443" {
+		log.Warn().Msgf("Only :443 is supported as a server address, ignoring set address of %s", cfg.Server.Address)
+	}
+
+	if cfg.Tracker.Type == discfg.TrackerTypeInMemory {
+		panic("Only tracker supported in lambda is DDB")
+	}
+
+	if cfg.Notification.Type != discfg.NotifierTypeSns {
+		panic("Only notifier supported in lambda is SNS")
+	}
+
+	hdl := bot.HttpHandler()
+	awsapigatewayv2handler.ListenAndServe(hdl)
+}
+
+func startServer() {
+	log.Info().Msg("Prepping server launch")
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	log.Info().Msg("Initing Listener")
+	lis := discord.LoadListener(cfg.Server)
 
 	go func() {
 		log.Info().Msg("Starting Bot")
 		appinit.PanicOnErr(bot.Serve(ctx, lis))
 	}()
 
-	go func() {
-		log.Info().Msg("Starting MQTT Listener on topic " + cfg.Notification.Topic)
-		appinit.PanicOnErr(lsn.Subscribe(ctx, cfg.Notification.Topic))
-		log.Info().Msg("Subscribed to MQTT topic")
-	}()
+	if cfg.Notification.Type == discfg.NotifierTypeMqtt {
+		log.Info().Msg("Initing Callback Handler")
+		lisHdl := callback.NewCallbackHandler(tmpstClient, tracker)
+
+		lsn, err := mqtt.NewListener(cfg.Notification.Broker, lisHdl, mqtt.WithLogLevel(zerolog.DebugLevel))
+		appinit.PanicOnErr(err)
+		go func() {
+			log.Info().Msg("Starting MQTT Listener on topic " + cfg.Notification.Topic)
+			appinit.PanicOnErr(lsn.Subscribe(ctx, cfg.Notification.Topic))
+		}()
+	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)

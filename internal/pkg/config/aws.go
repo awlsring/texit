@@ -1,8 +1,13 @@
 package config
 
 import (
+	"context"
 	"errors"
 	"os"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
 )
 
 const (
@@ -39,4 +44,20 @@ func SecretKeyFromEnv(k string) (string, error) {
 
 func RegionFromEnv(k string) (string, error) {
 	return getCustomOrDefaultFromEnv(k, DefaultRegionEnvVar, ErrMissingRegionKey)
+}
+
+func LoadAwsConfig(access, secret, region string) (aws.Config, error) {
+	opts := []func(*config.LoadOptions) error{}
+	if region != "" {
+		opts = append(opts, config.WithRegion(region))
+	}
+	if access != "" && secret != "" {
+		creds := credentials.NewStaticCredentialsProvider(access, secret, "")
+		opts = append(opts, config.WithCredentialsProvider(creds))
+	}
+	cfg, err := config.LoadDefaultConfig(context.Background(), opts...)
+	if err != nil {
+		return aws.Config{}, err
+	}
+	return cfg, nil
 }
