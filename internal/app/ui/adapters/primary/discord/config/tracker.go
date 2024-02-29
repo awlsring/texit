@@ -10,7 +10,7 @@ type TrackerType string
 
 const (
 	TrackerTypeInMemory TrackerType = "memory"
-	TrackerTypeDynamoDb TrackerType = "ddb"
+	TrackerTypeDynamoDb TrackerType = "dynamodb"
 )
 
 const (

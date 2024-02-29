@@ -10,3 +10,7 @@ discord:
   applicationId: "000000000000000"
   publicKey: "000000000000000000000000"
   token: "000000000000000000000000000000000000000000000000"
+notifier:
+  type: sns
+tracker:
+  type: dynamodb
