@@ -15,7 +15,6 @@ import (
 	"github.com/awlsring/texit/internal/pkg/runtime"
 	"github.com/awlsring/texit/internal/pkg/tsn"
 	"github.com/awlsring/texit/pkg/gen/texit"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	awsconfig "github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -62,9 +61,13 @@ func loadConfigFromS3() (*discfg.Config, error) {
 	if bucketName == "" {
 		panic("CONFIG_BUCKET environment variable not set")
 	}
+	key := os.Getenv("CONFIG_OBJECT")
+	if key == "" {
+		key = "config.yaml"
+	}
 	resp, err := client.GetObject(context.Background(), &s3.GetObjectInput{
 		Bucket: &bucketName,
-		Key:    aws.String("config.yaml"),
+		Key:    &key,
 	})
 	if err != nil {
 		return nil, err

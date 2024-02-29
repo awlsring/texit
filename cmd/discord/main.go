@@ -56,8 +56,6 @@ func main() {
 	log = logger.InitLogger(lvl)
 	appinit.PanicOnErr(err)
 
-	log.Info().Interface("config", cfg).Msg("Loaded config")
-
 	log.Info().Msg("Initing Texit API client")
 	texitClient = discord.LoadTexitClient(cfg.Api.Address, cfg.Api.ApiKey)
 
@@ -129,7 +127,11 @@ func startLambdaServer() {
 		panic("Only notifier supported in lambda is SNS")
 	}
 
+	err := bot.Init()
+	appinit.PanicOnErr(err)
+
 	hdl := bot.HttpHandler()
+	log.Info().Msg("Starting API Gateway V2 Handler")
 	awsapigatewayv2handler.ListenAndServe(hdl)
 }
 

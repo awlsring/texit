@@ -27,6 +27,8 @@ func (c *NotifierConfig) Validate() error {
 	switch c.Type {
 	case NotifierTypeMqtt:
 		return c.validateMqtt()
+	case NotifierTypeSns:
+		return nil
 	default:
 		return errors.New("unknown notifier type")
 	}
