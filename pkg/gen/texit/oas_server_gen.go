@@ -54,6 +54,12 @@ type Handler interface {
 	//
 	// GET /node
 	ListNodes(ctx context.Context) (*ListNodesResponseContent, error)
+	// ListNotifiers implements ListNotifiers operation.
+	//
+	// List all registered notifiers.
+	//
+	// GET /notifier
+	ListNotifiers(ctx context.Context) (*ListNotifiersResponseContent, error)
 	// ListProviders implements ListProviders operation.
 	//
 	// List all registered providers.

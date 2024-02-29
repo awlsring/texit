@@ -110,76 +110,76 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 
 				elem = origElem
-			case 'n': // Prefix: "node"
+			case 'n': // Prefix: "no"
 				origElem := elem
-				if l := len("node"); len(elem) >= l && elem[0:l] == "node" {
+				if l := len("no"); len(elem) >= l && elem[0:l] == "no" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					switch r.Method {
-					case "GET":
-						s.handleListNodesRequest([0]string{}, elemIsEscaped, w, r)
-					case "POST":
-						s.handleProvisionNodeRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "GET,POST")
-					}
-
-					return
+					break
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/"
+				case 'd': // Prefix: "de"
 					origElem := elem
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+					if l := len("de"); len(elem) >= l && elem[0:l] == "de" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
-					// Param: "identifier"
-					// Match until "/"
-					idx := strings.IndexByte(elem, '/')
-					if idx < 0 {
-						idx = len(elem)
-					}
-					args[0] = elem[:idx]
-					elem = elem[idx:]
-
 					if len(elem) == 0 {
 						switch r.Method {
-						case "DELETE":
-							s.handleDeprovisionNodeRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
 						case "GET":
-							s.handleDescribeNodeRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
+							s.handleListNodesRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleProvisionNodeRequest([0]string{}, elemIsEscaped, w, r)
 						default:
-							s.notAllowed(w, r, "DELETE,GET")
+							s.notAllowed(w, r, "GET,POST")
 						}
 
 						return
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/st"
+					case '/': // Prefix: "/"
 						origElem := elem
-						if l := len("/st"); len(elem) >= l && elem[0:l] == "/st" {
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
+						// Param: "identifier"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
 						if len(elem) == 0 {
-							break
+							switch r.Method {
+							case "DELETE":
+								s.handleDeprovisionNodeRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							case "GET":
+								s.handleDescribeNodeRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "DELETE,GET")
+							}
+
+							return
 						}
 						switch elem[0] {
-						case 'a': // Prefix: "a"
+						case '/': // Prefix: "/st"
 							origElem := elem
-							if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
+							if l := len("/st"); len(elem) >= l && elem[0:l] == "/st" {
 								elem = elem[l:]
 							} else {
 								break
@@ -189,9 +189,70 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								break
 							}
 							switch elem[0] {
-							case 'r': // Prefix: "rt"
+							case 'a': // Prefix: "a"
 								origElem := elem
-								if l := len("rt"); len(elem) >= l && elem[0:l] == "rt" {
+								if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									break
+								}
+								switch elem[0] {
+								case 'r': // Prefix: "rt"
+									origElem := elem
+									if l := len("rt"); len(elem) >= l && elem[0:l] == "rt" {
+										elem = elem[l:]
+									} else {
+										break
+									}
+
+									if len(elem) == 0 {
+										// Leaf node.
+										switch r.Method {
+										case "POST":
+											s.handleStartNodeRequest([1]string{
+												args[0],
+											}, elemIsEscaped, w, r)
+										default:
+											s.notAllowed(w, r, "POST")
+										}
+
+										return
+									}
+
+									elem = origElem
+								case 't': // Prefix: "tus"
+									origElem := elem
+									if l := len("tus"); len(elem) >= l && elem[0:l] == "tus" {
+										elem = elem[l:]
+									} else {
+										break
+									}
+
+									if len(elem) == 0 {
+										// Leaf node.
+										switch r.Method {
+										case "GET":
+											s.handleGetNodeStatusRequest([1]string{
+												args[0],
+											}, elemIsEscaped, w, r)
+										default:
+											s.notAllowed(w, r, "GET")
+										}
+
+										return
+									}
+
+									elem = origElem
+								}
+
+								elem = origElem
+							case 'o': // Prefix: "op"
+								origElem := elem
+								if l := len("op"); len(elem) >= l && elem[0:l] == "op" {
 									elem = elem[l:]
 								} else {
 									break
@@ -201,7 +262,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 									// Leaf node.
 									switch r.Method {
 									case "POST":
-										s.handleStartNodeRequest([1]string{
+										s.handleStopNodeRequest([1]string{
 											args[0],
 										}, elemIsEscaped, w, r)
 									default:
@@ -212,58 +273,33 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								}
 
 								elem = origElem
-							case 't': // Prefix: "tus"
-								origElem := elem
-								if l := len("tus"); len(elem) >= l && elem[0:l] == "tus" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch r.Method {
-									case "GET":
-										s.handleGetNodeStatusRequest([1]string{
-											args[0],
-										}, elemIsEscaped, w, r)
-									default:
-										s.notAllowed(w, r, "GET")
-									}
-
-									return
-								}
-
-								elem = origElem
-							}
-
-							elem = origElem
-						case 'o': // Prefix: "op"
-							origElem := elem
-							if l := len("op"); len(elem) >= l && elem[0:l] == "op" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "POST":
-									s.handleStopNodeRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "POST")
-								}
-
-								return
 							}
 
 							elem = origElem
 						}
 
 						elem = origElem
+					}
+
+					elem = origElem
+				case 't': // Prefix: "tifier"
+					origElem := elem
+					if l := len("tifier"); len(elem) >= l && elem[0:l] == "tifier" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleListNotifiersRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
 					}
 
 					elem = origElem
@@ -520,92 +556,92 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				}
 
 				elem = origElem
-			case 'n': // Prefix: "node"
+			case 'n': // Prefix: "no"
 				origElem := elem
-				if l := len("node"); len(elem) >= l && elem[0:l] == "node" {
+				if l := len("no"); len(elem) >= l && elem[0:l] == "no" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					switch method {
-					case "GET":
-						r.name = "ListNodes"
-						r.summary = ""
-						r.operationID = "ListNodes"
-						r.pathPattern = "/node"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "POST":
-						r.name = "ProvisionNode"
-						r.summary = ""
-						r.operationID = "ProvisionNode"
-						r.pathPattern = "/node"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
-					}
+					break
 				}
 				switch elem[0] {
-				case '/': // Prefix: "/"
+				case 'd': // Prefix: "de"
 					origElem := elem
-					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+					if l := len("de"); len(elem) >= l && elem[0:l] == "de" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
-					// Param: "identifier"
-					// Match until "/"
-					idx := strings.IndexByte(elem, '/')
-					if idx < 0 {
-						idx = len(elem)
-					}
-					args[0] = elem[:idx]
-					elem = elem[idx:]
-
 					if len(elem) == 0 {
 						switch method {
-						case "DELETE":
-							r.name = "DeprovisionNode"
-							r.summary = ""
-							r.operationID = "DeprovisionNode"
-							r.pathPattern = "/node/{identifier}"
-							r.args = args
-							r.count = 1
-							return r, true
 						case "GET":
-							r.name = "DescribeNode"
+							r.name = "ListNodes"
 							r.summary = ""
-							r.operationID = "DescribeNode"
-							r.pathPattern = "/node/{identifier}"
+							r.operationID = "ListNodes"
+							r.pathPattern = "/node"
 							r.args = args
-							r.count = 1
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = "ProvisionNode"
+							r.summary = ""
+							r.operationID = "ProvisionNode"
+							r.pathPattern = "/node"
+							r.args = args
+							r.count = 0
 							return r, true
 						default:
 							return
 						}
 					}
 					switch elem[0] {
-					case '/': // Prefix: "/st"
+					case '/': // Prefix: "/"
 						origElem := elem
-						if l := len("/st"); len(elem) >= l && elem[0:l] == "/st" {
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
+						// Param: "identifier"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
 						if len(elem) == 0 {
-							break
+							switch method {
+							case "DELETE":
+								r.name = "DeprovisionNode"
+								r.summary = ""
+								r.operationID = "DeprovisionNode"
+								r.pathPattern = "/node/{identifier}"
+								r.args = args
+								r.count = 1
+								return r, true
+							case "GET":
+								r.name = "DescribeNode"
+								r.summary = ""
+								r.operationID = "DescribeNode"
+								r.pathPattern = "/node/{identifier}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
 						}
 						switch elem[0] {
-						case 'a': // Prefix: "a"
+						case '/': // Prefix: "/st"
 							origElem := elem
-							if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
+							if l := len("/st"); len(elem) >= l && elem[0:l] == "/st" {
 								elem = elem[l:]
 							} else {
 								break
@@ -615,9 +651,74 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								break
 							}
 							switch elem[0] {
-							case 'r': // Prefix: "rt"
+							case 'a': // Prefix: "a"
 								origElem := elem
-								if l := len("rt"); len(elem) >= l && elem[0:l] == "rt" {
+								if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									break
+								}
+								switch elem[0] {
+								case 'r': // Prefix: "rt"
+									origElem := elem
+									if l := len("rt"); len(elem) >= l && elem[0:l] == "rt" {
+										elem = elem[l:]
+									} else {
+										break
+									}
+
+									if len(elem) == 0 {
+										switch method {
+										case "POST":
+											// Leaf: StartNode
+											r.name = "StartNode"
+											r.summary = ""
+											r.operationID = "StartNode"
+											r.pathPattern = "/node/{identifier}/start"
+											r.args = args
+											r.count = 1
+											return r, true
+										default:
+											return
+										}
+									}
+
+									elem = origElem
+								case 't': // Prefix: "tus"
+									origElem := elem
+									if l := len("tus"); len(elem) >= l && elem[0:l] == "tus" {
+										elem = elem[l:]
+									} else {
+										break
+									}
+
+									if len(elem) == 0 {
+										switch method {
+										case "GET":
+											// Leaf: GetNodeStatus
+											r.name = "GetNodeStatus"
+											r.summary = ""
+											r.operationID = "GetNodeStatus"
+											r.pathPattern = "/node/{identifier}/status"
+											r.args = args
+											r.count = 1
+											return r, true
+										default:
+											return
+										}
+									}
+
+									elem = origElem
+								}
+
+								elem = origElem
+							case 'o': // Prefix: "op"
+								origElem := elem
+								if l := len("op"); len(elem) >= l && elem[0:l] == "op" {
 									elem = elem[l:]
 								} else {
 									break
@@ -626,11 +727,11 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								if len(elem) == 0 {
 									switch method {
 									case "POST":
-										// Leaf: StartNode
-										r.name = "StartNode"
+										// Leaf: StopNode
+										r.name = "StopNode"
 										r.summary = ""
-										r.operationID = "StartNode"
-										r.pathPattern = "/node/{identifier}/start"
+										r.operationID = "StopNode"
+										r.pathPattern = "/node/{identifier}/stop"
 										r.args = args
 										r.count = 1
 										return r, true
@@ -640,62 +741,37 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								}
 
 								elem = origElem
-							case 't': // Prefix: "tus"
-								origElem := elem
-								if l := len("tus"); len(elem) >= l && elem[0:l] == "tus" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									switch method {
-									case "GET":
-										// Leaf: GetNodeStatus
-										r.name = "GetNodeStatus"
-										r.summary = ""
-										r.operationID = "GetNodeStatus"
-										r.pathPattern = "/node/{identifier}/status"
-										r.args = args
-										r.count = 1
-										return r, true
-									default:
-										return
-									}
-								}
-
-								elem = origElem
-							}
-
-							elem = origElem
-						case 'o': // Prefix: "op"
-							origElem := elem
-							if l := len("op"); len(elem) >= l && elem[0:l] == "op" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								switch method {
-								case "POST":
-									// Leaf: StopNode
-									r.name = "StopNode"
-									r.summary = ""
-									r.operationID = "StopNode"
-									r.pathPattern = "/node/{identifier}/stop"
-									r.args = args
-									r.count = 1
-									return r, true
-								default:
-									return
-								}
 							}
 
 							elem = origElem
 						}
 
 						elem = origElem
+					}
+
+					elem = origElem
+				case 't': // Prefix: "tifier"
+					origElem := elem
+					if l := len("tifier"); len(elem) >= l && elem[0:l] == "tifier" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						switch method {
+						case "GET":
+							// Leaf: ListNotifiers
+							r.name = "ListNotifiers"
+							r.summary = ""
+							r.operationID = "ListNotifiers"
+							r.pathPattern = "/notifier"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
 					}
 
 					elem = origElem

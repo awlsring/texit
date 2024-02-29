@@ -99,8 +99,8 @@ func LoadHeadscaleGateway(cfg *config.TailnetConfig) gateway.Tailnet {
 	return headscale_v0_22_3_gateway.New(cfg.User, client.HeadscaleService)
 }
 
-func LoadNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
-	notifiers := make([]gateway.Notification, 0, len(cfg))
+func LoadNotifiers(cfg []*config.NotifierConfig) map[string]gateway.Notification {
+	notifiers := make(map[string]gateway.Notification)
 	for _, n := range cfg {
 		switch n.Type {
 		case config.NotifierTypeMqtt:
@@ -117,12 +117,12 @@ func LoadNotifiers(cfg []*config.NotifierConfig) []gateway.Notification {
 			if token := c.Connect(); token.Wait() && token.Error() != nil {
 				appinit.PanicOnErr(token.Error())
 			}
-			notifiers = append(notifiers, mqtt_notification_gateway.New(n.Topic, c))
+			notifiers[n.Name] = mqtt_notification_gateway.New(n.Broker, n.Topic, c)
 		case config.NotifierTypeSns:
 			cfg, err := cconfig.LoadAwsConfig(n.AccessKey, n.SecretKey, n.Region)
 			appinit.PanicOnErr(err)
 			client := sns.NewFromConfig(cfg)
-			notifiers = append(notifiers, sns_notification_gateway.New(n.Topic, client))
+			notifiers[n.Name] = sns_notification_gateway.New(n.Topic, client)
 		default:
 			panic("unknown notifier type")
 		}

@@ -30,6 +30,8 @@ const (
 type NotifierConfig struct {
 	// the notifier type
 	Type NotifierType `yaml:"type"`
+	// the notifier name
+	Name string `yaml:"name"`
 	// the topic to publish to
 	Topic string `yaml:"topic"`
 	// username for the notifier
@@ -47,6 +49,9 @@ type NotifierConfig struct {
 }
 
 func (c *NotifierConfig) Validate() error {
+	if c.Name == "" {
+		c.Name = string(c.Type)
+	}
 	switch c.Type {
 	case NotifierTypeMqtt:
 		return c.validateMqtt()

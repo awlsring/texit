@@ -19,7 +19,7 @@ func TestDeprovisionNode(t *testing.T) {
 	}
 
 	mockWorkSvc := mocks.NewMockWorkflow_service(t)
-	h := New(nil, mockWorkSvc, nil, nil)
+	h := New(nil, mockWorkSvc, nil, nil, nil)
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
 	exId := workflow.ExecutionIdentifier("test-execution-id")
@@ -36,7 +36,7 @@ func TestDeprovisionNodeFailToParse(t *testing.T) {
 	ctx := context.Background()
 
 	mockWorkSvc := mocks.NewMockWorkflow_service(t)
-	h := New(nil, mockWorkSvc, nil, nil)
+	h := New(nil, mockWorkSvc, nil, nil, nil)
 
 	badReq := texit.DeprovisionNodeParams{
 		Identifier: "",
@@ -56,7 +56,7 @@ func TestDeprovisionNodeError(t *testing.T) {
 	}
 
 	mockWorkSvc := mocks.NewMockWorkflow_service(t)
-	h := New(nil, mockWorkSvc, nil, nil)
+	h := New(nil, mockWorkSvc, nil, nil, nil)
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
 

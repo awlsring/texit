@@ -299,6 +299,21 @@ func (s *ListNodesResponseContent) SetSummaries(val []NodeSummary) {
 	s.Summaries = val
 }
 
+// Ref: #/components/schemas/ListNotifiersResponseContent
+type ListNotifiersResponseContent struct {
+	Summaries []NotifierSummary `json:"summaries"`
+}
+
+// GetSummaries returns the value of Summaries.
+func (s *ListNotifiersResponseContent) GetSummaries() []NotifierSummary {
+	return s.Summaries
+}
+
+// SetSummaries sets the value of Summaries.
+func (s *ListNotifiersResponseContent) SetSummaries(val []NotifierSummary) {
+	s.Summaries = val
+}
+
 // Ref: #/components/schemas/ListProvidersResponseContent
 type ListProvidersResponseContent struct {
 	Summaries []ProviderSummary `json:"summaries"`
@@ -515,6 +530,96 @@ func (s *NodeSummary) SetCreated(val float64) {
 // SetUpdated sets the value of Updated.
 func (s *NodeSummary) SetUpdated(val float64) {
 	s.Updated = val
+}
+
+// Ref: #/components/schemas/NotifierSummary
+type NotifierSummary struct {
+	// The name of the notifier.
+	Name string       `json:"name"`
+	Type NotifierType `json:"type"`
+	// The endpoint that is used to send notifications. For SNS, this is the topic arn. For MQTT, this is
+	// the broker address and topic.
+	Endpoint string `json:"endpoint"`
+}
+
+// GetName returns the value of Name.
+func (s *NotifierSummary) GetName() string {
+	return s.Name
+}
+
+// GetType returns the value of Type.
+func (s *NotifierSummary) GetType() NotifierType {
+	return s.Type
+}
+
+// GetEndpoint returns the value of Endpoint.
+func (s *NotifierSummary) GetEndpoint() string {
+	return s.Endpoint
+}
+
+// SetName sets the value of Name.
+func (s *NotifierSummary) SetName(val string) {
+	s.Name = val
+}
+
+// SetType sets the value of Type.
+func (s *NotifierSummary) SetType(val NotifierType) {
+	s.Type = val
+}
+
+// SetEndpoint sets the value of Endpoint.
+func (s *NotifierSummary) SetEndpoint(val string) {
+	s.Endpoint = val
+}
+
+// The type of notifier.
+// Ref: #/components/schemas/NotifierType
+type NotifierType string
+
+const (
+	NotifierTypeAWSSns  NotifierType = "aws-sns"
+	NotifierTypeMqtt    NotifierType = "mqtt"
+	NotifierTypeUnknown NotifierType = "unknown"
+)
+
+// AllValues returns all NotifierType values.
+func (NotifierType) AllValues() []NotifierType {
+	return []NotifierType{
+		NotifierTypeAWSSns,
+		NotifierTypeMqtt,
+		NotifierTypeUnknown,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s NotifierType) MarshalText() ([]byte, error) {
+	switch s {
+	case NotifierTypeAWSSns:
+		return []byte(s), nil
+	case NotifierTypeMqtt:
+		return []byte(s), nil
+	case NotifierTypeUnknown:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *NotifierType) UnmarshalText(data []byte) error {
+	switch NotifierType(data) {
+	case NotifierTypeAWSSns:
+		*s = NotifierTypeAWSSns
+		return nil
+	case NotifierTypeMqtt:
+		*s = NotifierTypeMqtt
+		return nil
+	case NotifierTypeUnknown:
+		*s = NotifierTypeUnknown
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
 }
 
 // NewOptBool returns new OptBool with value set to v.

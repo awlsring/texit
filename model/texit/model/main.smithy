@@ -11,5 +11,5 @@ use aws.protocols#restJson1
 service Texit {
     version: "2024-01-31"
     operations: [Health]
-    resources: [Provider, Tailnet, Execution, Node]
+    resources: [Provider, Tailnet, Execution, Node, Notifier]
 }

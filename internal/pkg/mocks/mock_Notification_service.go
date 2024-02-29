@@ -5,6 +5,7 @@ package mocks
 import (
 	context "context"
 
+	notification "github.com/awlsring/texit/internal/pkg/domain/notification"
 	mock "github.com/stretchr/testify/mock"
 
 	workflow "github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -21,6 +22,54 @@ type MockNotification_service_Expecter struct {
 
 func (_m *MockNotification_service) EXPECT() *MockNotification_service_Expecter {
 	return &MockNotification_service_Expecter{mock: &_m.Mock}
+}
+
+// ListNotifiers provides a mock function with given fields: ctx
+func (_m *MockNotification_service) ListNotifiers(ctx context.Context) []*notification.Notifier {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListNotifiers")
+	}
+
+	var r0 []*notification.Notifier
+	if rf, ok := ret.Get(0).(func(context.Context) []*notification.Notifier); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*notification.Notifier)
+		}
+	}
+
+	return r0
+}
+
+// MockNotification_service_ListNotifiers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListNotifiers'
+type MockNotification_service_ListNotifiers_Call struct {
+	*mock.Call
+}
+
+// ListNotifiers is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockNotification_service_Expecter) ListNotifiers(ctx interface{}) *MockNotification_service_ListNotifiers_Call {
+	return &MockNotification_service_ListNotifiers_Call{Call: _e.mock.On("ListNotifiers", ctx)}
+}
+
+func (_c *MockNotification_service_ListNotifiers_Call) Run(run func(ctx context.Context)) *MockNotification_service_ListNotifiers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context))
+	})
+	return _c
+}
+
+func (_c *MockNotification_service_ListNotifiers_Call) Return(_a0 []*notification.Notifier) *MockNotification_service_ListNotifiers_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *MockNotification_service_ListNotifiers_Call) RunAndReturn(run func(context.Context) []*notification.Notifier) *MockNotification_service_ListNotifiers_Call {
+	_c.Call.Return(run)
+	return _c
 }
 
 // NotifyExecutionCompletion provides a mock function with given fields: ctx, e, w, status, results

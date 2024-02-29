@@ -492,6 +492,64 @@ func (_c *MockInvoker_texit_ListNodes_Call) RunAndReturn(run func(context.Contex
 	return _c
 }
 
+// ListNotifiers provides a mock function with given fields: ctx
+func (_m *MockInvoker_texit) ListNotifiers(ctx context.Context) (*texit.ListNotifiersResponseContent, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListNotifiers")
+	}
+
+	var r0 *texit.ListNotifiersResponseContent
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) (*texit.ListNotifiersResponseContent, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) *texit.ListNotifiersResponseContent); ok {
+		r0 = rf(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*texit.ListNotifiersResponseContent)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockInvoker_texit_ListNotifiers_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListNotifiers'
+type MockInvoker_texit_ListNotifiers_Call struct {
+	*mock.Call
+}
+
+// ListNotifiers is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockInvoker_texit_Expecter) ListNotifiers(ctx interface{}) *MockInvoker_texit_ListNotifiers_Call {
+	return &MockInvoker_texit_ListNotifiers_Call{Call: _e.mock.On("ListNotifiers", ctx)}
+}
+
+func (_c *MockInvoker_texit_ListNotifiers_Call) Run(run func(ctx context.Context)) *MockInvoker_texit_ListNotifiers_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context))
+	})
+	return _c
+}
+
+func (_c *MockInvoker_texit_ListNotifiers_Call) Return(_a0 *texit.ListNotifiersResponseContent, _a1 error) *MockInvoker_texit_ListNotifiers_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockInvoker_texit_ListNotifiers_Call) RunAndReturn(run func(context.Context) (*texit.ListNotifiersResponseContent, error)) *MockInvoker_texit_ListNotifiers_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ListProviders provides a mock function with given fields: ctx
 func (_m *MockInvoker_texit) ListProviders(ctx context.Context) (*texit.ListProvidersResponseContent, error) {
 	ret := _m.Called(ctx)

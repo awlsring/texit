@@ -83,6 +83,15 @@ func (UnimplementedHandler) ListNodes(ctx context.Context) (r *ListNodesResponse
 	return r, ht.ErrNotImplemented
 }
 
+// ListNotifiers implements ListNotifiers operation.
+//
+// List all registered notifiers.
+//
+// GET /notifier
+func (UnimplementedHandler) ListNotifiers(ctx context.Context) (r *ListNotifiersResponseContent, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ListProviders implements ListProviders operation.
 //
 // List all registered providers.

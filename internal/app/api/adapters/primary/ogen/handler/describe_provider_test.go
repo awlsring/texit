@@ -19,7 +19,7 @@ func TestDescribeProvider(t *testing.T) {
 	}
 
 	mockProviderSvc := mocks.NewMockProvider_service(t)
-	h := New(nil, nil, mockProviderSvc, nil)
+	h := New(nil, nil, mockProviderSvc, nil, nil)
 
 	providerId, _ := provider.IdentifierFromString(req.Name)
 	testProvider := &provider.Provider{
@@ -38,7 +38,7 @@ func TestDescribeProvider(t *testing.T) {
 func TestDescribeProviderBadParse(t *testing.T) {
 	ctx := context.Background()
 	mockProviderSvc := mocks.NewMockProvider_service(t)
-	h := New(nil, nil, mockProviderSvc, nil)
+	h := New(nil, nil, mockProviderSvc, nil, nil)
 
 	badReq := texit.DescribeProviderParams{
 		Name: "",
@@ -57,7 +57,7 @@ func TestDescribeProviderError(t *testing.T) {
 	}
 
 	mockProviderSvc := mocks.NewMockProvider_service(t)
-	h := New(nil, nil, mockProviderSvc, nil)
+	h := New(nil, nil, mockProviderSvc, nil, nil)
 
 	providerId, _ := provider.IdentifierFromString(req.Name)
 

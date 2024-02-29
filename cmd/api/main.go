@@ -34,7 +34,7 @@ var (
 	execRepo         repository.Execution
 	providerGateways map[string]gateway.Platform
 	tailnetGateways  map[string]gateway.Tailnet
-	notifierGateways []gateway.Notification
+	notifierGateways map[string]gateway.Notification
 	workflowGateway  gateway.Workflow
 	activitySvc      service.Activity
 	nodeSvc          service.Node
@@ -86,13 +86,14 @@ func main() {
 	notifierGateways = setup.LoadNotifiers(cfg.Notifiers)
 
 	log.Info().Msg("Initializing notification service")
-	notSvc = notification.NewService(notifierGateways)
+	notSvc, err = notification.NewService(notifierGateways)
+	appinit.PanicOnErr(err)
 
 	log.Info().Msg("Initializing node service")
 	nodeSvc = node.NewService(nodeRepo, workflowSvc, providerGateways)
 
 	log.Info().Msg("Froming ogen handler")
-	hdl := handler.New(nodeSvc, workflowSvc, providerSvc, tailnetSvc)
+	hdl := handler.New(nodeSvc, workflowSvc, providerSvc, tailnetSvc, notSvc)
 
 	log.Info().Msg("Initializing security handler")
 	sec := auth.NewSecurityHandler([]string{cfg.Server.APIKey})

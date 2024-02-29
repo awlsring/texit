@@ -19,7 +19,7 @@ func TestGetNodeStatus(t *testing.T) {
 	}
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil)
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
 	testStatus := node.StatusRunning
@@ -36,7 +36,7 @@ func TestGetNodeStatusFailToParse(t *testing.T) {
 	ctx := context.Background()
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil)
 
 	badReq := texit.GetNodeStatusParams{
 		Identifier: "",
@@ -55,7 +55,7 @@ func TestGetNodeStatusError(t *testing.T) {
 	}
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil)
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
 

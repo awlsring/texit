@@ -2,6 +2,7 @@ package sns_notification_gateway
 
 import (
 	"github.com/awlsring/texit/internal/app/api/ports/gateway"
+	"github.com/awlsring/texit/internal/pkg/domain/notification"
 	"github.com/aws/aws-sdk-go-v2/service/sns"
 )
 
@@ -17,6 +18,10 @@ func New(topic string, client *sns.Client) gateway.Notification {
 	}
 }
 
-func (g *SnsGateway) Endpoint() string {
-	return g.topic
+func (g *SnsGateway) Type() notification.TopicType {
+	return notification.TopicTypeSns
+}
+
+func (g *SnsGateway) Endpoint() notification.Endpoint {
+	return notification.Endpoint(g.topic)
 }

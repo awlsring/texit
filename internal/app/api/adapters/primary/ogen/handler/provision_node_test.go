@@ -25,7 +25,7 @@ func TestProvisionNode(t *testing.T) {
 	mockProviderSvc := mocks.NewMockProvider_service(t)
 	mockTailnetSvc := mocks.NewMockTailnet_service(t)
 	mockWorkSvc := mocks.NewMockWorkflow_service(t)
-	h := New(nil, mockWorkSvc, mockProviderSvc, mockTailnetSvc)
+	h := New(nil, mockWorkSvc, mockProviderSvc, mockTailnetSvc, nil)
 
 	provId, _ := provider.IdentifierFromString(req.Provider)
 	testProvider := &provider.Provider{
@@ -64,7 +64,7 @@ func TestProvisionNodeError(t *testing.T) {
 	mockProviderSvc := mocks.NewMockProvider_service(t)
 	mockTailnetSvc := mocks.NewMockTailnet_service(t)
 	mockWorkSvc := mocks.NewMockWorkflow_service(t)
-	h := New(nil, mockWorkSvc, mockProviderSvc, mockTailnetSvc)
+	h := New(nil, mockWorkSvc, mockProviderSvc, mockTailnetSvc, nil)
 
 	provId, _ := provider.IdentifierFromString(req.Provider)
 

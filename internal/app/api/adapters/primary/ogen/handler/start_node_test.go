@@ -18,7 +18,7 @@ func TestStartNode(t *testing.T) {
 	}
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil)
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
 
@@ -37,7 +37,7 @@ func TestStartNodeParseError(t *testing.T) {
 	}
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil)
 
 	res, err := h.StartNode(ctx, req)
 
@@ -52,7 +52,7 @@ func TestStartNodeError(t *testing.T) {
 	}
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil)
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
 

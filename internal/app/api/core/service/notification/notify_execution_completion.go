@@ -38,7 +38,7 @@ func (s *Service) NotifyExecutionCompletion(ctx context.Context, e workflow.Exec
 			defer wg.Done()
 			err := gw.SendMessage(ctx, smsg)
 			if err != nil {
-				log.Warn().Err(err).Str("endpoint", gw.Endpoint()).Msg("Failed to send notification")
+				log.Warn().Err(err).Str("endpoint", gw.Endpoint().String()).Msg("Failed to send notification")
 			}
 		}(gw)
 	}

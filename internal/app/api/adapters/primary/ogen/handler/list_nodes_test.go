@@ -14,7 +14,7 @@ func TestListNodes(t *testing.T) {
 	ctx := context.Background()
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil)
 
 	testNodes := []*node.Node{
 		{
@@ -37,7 +37,7 @@ func TestListNodesError(t *testing.T) {
 	ctx := context.Background()
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil)
 
 	mockNodeSvc.EXPECT().List(ctx).Return(nil, errors.New("test error"))
 
