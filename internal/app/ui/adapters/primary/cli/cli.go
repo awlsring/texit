@@ -235,6 +235,17 @@ func New(hdl *handler.Handler) *CLI {
 					},
 				},
 			},
+			{
+				Name:  "notifier",
+				Usage: "Get information about notifiers",
+				Subcommands: []*cli.Command{
+					{
+						Name:   "list",
+						Usage:  "Lists all notifiers",
+						Action: hdl.ListNotifiers,
+					},
+				},
+			},
 		},
 	}
 
