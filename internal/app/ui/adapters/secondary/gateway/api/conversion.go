@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/domain/notification"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -181,4 +182,24 @@ func SummaryToTailnet(summary texit.TailnetSummary) (*tailnet.Tailnet, error) {
 		Type:          translateTailnetType(summary.Type),
 		ControlServer: cs,
 	}, nil
+}
+
+func translateNotifiersType(t texit.NotifierType) notification.TopicType {
+	switch t {
+	case texit.NotifierTypeMqtt:
+		return notification.TopicTypeMqtt
+	case texit.NotifierTypeAWSSns:
+		return notification.TopicTypeSns
+	default:
+		return notification.TopicTypeUnknown
+	}
+}
+
+func SummaryToNotifiers(s texit.NotifierSummary) (*notification.Notifier, error) {
+	n, err := notification.NewNotifierFromPrimitive(s.Name, translateNotifiersType(s.Type).String(), s.Endpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	return n, nil
 }

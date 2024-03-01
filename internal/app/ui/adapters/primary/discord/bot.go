@@ -144,6 +144,10 @@ func (b *Bot) registerCommands() error {
 		return err
 	}
 
+	if err := b.tmpst.RegisterCommand(command.NewListNotifiersCommand(b.CommandPreflight(b.hdl.ListNotifiers))); err != nil {
+		return err
+	}
+
 	if err := b.tmpst.RegisterCommand(command.NewDescribeTailnetCommand(b.CommandPreflight(b.hdl.DescribeTailnet), b.AutoCompletePreflight(b.logLevel, func(ctx *comctx.CommandContext) []tempest.Choice {
 		field, input := ctx.GetFocusedValue()
 		switch field {

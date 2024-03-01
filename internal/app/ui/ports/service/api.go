@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/awlsring/texit/internal/pkg/domain/node"
+	"github.com/awlsring/texit/internal/pkg/domain/notification"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -31,6 +32,8 @@ type Api interface {
 
 	GetTailnet(ctx context.Context, id tailnet.Identifier) (*tailnet.Tailnet, error)
 	ListTailnets(ctx context.Context) ([]*tailnet.Tailnet, error)
+
+	ListNotifiers(ctx context.Context) ([]*notification.Notifier, error)
 
 	CheckServerHealth(ctx context.Context) error
 }
