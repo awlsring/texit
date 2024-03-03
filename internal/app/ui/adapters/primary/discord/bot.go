@@ -18,7 +18,6 @@ type Bot struct {
 	tmpst      *tempest.Client
 	hdl        *handler.Handler
 	mux        *http.ServeMux
-	lis        net.Listener
 	authorized []tempest.Snowflake
 	guildIds   []tempest.Snowflake
 }

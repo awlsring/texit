@@ -35,11 +35,7 @@ func getUserId(itx *tempest.CommandInteraction) (tempest.Snowflake, error) {
 }
 
 func isPrivateMessage(itx *tempest.CommandInteraction) bool {
-	if itx.User != nil {
-		return true
-	}
-
-	return false
+	return itx.User != nil
 }
 
 func getRoles(itx *tempest.CommandInteraction) []tempest.Snowflake {

@@ -16,9 +16,7 @@ func (*DynamoNodeRepository) Init(ctx context.Context) error {
 	return nil
 }
 
-func (r *DynamoNodeRepository) Close() {
-	return
-}
+func (r *DynamoNodeRepository) Close() {}
 
 func New(table string, client *dynamodb.Client) repository.Node {
 	return &DynamoNodeRepository{

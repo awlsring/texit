@@ -32,7 +32,10 @@ func (h *CallbackHandler) SendDeprovisionFollowUp(ctx context.Context, msg notif
 		log.Error().Err(err).Msg("Failed to get user")
 		return
 	}
-	defer h.pe.RemoveExecution(ctx, msg.ExecutionId)
+	defer func() {
+		err := h.pe.RemoveExecution(ctx, msg.ExecutionId)
+		log.Error().Err(err).Msg("Failed to remove execution")
+	}()
 	log.Debug().Msg("Forming bot response")
 
 	m := tempest.Message{}
@@ -67,7 +70,10 @@ func (h *CallbackHandler) SendProvisionFollowUp(ctx context.Context, msg notific
 		log.Error().Err(err).Msg("Failed to get user")
 		return
 	}
-	defer h.pe.RemoveExecution(ctx, msg.ExecutionId)
+	defer func() {
+		err := h.pe.RemoveExecution(ctx, msg.ExecutionId)
+		log.Error().Err(err).Msg("Failed to remove execution")
+	}()
 	log.Debug().Msg("Forming bot response")
 
 	m := tempest.Message{}

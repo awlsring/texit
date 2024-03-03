@@ -11,7 +11,7 @@ HEADSCALE_22_GEN := $(GEN_DIR)/headscale/v0.22.3
 all: build
 
 test:
-	go test -v ./...
+	go test -v ./internal/...
 
 vet:
 	go vet ./internal/...
@@ -33,10 +33,8 @@ mockgen:
 build: codegen mockgen vet lint test
 	@echo "Tidying up"
 	go mod tidy
-	@echo "Building api"
-	go build -o $(BUILD_DIR)/bin/api $(CMD_DIR)/api/main.go
-	@echo "Building cli"
-	go build -o $(BUILD_DIR)/bin/cli $(CMD_DIR)/cli/main.go
+	@echo "Building with goreleaser"
+	goreleaser release --snapshot --clean
 
 lint:
 	@echo "Linting go files"

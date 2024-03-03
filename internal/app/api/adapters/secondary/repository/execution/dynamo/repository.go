@@ -16,9 +16,7 @@ func (*DynamoExecutionRepository) Init(ctx context.Context) error {
 	return nil
 }
 
-func (r *DynamoExecutionRepository) Close() {
-	return
-}
+func (r *DynamoExecutionRepository) Close() {}
 
 func New(table string, client *dynamodb.Client) repository.Execution {
 	return &DynamoExecutionRepository{

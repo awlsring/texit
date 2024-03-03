@@ -64,7 +64,7 @@ func (l *snsListener) SetLogger(logger zerolog.Logger) {
 
 func (l *snsListener) Subscribe(ctx context.Context, topic string) error {
 	go func() {
-		http.Serve(l.callbackListener, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_ = http.Serve(l.callbackListener, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var msg snsSubscriptionMessage
 			if err := json.NewDecoder(r.Body).Decode(&msg); err != nil {
 				l.log.Error().Err(err).Msg("Failed to decode message")
@@ -92,11 +92,14 @@ func (l *snsListener) Subscribe(ctx context.Context, topic string) error {
 		log.Debug().Msg("Shutting down server...")
 	}()
 
-	l.client.Subscribe(ctx, &sns.SubscribeInput{
+	_, err := l.client.Subscribe(ctx, &sns.SubscribeInput{
 		TopicArn: &topic,
 		Protocol: aws.String(l.protocol),
 		Endpoint: aws.String(l.callbackUrl),
 	})
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
