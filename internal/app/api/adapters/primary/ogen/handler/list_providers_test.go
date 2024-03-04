@@ -14,7 +14,7 @@ func TestListProviders(t *testing.T) {
 	ctx := context.Background()
 
 	mockProviderSvc := mocks.NewMockProvider_service(t)
-	h := New(nil, nil, mockProviderSvc, nil, nil)
+	h := New(nil, nil, mockProviderSvc, nil, nil, nil)
 
 	testProviders := []*provider.Provider{
 		{
@@ -37,7 +37,7 @@ func TestListProvidersError(t *testing.T) {
 	ctx := context.Background()
 
 	mockProviderSvc := mocks.NewMockProvider_service(t)
-	h := New(nil, nil, mockProviderSvc, nil, nil)
+	h := New(nil, nil, mockProviderSvc, nil, nil, nil)
 
 	mockProviderSvc.EXPECT().List(ctx).Return(nil, errors.New("test error"))
 

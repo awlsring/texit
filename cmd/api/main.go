@@ -22,8 +22,11 @@ import (
 	"github.com/awlsring/texit/internal/app/api/setup"
 	"github.com/awlsring/texit/internal/pkg/appinit"
 	"github.com/awlsring/texit/internal/pkg/logger"
+	"github.com/awlsring/texit/internal/pkg/observability"
 	"github.com/awlsring/texit/internal/pkg/runtime"
 	"github.com/rs/zerolog"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/prometheus"
 )
 
 var (
@@ -92,8 +95,10 @@ func main() {
 	log.Info().Msg("Initializing node service")
 	nodeSvc = node.NewService(nodeRepo, workflowSvc, providerGateways)
 
+	metrics := observability.NewMetrics(observability.WithNamespace("texit"))
+
 	log.Info().Msg("Froming ogen handler")
-	hdl := handler.New(nodeSvc, workflowSvc, providerSvc, tailnetSvc, notSvc)
+	hdl := handler.New(nodeSvc, workflowSvc, providerSvc, tailnetSvc, notSvc, metrics)
 
 	log.Info().Msg("Initializing security handler")
 	sec := auth.NewSecurityHandler([]string{cfg.Server.APIKey})
@@ -133,6 +138,11 @@ func startServer() {
 	log.Info().Msg("Prepping server launch")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	exp, err := prometheus.New()
+	appinit.PanicOnErr(err)
+	mprov := observability.NewPrometheusMetricsProvider(exp)
+	otel.SetMeterProvider(mprov)
 
 	log.Info().Msg("Initializing net listener")
 	lis := setup.LoadListener(cfg.Server)

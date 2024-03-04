@@ -14,7 +14,7 @@ func TestListTailnets(t *testing.T) {
 	ctx := context.Background()
 
 	mockTailnetSvc := mocks.NewMockTailnet_service(t)
-	h := New(nil, nil, nil, mockTailnetSvc, nil)
+	h := New(nil, nil, nil, mockTailnetSvc, nil, nil)
 
 	testTailnets := []*tailnet.Tailnet{
 		{
@@ -37,7 +37,7 @@ func TestListTailnetsError(t *testing.T) {
 	ctx := context.Background()
 
 	mockTailnetSvc := mocks.NewMockTailnet_service(t)
-	h := New(nil, nil, nil, mockTailnetSvc, nil)
+	h := New(nil, nil, nil, mockTailnetSvc, nil, nil)
 
 	mockTailnetSvc.EXPECT().List(ctx).Return(nil, errors.New("test error"))
 
@@ -51,7 +51,7 @@ func TestListTailnetsEmpty(t *testing.T) {
 	ctx := context.Background()
 
 	mockTailnetSvc := mocks.NewMockTailnet_service(t)
-	h := New(nil, nil, nil, mockTailnetSvc, nil)
+	h := New(nil, nil, nil, mockTailnetSvc, nil, nil)
 
 	mockTailnetSvc.EXPECT().List(ctx).Return([]*tailnet.Tailnet{}, nil)
 

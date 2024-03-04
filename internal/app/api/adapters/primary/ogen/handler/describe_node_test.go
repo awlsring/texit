@@ -19,7 +19,7 @@ func TestDescribeNode(t *testing.T) {
 	}
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil, nil)
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
 	testNode := &node.Node{
@@ -39,7 +39,7 @@ func TestDescribeNodeFailToParse(t *testing.T) {
 	ctx := context.Background()
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil, nil)
 
 	badReq := texit.DescribeNodeParams{
 		Identifier: "",
@@ -59,7 +59,7 @@ func TestDescribeNodeError(t *testing.T) {
 	}
 
 	mockNodeSvc := mocks.NewMockNode_service(t)
-	h := New(mockNodeSvc, nil, nil, nil, nil)
+	h := New(mockNodeSvc, nil, nil, nil, nil, nil)
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
 

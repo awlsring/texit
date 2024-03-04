@@ -9,6 +9,7 @@ import (
 	"github.com/awlsring/texit/internal/app/api/adapters/primary/ogen/smithy_errors"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/pkg/gen/texit"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog"
 )
 
@@ -21,7 +22,7 @@ type Server struct {
 	hdl      texit.Handler
 	secHdl   texit.SecurityHandler
 	opts     []texit.ServerOption
-	srv      *texit.Server
+	srv      http.Handler
 }
 
 func NewServer(hdl texit.Handler, opts ...ServerOpt) (*Server, error) {
@@ -60,6 +61,13 @@ func (s *Server) Serve(ctx context.Context, lis net.Listener) error {
 		log.Debug().Msgf("server listening at %v", lis.Addr())
 		if err := http.Serve(lis, s.srv); err != nil {
 			log.Error().Err(err).Msg("Server error")
+		}
+	}()
+
+	go func() {
+		log.Debug().Msgf("metrics listening at %v", ":9090")
+		if err := http.ListenAndServe(":9090", promhttp.Handler()); err != nil {
+			log.Error().Err(err).Msg("Metrics error")
 		}
 	}()
 

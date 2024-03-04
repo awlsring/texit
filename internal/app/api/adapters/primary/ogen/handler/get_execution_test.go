@@ -18,7 +18,7 @@ func TestSuccessfulGetExecution(t *testing.T) {
 	}
 
 	mockWorkSvc := mocks.NewMockWorkflow_service(t)
-	h := New(nil, mockWorkSvc, nil, nil, nil)
+	h := New(nil, mockWorkSvc, nil, nil, nil, nil)
 
 	exId, _ := workflow.ExecutionIdentifierFromString(req.Identifier)
 	testExecution := &workflow.Execution{
@@ -41,7 +41,7 @@ func TestFailedToParseExecutionId(t *testing.T) {
 	}
 
 	mockWorkSvc := mocks.NewMockWorkflow_service(t)
-	h := New(nil, mockWorkSvc, nil, nil, nil)
+	h := New(nil, mockWorkSvc, nil, nil, nil, nil)
 
 	res, err := h.GetExecution(ctx, badReq)
 
@@ -56,7 +56,7 @@ func TestFailedToGetExecution(t *testing.T) {
 	}
 
 	mockWorkSvc := mocks.NewMockWorkflow_service(t)
-	h := New(nil, mockWorkSvc, nil, nil, nil)
+	h := New(nil, mockWorkSvc, nil, nil, nil, nil)
 
 	exId, _ := workflow.ExecutionIdentifierFromString(req.Identifier)
 

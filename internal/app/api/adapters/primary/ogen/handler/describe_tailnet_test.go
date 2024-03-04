@@ -19,7 +19,7 @@ func TestDescribeTailnet(t *testing.T) {
 	}
 
 	mockTailnetSvc := mocks.NewMockTailnet_service(t)
-	h := New(nil, nil, nil, mockTailnetSvc, nil)
+	h := New(nil, nil, nil, mockTailnetSvc, nil, nil)
 
 	tailnetId, _ := tailnet.IdentifierFromString(req.Name)
 	testTailnet := &tailnet.Tailnet{
@@ -41,7 +41,7 @@ func TestDescribeTailnetFailToParse(t *testing.T) {
 	}
 
 	mockTailnetSvc := mocks.NewMockTailnet_service(t)
-	h := New(nil, nil, nil, mockTailnetSvc, nil)
+	h := New(nil, nil, nil, mockTailnetSvc, nil, nil)
 
 	tailnetId, _ := tailnet.IdentifierFromString(req.Name)
 	badReq := texit.DescribeTailnetParams{
@@ -70,7 +70,7 @@ func TestDescribeTailnetError(t *testing.T) {
 	}
 
 	mockTailnetSvc := mocks.NewMockTailnet_service(t)
-	h := New(nil, nil, nil, mockTailnetSvc, nil)
+	h := New(nil, nil, nil, mockTailnetSvc, nil, nil)
 
 	tailnetId, _ := tailnet.IdentifierFromString(req.Name)
 

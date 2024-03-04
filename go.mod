@@ -39,13 +39,16 @@ require (
 	github.com/ogen-go/ogen v0.81.2
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pkg/errors v0.9.1
+	github.com/prometheus/client_golang v1.18.0
 	github.com/rs/zerolog v1.32.0
 	github.com/stretchr/testify v1.8.4
 	github.com/tailscale/tailscale-client-go v1.15.0
 	github.com/urfave/cli/v2 v2.27.1
-	go.opentelemetry.io/otel v1.23.0
-	go.opentelemetry.io/otel/metric v1.23.0
-	go.opentelemetry.io/otel/trace v1.23.0
+	go.opentelemetry.io/otel v1.24.0
+	go.opentelemetry.io/otel/exporters/prometheus v0.46.0
+	go.opentelemetry.io/otel/metric v1.24.0
+	go.opentelemetry.io/otel/sdk/metric v1.24.0
+	go.opentelemetry.io/otel/trace v1.24.0
 	go.uber.org/multierr v1.11.0
 	golang.org/x/oauth2 v0.16.0
 	gopkg.in/yaml.v2 v2.4.0
@@ -136,8 +139,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_golang v1.18.0 // indirect
-	github.com/prometheus/client_model v0.5.0 // indirect
+	github.com/prometheus/client_model v0.6.0 // indirect
 	github.com/prometheus/common v0.45.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
@@ -161,6 +163,7 @@ require (
 	github.com/xrash/smetrics v0.0.0-20231213231151-1d8dd44e695e // indirect
 	github.com/yuin/goldmark v1.4.13 // indirect
 	go.mongodb.org/mongo-driver v1.13.1 // indirect
+	go.opentelemetry.io/otel/sdk v1.24.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
 	go4.org/mem v0.0.0-20220726221520-4f986261bf13 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect
@@ -170,7 +173,7 @@ require (
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/term v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.5.0 // indirect

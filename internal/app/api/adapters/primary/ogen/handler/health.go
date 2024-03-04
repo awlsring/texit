@@ -9,7 +9,7 @@ import (
 
 func (h *Handler) Health(ctx context.Context) (*texit.HealthResponseContent, error) {
 	log := logger.FromContext(ctx)
-	log.Debug().Msg("Health check")
+	log.Debug().Msg("Test Counter Metric")
 	return &texit.HealthResponseContent{
 		Healthy: true,
 	}, nil
