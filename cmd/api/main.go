@@ -95,6 +95,12 @@ func main() {
 	log.Info().Msg("Initializing node service")
 	nodeSvc = node.NewService(nodeRepo, workflowSvc, providerGateways)
 
+	log.Info().Msg("Initializing observability")
+	exp, err := prometheus.New()
+	appinit.PanicOnErr(err)
+	mprov := observability.NewPrometheusMetricsProvider(exp)
+	otel.SetMeterProvider(mprov)
+
 	metrics := observability.NewMetrics(observability.WithNamespace("texit"))
 
 	log.Info().Msg("Froming ogen handler")
@@ -138,11 +144,6 @@ func startServer() {
 	log.Info().Msg("Prepping server launch")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
-	exp, err := prometheus.New()
-	appinit.PanicOnErr(err)
-	mprov := observability.NewPrometheusMetricsProvider(exp)
-	otel.SetMeterProvider(mprov)
 
 	log.Info().Msg("Initializing net listener")
 	lis := setup.LoadListener(cfg.Server)
