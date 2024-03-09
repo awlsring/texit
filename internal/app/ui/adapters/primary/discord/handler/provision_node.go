@@ -66,7 +66,7 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 			InvalidInputErrorResponse(ctx, err)
 			return
 		}
-		log.Warn().Err(err).Msg("Error deprovisioning node")
+		log.Warn().Err(err).Msg("Error provisioning node")
 		InternalErrorResponse(ctx)
 		return
 	}

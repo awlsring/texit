@@ -3,11 +3,28 @@ package handler
 import (
 	"context"
 
+	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/logger"
 	"github.com/awlsring/texit/pkg/gen/texit"
 )
+
+func determineSize(size texit.OptNodeSize) node.Size {
+	if !size.IsSet() {
+		return node.SizeSmall
+	}
+	switch size.Value {
+	case texit.NodeSizeSmall:
+		return node.SizeSmall
+	case texit.NodeSizeMedium:
+		return node.SizeMedium
+	case texit.NodeSizeLarge:
+		return node.SizeLarge
+	default:
+		return node.SizeSmall
+	}
+}
 
 func (h *Handler) ProvisionNode(ctx context.Context, req *texit.ProvisionNodeRequestContent) (texit.ProvisionNodeRes, error) {
 	log := logger.FromContext(ctx)
@@ -47,8 +64,11 @@ func (h *Handler) ProvisionNode(ctx context.Context, req *texit.ProvisionNodeReq
 		return nil, err
 	}
 
+	log.Debug().Msg("Parsing node size")
+	size := determineSize(req.GetSize())
+
 	log.Debug().Msg("Launching provision node workflow")
-	exId, err := h.workSvc.LaunchProvisionNodeWorkflow(ctx, prov, loc, tail, req.Ephemeral.Value)
+	exId, err := h.workSvc.LaunchProvisionNodeWorkflow(ctx, prov, loc, tail, size, req.Ephemeral.Value)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to launch provision node workflow")
 		return nil, err

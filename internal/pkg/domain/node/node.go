@@ -26,6 +26,8 @@ type Node struct {
 	PreauthKey tailnet.PreauthKey
 	// if the node will be deleted when stopped
 	Ephemeral bool
+	// the size of the node
+	Size      Size
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

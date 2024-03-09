@@ -3,13 +3,14 @@ package workflow
 import (
 	"context"
 
+	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, p *provider.Provider, l provider.Location, tn *tailnet.Tailnet, ephemeral bool) (workflow.ExecutionIdentifier, error) {
+func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, p *provider.Provider, l provider.Location, tn *tailnet.Tailnet, size node.Size, ephemeral bool) (workflow.ExecutionIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Launching provision node workflow")
 
@@ -23,6 +24,7 @@ func (s *Service) LaunchProvisionNodeWorkflow(ctx context.Context, p *provider.P
 		Location:             l.String(),
 		TailnetName:          tn.Name.String(),
 		TailnetControlServer: tn.ControlServer.String(),
+		Size:                 size.String(),
 		Ephemeral:            ephemeral,
 	}
 

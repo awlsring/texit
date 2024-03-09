@@ -54,6 +54,12 @@ func (w *Worker) provisionNodeWorkflow(ctx context.Context, input *workflow.Prov
 		return returnFailure(err, results)
 	}
 
+	size, err := node.SizeFromString(input.Size)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse node size")
+		return returnFailure(err, results)
+	}
+
 	log.Debug().Msg("Forming node id")
 	id := node.FormNewNodeIdentifier()
 	log.Debug().Msgf("New node id: %s", id)
@@ -70,7 +76,7 @@ func (w *Worker) provisionNodeWorkflow(ctx context.Context, input *workflow.Prov
 	}
 
 	log.Debug().Msg("Creating node on platform")
-	platId, err := w.actSvc.CreateNode(ctx, provName, tcs, id, tailName, location, preauthKey)
+	platId, err := w.actSvc.CreateNode(ctx, provName, tcs, id, tailName, location, preauthKey, size)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create node")
 		return returnFailure(err, results)
@@ -104,7 +110,7 @@ func (w *Worker) provisionNodeWorkflow(ctx context.Context, input *workflow.Prov
 	}
 
 	log.Debug().Msg("Creating node in repository")
-	err = w.actSvc.CreateNodeRecord(ctx, id, platId, provName, location, preauthKey, tn, tid, tailName, input.Ephemeral)
+	err = w.actSvc.CreateNodeRecord(ctx, id, platId, provName, location, preauthKey, tn, tid, tailName, size, input.Ephemeral)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create node record")
 		return returnFailure(err, results)

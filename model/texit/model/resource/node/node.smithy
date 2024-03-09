@@ -24,6 +24,14 @@ enum NodeStatus {
     UNKNOWN = "unknown"
 }
 
+@documentation("The size a node. Size are abstracted so that a provider can define what to provision for each.")
+enum NodeSize {
+    SMALL = "small"
+    MEDIUM = "medium"
+    LARGE = "large"
+    UNKNOWN = "unknown"
+}
+
 structure NodeSummary {
     @required
     identifier: NodeIdentifier
@@ -45,6 +53,9 @@ structure NodeSummary {
 
     @required
     TailnetDeviceIdentifier: TailnetDeviceIdentifier
+
+    @required
+    Size: NodeSize
 
     @required
     @documentation("If a node is ephemeral.")

@@ -415,6 +415,21 @@ func (s *ListTailnetsResponseContent) Validate() error {
 	return nil
 }
 
+func (s NodeSize) Validate() error {
+	switch s {
+	case "small":
+		return nil
+	case "medium":
+		return nil
+	case "large":
+		return nil
+	case "unknown":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s NodeStatus) Validate() error {
 	switch s {
 	case "starting":
@@ -492,6 +507,17 @@ func (s *NodeSummary) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "tailnet",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Size.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "Size",
 			Error: err,
 		})
 	}
@@ -678,6 +704,24 @@ func (s *ProvisionNodeRequestContent) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "tailnet",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Size.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "size",
 			Error: err,
 		})
 	}

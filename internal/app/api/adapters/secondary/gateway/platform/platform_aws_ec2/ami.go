@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	defaultAmiFilter = "al2023-ami-*-arm64"
+	defaultAmiFilter = "al2023-ami-*"
 )
 
-func getLatestAmi(ctx context.Context, client interfaces.Ec2Client, region string) (string, error) {
+func getLatestAmi(ctx context.Context, client interfaces.Ec2Client, region string, arch string) (string, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Getting latest AMI")
 
@@ -26,7 +26,7 @@ func getLatestAmi(ctx context.Context, client interfaces.Ec2Client, region strin
 		},
 		{
 			Name:   aws.String("architecture"),
-			Values: []string{"arm64"},
+			Values: []string{arch},
 		},
 	}
 

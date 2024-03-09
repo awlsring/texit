@@ -16,6 +16,7 @@ type CreateNodeInput struct {
 	TailnetDeviceName    string `json:"tailnetDeviceName"`
 	TailnetControlServer string `json:"tailnetControlServer"`
 	PreauthKey           string `json:"preauthKey"`
+	Size                 string `json:"size"`
 }
 
 func (h *SfnActivityHandler) createNodeActivity(ctx context.Context, input *CreateNodeInput) (interface{}, error) {
@@ -59,8 +60,14 @@ func (h *SfnActivityHandler) createNodeActivity(ctx context.Context, input *Crea
 		return nil, err
 	}
 
+	size, err := node.SizeFromString(input.Size)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse node size")
+		return nil, err
+	}
+
 	log.Debug().Msg("Creating node")
-	node, err := h.actSvc.CreateNode(ctx, prov, tcs, nodeId, dev, location, key)
+	node, err := h.actSvc.CreateNode(ctx, prov, tcs, nodeId, dev, location, key, size)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create node")
 		return nil, err

@@ -16,9 +16,26 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
-func (g *PlatformAwsEc2Gateway) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, loc provider.Location, tcs tailnet.ControlServer, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
+func nodeSizeToInstanceTypeAndArch(size node.Size) (string, string) {
+	switch size {
+	case node.SizeSmall:
+		return DefaultSmallInstanceType, DefaultSmallInstanceArch
+	case node.SizeMedium:
+		return DefaultMediumInstanceType, DefaultMediumInstanceArch
+	case node.SizeLarge:
+		return DefaultLargeInstanceType, DefaultLargeInstanceArch
+	default:
+		return DefaultSmallInstanceType, DefaultSmallInstanceArch
+	}
+}
+
+func (g *PlatformAwsEc2Gateway) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, loc provider.Location, tcs tailnet.ControlServer, key tailnet.PreauthKey, size node.Size) (node.PlatformIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating node on EC2")
+
+	log.Debug().Msg("Getting instance type and architecture")
+	instanceType, arch := nodeSizeToInstanceTypeAndArch(size)
+	log.Debug().Msgf("Instance type: %s, architecture: %s", instanceType, arch)
 
 	log.Debug().Msgf("Getting ec2 client for location %s", loc.String())
 	ec2Client, err := platform_aws.GetClientForLocation(ctx, ec2.NewFromConfig, g.Ec2Cache, loc, g.Creds)
@@ -28,7 +45,7 @@ func (g *PlatformAwsEc2Gateway) CreateNode(ctx context.Context, id node.Identifi
 	}
 
 	log.Debug().Msgf("Getting latest AL2023 AMI for location %s", loc.String())
-	ami, err := getLatestAmi(ctx, ec2Client, loc.String())
+	ami, err := getLatestAmi(ctx, ec2Client, loc.String(), arch)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to get latest AMI")
 		return "", err
@@ -39,7 +56,7 @@ func (g *PlatformAwsEc2Gateway) CreateNode(ctx context.Context, id node.Identifi
 	log.Debug().Str("cloud_init", cloudInit).Msg("Cloud-init formed")
 
 	log.Debug().Msg("Creating EC2 instance")
-	instanceId, err := runInstance(ctx, ec2Client, id, tid, ami, DefaultInstanceType, cloudInit)
+	instanceId, err := runInstance(ctx, ec2Client, id, tid, ami, instanceType, cloudInit)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create EC2 instance")
 		return "", err

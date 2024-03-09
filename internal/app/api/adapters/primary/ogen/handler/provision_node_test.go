@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -44,7 +45,7 @@ func TestProvisionNode(t *testing.T) {
 
 	mockProviderSvc.EXPECT().Describe(ctx, provId).Return(testProvider, nil)
 	mockTailnetSvc.EXPECT().Describe(ctx, tnId).Return(testTailnet, nil)
-	mockWorkSvc.EXPECT().LaunchProvisionNodeWorkflow(ctx, testProvider, testLocation, testTailnet, req.Ephemeral.Value).Return(testExecutionId, nil)
+	mockWorkSvc.EXPECT().LaunchProvisionNodeWorkflow(ctx, testProvider, testLocation, testTailnet, node.SizeSmall, req.Ephemeral.Value).Return(testExecutionId, nil)
 
 	res, err := h.ProvisionNode(ctx, req)
 

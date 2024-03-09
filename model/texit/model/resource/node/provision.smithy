@@ -16,6 +16,8 @@ operation ProvisionNode {
         tailnet: TailnetName
 
         ephemeral: Boolean
+
+        size: NodeSize
     }
 
     output := {

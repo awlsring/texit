@@ -18,11 +18,13 @@ type NodeSqlRecord struct {
 	Location           string    `db:"location"`
 	PreauthKey         string    `db:"preauth_key"`
 	Ephemeral          bool      `db:"ephemeral"`
+	Size               string    `db:"size"`
 	CreatedAt          time.Time `db:"created_at"`
 	UpdatedAt          time.Time `db:"updated_at"`
 }
 
 func (n *NodeSqlRecord) ToNode() *node.Node {
+	s, _ := node.SizeFromString(n.Size)
 	return &node.Node{
 		Identifier:         node.Identifier(n.Identifier),
 		PlatformIdentifier: node.PlatformIdentifier(n.PlatformIdentifier),
@@ -33,6 +35,7 @@ func (n *NodeSqlRecord) ToNode() *node.Node {
 		Location:           provider.Location(n.Location),
 		PreauthKey:         tailnet.PreauthKey(n.PreauthKey),
 		Ephemeral:          n.Ephemeral,
+		Size:               s,
 		CreatedAt:          n.CreatedAt,
 		UpdatedAt:          n.UpdatedAt,
 	}

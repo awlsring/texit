@@ -17,8 +17,6 @@ import (
 const (
 	image                  = "ghcr.io/tailscale/tailscale:latest"
 	defaultName            = "tailscale"
-	defaultCpuAmount       = "256"
-	defaultMemoryAmount    = "512"
 	keyTsAuthkey           = "TS_AUTHKEY"
 	keyTsStateDir          = "TS_STATE_DIR"
 	keyTsHostname          = "TS_HOSTNAME"
@@ -27,6 +25,15 @@ const (
 	valueAdvertiseExitNode = "--advertise-exit-node"
 	keyTsAcceptDns         = "TS_ACCEPT_DNS"
 	keyTsUserspaceRoutes   = "TS_USERSPACE"
+
+	defaultSmallCpuAmount    = "256"
+	defaultSmallMemoryAmount = "512"
+
+	defaultMediumCpuAmount    = "512"
+	defaultMediumMemoryAmount = "1024"
+
+	defaultLargeCpuAmount    = "1024"
+	defaultLargeMemoryAmount = "2048"
 )
 
 func makeExtraArgs(tcs tailnet.ControlServer) types.KeyValuePair {
@@ -38,8 +45,23 @@ func makeExtraArgs(tcs tailnet.ControlServer) types.KeyValuePair {
 	}
 }
 
-func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, id node.Identifier, tcs tailnet.ControlServer, tid tailnet.DeviceName, authkey tailnet.PreauthKey, execRole, taskRole, param string) error {
+func nodeSizeToCpuAndMem(size node.Size) (string, string) {
+	switch size {
+	case node.SizeSmall:
+		return defaultSmallCpuAmount, defaultSmallMemoryAmount
+	case node.SizeMedium:
+		return defaultMediumCpuAmount, defaultMediumMemoryAmount
+	case node.SizeLarge:
+		return defaultLargeCpuAmount, defaultLargeMemoryAmount
+	default:
+		return defaultSmallCpuAmount, defaultSmallMemoryAmount
+	}
+}
+
+func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, id node.Identifier, tcs tailnet.ControlServer, tid tailnet.DeviceName, authkey tailnet.PreauthKey, execRole, taskRole, param string, size node.Size) error {
 	log := logger.FromContext(ctx)
+
+	cpu, mem := nodeSizeToCpuAndMem(size)
 
 	log.Debug().Msg("Creating new ECS task definition")
 	_, err := client.RegisterTaskDefinition(ctx, &ecs.RegisterTaskDefinitionInput{
@@ -87,8 +109,8 @@ func createTaskDefinition(ctx context.Context, client interfaces.EcsClient, id n
 			},
 		},
 		Family:      aws.String(id.String()),
-		Cpu:         aws.String(defaultCpuAmount),
-		Memory:      aws.String(defaultMemoryAmount),
+		Cpu:         aws.String(cpu),
+		Memory:      aws.String(mem),
 		NetworkMode: types.NetworkModeAwsvpc,
 		RequiresCompatibilities: []types.Compatibility{
 			types.CompatibilityFargate,

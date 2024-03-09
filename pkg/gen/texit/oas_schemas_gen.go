@@ -344,6 +344,63 @@ func (s *ListTailnetsResponseContent) SetSummaries(val []TailnetSummary) {
 	s.Summaries = val
 }
 
+// The size a node. Size are abstracted so that a provider can define what to provision for each.
+// Ref: #/components/schemas/NodeSize
+type NodeSize string
+
+const (
+	NodeSizeSmall   NodeSize = "small"
+	NodeSizeMedium  NodeSize = "medium"
+	NodeSizeLarge   NodeSize = "large"
+	NodeSizeUnknown NodeSize = "unknown"
+)
+
+// AllValues returns all NodeSize values.
+func (NodeSize) AllValues() []NodeSize {
+	return []NodeSize{
+		NodeSizeSmall,
+		NodeSizeMedium,
+		NodeSizeLarge,
+		NodeSizeUnknown,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s NodeSize) MarshalText() ([]byte, error) {
+	switch s {
+	case NodeSizeSmall:
+		return []byte(s), nil
+	case NodeSizeMedium:
+		return []byte(s), nil
+	case NodeSizeLarge:
+		return []byte(s), nil
+	case NodeSizeUnknown:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *NodeSize) UnmarshalText(data []byte) error {
+	switch NodeSize(data) {
+	case NodeSizeSmall:
+		*s = NodeSizeSmall
+		return nil
+	case NodeSizeMedium:
+		*s = NodeSizeMedium
+		return nil
+	case NodeSizeLarge:
+		*s = NodeSizeLarge
+		return nil
+	case NodeSizeUnknown:
+		*s = NodeSizeUnknown
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // The status of a node.
 // Ref: #/components/schemas/NodeStatus
 type NodeStatus string
@@ -423,7 +480,8 @@ type NodeSummary struct {
 	// The name of a tailnet device.
 	TailnetDeviceName string `json:"tailnetDeviceName"`
 	// The identifier of a tailnet device.
-	TailnetDeviceIdentifier string `json:"TailnetDeviceIdentifier"`
+	TailnetDeviceIdentifier string   `json:"TailnetDeviceIdentifier"`
+	Size                    NodeSize `json:"Size"`
 	// If a node is ephemeral.
 	Ephemeral bool `json:"ephemeral"`
 	// When a node was created.
@@ -465,6 +523,11 @@ func (s *NodeSummary) GetTailnetDeviceName() string {
 // GetTailnetDeviceIdentifier returns the value of TailnetDeviceIdentifier.
 func (s *NodeSummary) GetTailnetDeviceIdentifier() string {
 	return s.TailnetDeviceIdentifier
+}
+
+// GetSize returns the value of Size.
+func (s *NodeSummary) GetSize() NodeSize {
+	return s.Size
 }
 
 // GetEphemeral returns the value of Ephemeral.
@@ -515,6 +578,11 @@ func (s *NodeSummary) SetTailnetDeviceName(val string) {
 // SetTailnetDeviceIdentifier sets the value of TailnetDeviceIdentifier.
 func (s *NodeSummary) SetTailnetDeviceIdentifier(val string) {
 	s.TailnetDeviceIdentifier = val
+}
+
+// SetSize sets the value of Size.
+func (s *NodeSummary) SetSize(val NodeSize) {
+	s.Size = val
 }
 
 // SetEphemeral sets the value of Ephemeral.
@@ -714,6 +782,52 @@ func (o OptFloat64) Or(d float64) float64 {
 	return d
 }
 
+// NewOptNodeSize returns new OptNodeSize with value set to v.
+func NewOptNodeSize(v NodeSize) OptNodeSize {
+	return OptNodeSize{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptNodeSize is optional NodeSize.
+type OptNodeSize struct {
+	Value NodeSize
+	Set   bool
+}
+
+// IsSet returns true if OptNodeSize was set.
+func (o OptNodeSize) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptNodeSize) Reset() {
+	var v NodeSize
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptNodeSize) SetTo(v NodeSize) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptNodeSize) Get() (v NodeSize, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptNodeSize) Or(d NodeSize) NodeSize {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptString returns new OptString with value set to v.
 func NewOptString(v string) OptString {
 	return OptString{
@@ -858,8 +972,9 @@ type ProvisionNodeRequestContent struct {
 	// A location provided by a provider.
 	Location string `json:"location"`
 	// .
-	Tailnet   string  `json:"tailnet"`
-	Ephemeral OptBool `json:"ephemeral"`
+	Tailnet   string      `json:"tailnet"`
+	Ephemeral OptBool     `json:"ephemeral"`
+	Size      OptNodeSize `json:"size"`
 }
 
 // GetProvider returns the value of Provider.
@@ -882,6 +997,11 @@ func (s *ProvisionNodeRequestContent) GetEphemeral() OptBool {
 	return s.Ephemeral
 }
 
+// GetSize returns the value of Size.
+func (s *ProvisionNodeRequestContent) GetSize() OptNodeSize {
+	return s.Size
+}
+
 // SetProvider sets the value of Provider.
 func (s *ProvisionNodeRequestContent) SetProvider(val string) {
 	s.Provider = val
@@ -900,6 +1020,11 @@ func (s *ProvisionNodeRequestContent) SetTailnet(val string) {
 // SetEphemeral sets the value of Ephemeral.
 func (s *ProvisionNodeRequestContent) SetEphemeral(val OptBool) {
 	s.Ephemeral = val
+}
+
+// SetSize sets the value of Size.
+func (s *ProvisionNodeRequestContent) SetSize(val OptNodeSize) {
+	s.Size = val
 }
 
 // Ref: #/components/schemas/ProvisionNodeResponseContent

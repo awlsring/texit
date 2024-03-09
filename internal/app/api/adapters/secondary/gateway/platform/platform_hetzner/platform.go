@@ -8,10 +8,6 @@ import (
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 )
 
-const (
-	DefaultInstanceType = "g6-nanode-1"
-)
-
 type PlatformHetzner struct {
 	client *hcloud.Client
 }

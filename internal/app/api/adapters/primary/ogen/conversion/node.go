@@ -20,6 +20,19 @@ func TranslateNodeStatus(s node.Status) texit.NodeStatus {
 	}
 }
 
+func TranslateNodeSize(s node.Size) texit.NodeSize {
+	switch s {
+	case node.SizeSmall:
+		return texit.NodeSizeSmall
+	case node.SizeMedium:
+		return texit.NodeSizeMedium
+	case node.SizeLarge:
+		return texit.NodeSizeLarge
+	default:
+		return texit.NodeSizeUnknown
+	}
+}
+
 func NodeToSummary(n *node.Node) texit.NodeSummary {
 	return texit.NodeSummary{
 		Identifier:              n.Identifier.String(),
@@ -30,6 +43,7 @@ func NodeToSummary(n *node.Node) texit.NodeSummary {
 		TailnetDeviceName:       n.TailnetName.String(),
 		TailnetDeviceIdentifier: n.TailnetIdentifier.String(),
 		Ephemeral:               n.Ephemeral,
+		Size:                    TranslateNodeSize(n.Size),
 		Created:                 float64(n.CreatedAt.Unix()),
 		Updated:                 float64(n.UpdatedAt.Unix()),
 	}

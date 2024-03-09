@@ -17,9 +17,24 @@ const (
 	DefaultImage = "linode/debian12"
 )
 
-func (p *PlatformLinode) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, loc provider.Location, tcs tailnet.ControlServer, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
+func determineLinodeForSize(size node.Size) string {
+	switch size {
+	case node.SizeSmall:
+		return DefaultSmallInstanceType
+	case node.SizeMedium:
+		return DefaultMediumInstanceType
+	case node.SizeLarge:
+		return DefaultLargeInstanceType
+	default:
+		return DefaultSmallInstanceType
+	}
+}
+
+func (p *PlatformLinode) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, loc provider.Location, tcs tailnet.ControlServer, key tailnet.PreauthKey, size node.Size) (node.PlatformIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating Linode node")
+
+	instanceType := determineLinodeForSize(size)
 
 	log.Debug().Msg("Creating Linode stackscript")
 	stack, err := p.client.CreateStackscript(ctx, linodego.StackscriptCreateOptions{
@@ -36,7 +51,7 @@ func (p *PlatformLinode) CreateNode(ctx context.Context, id node.Identifier, tid
 	log.Debug().Msg("Creating Linode instance")
 	resp, err := p.client.CreateInstance(ctx, linodego.InstanceCreateOptions{
 		Region:        loc.String(),
-		Type:          DefaultInstanceType,
+		Type:          instanceType,
 		Label:         id.String(),
 		Tags:          []string{"texit", fmt.Sprintf("tailnet:%s", tid.String()), fmt.Sprintf("node-id:%s", id.String())},
 		StackScriptID: stack.ID,

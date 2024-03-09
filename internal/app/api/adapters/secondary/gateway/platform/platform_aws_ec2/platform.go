@@ -8,9 +8,14 @@ import (
 )
 
 const (
-	// TODO: make these override able in config or via input?
-	DefaultInstanceType = "t4g.nano"
-	DefaultInstanceArch = "arm64"
+	DefaultSmallInstanceType = "t4g.nano"
+	DefaultSmallInstanceArch = "arm64"
+
+	DefaultMediumInstanceType = "t4g.micro"
+	DefaultMediumInstanceArch = "arm64"
+
+	DefaultLargeInstanceType = "t4g.medium"
+	DefaultLargeInstanceArch = "arm64"
 )
 
 type PlatformAwsEc2Gateway struct {

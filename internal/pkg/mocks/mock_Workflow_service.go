@@ -144,9 +144,9 @@ func (_c *MockWorkflow_service_LaunchDeprovisionNodeWorkflow_Call) RunAndReturn(
 	return _c
 }
 
-// LaunchProvisionNodeWorkflow provides a mock function with given fields: _a0, _a1, _a2, _a3, _a4
-func (_m *MockWorkflow_service) LaunchProvisionNodeWorkflow(_a0 context.Context, _a1 *provider.Provider, _a2 provider.Location, _a3 *tailnet.Tailnet, _a4 bool) (workflow.ExecutionIdentifier, error) {
-	ret := _m.Called(_a0, _a1, _a2, _a3, _a4)
+// LaunchProvisionNodeWorkflow provides a mock function with given fields: _a0, _a1, _a2, _a3, _a4, _a5
+func (_m *MockWorkflow_service) LaunchProvisionNodeWorkflow(_a0 context.Context, _a1 *provider.Provider, _a2 provider.Location, _a3 *tailnet.Tailnet, _a4 node.Size, _a5 bool) (workflow.ExecutionIdentifier, error) {
+	ret := _m.Called(_a0, _a1, _a2, _a3, _a4, _a5)
 
 	if len(ret) == 0 {
 		panic("no return value specified for LaunchProvisionNodeWorkflow")
@@ -154,17 +154,17 @@ func (_m *MockWorkflow_service) LaunchProvisionNodeWorkflow(_a0 context.Context,
 
 	var r0 workflow.ExecutionIdentifier
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *provider.Provider, provider.Location, *tailnet.Tailnet, bool) (workflow.ExecutionIdentifier, error)); ok {
-		return rf(_a0, _a1, _a2, _a3, _a4)
+	if rf, ok := ret.Get(0).(func(context.Context, *provider.Provider, provider.Location, *tailnet.Tailnet, node.Size, bool) (workflow.ExecutionIdentifier, error)); ok {
+		return rf(_a0, _a1, _a2, _a3, _a4, _a5)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *provider.Provider, provider.Location, *tailnet.Tailnet, bool) workflow.ExecutionIdentifier); ok {
-		r0 = rf(_a0, _a1, _a2, _a3, _a4)
+	if rf, ok := ret.Get(0).(func(context.Context, *provider.Provider, provider.Location, *tailnet.Tailnet, node.Size, bool) workflow.ExecutionIdentifier); ok {
+		r0 = rf(_a0, _a1, _a2, _a3, _a4, _a5)
 	} else {
 		r0 = ret.Get(0).(workflow.ExecutionIdentifier)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *provider.Provider, provider.Location, *tailnet.Tailnet, bool) error); ok {
-		r1 = rf(_a0, _a1, _a2, _a3, _a4)
+	if rf, ok := ret.Get(1).(func(context.Context, *provider.Provider, provider.Location, *tailnet.Tailnet, node.Size, bool) error); ok {
+		r1 = rf(_a0, _a1, _a2, _a3, _a4, _a5)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -182,14 +182,15 @@ type MockWorkflow_service_LaunchProvisionNodeWorkflow_Call struct {
 //   - _a1 *provider.Provider
 //   - _a2 provider.Location
 //   - _a3 *tailnet.Tailnet
-//   - _a4 bool
-func (_e *MockWorkflow_service_Expecter) LaunchProvisionNodeWorkflow(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 interface{}, _a4 interface{}) *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call {
-	return &MockWorkflow_service_LaunchProvisionNodeWorkflow_Call{Call: _e.mock.On("LaunchProvisionNodeWorkflow", _a0, _a1, _a2, _a3, _a4)}
+//   - _a4 node.Size
+//   - _a5 bool
+func (_e *MockWorkflow_service_Expecter) LaunchProvisionNodeWorkflow(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 interface{}, _a4 interface{}, _a5 interface{}) *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call {
+	return &MockWorkflow_service_LaunchProvisionNodeWorkflow_Call{Call: _e.mock.On("LaunchProvisionNodeWorkflow", _a0, _a1, _a2, _a3, _a4, _a5)}
 }
 
-func (_c *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call) Run(run func(_a0 context.Context, _a1 *provider.Provider, _a2 provider.Location, _a3 *tailnet.Tailnet, _a4 bool)) *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call {
+func (_c *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call) Run(run func(_a0 context.Context, _a1 *provider.Provider, _a2 provider.Location, _a3 *tailnet.Tailnet, _a4 node.Size, _a5 bool)) *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(*provider.Provider), args[2].(provider.Location), args[3].(*tailnet.Tailnet), args[4].(bool))
+		run(args[0].(context.Context), args[1].(*provider.Provider), args[2].(provider.Location), args[3].(*tailnet.Tailnet), args[4].(node.Size), args[5].(bool))
 	})
 	return _c
 }
@@ -199,7 +200,7 @@ func (_c *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call) Return(_a0 work
 	return _c
 }
 
-func (_c *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call) RunAndReturn(run func(context.Context, *provider.Provider, provider.Location, *tailnet.Tailnet, bool) (workflow.ExecutionIdentifier, error)) *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call {
+func (_c *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call) RunAndReturn(run func(context.Context, *provider.Provider, provider.Location, *tailnet.Tailnet, node.Size, bool) (workflow.ExecutionIdentifier, error)) *MockWorkflow_service_LaunchProvisionNodeWorkflow_Call {
 	_c.Call.Return(run)
 	return _c
 }

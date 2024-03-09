@@ -13,6 +13,7 @@ type ProvisionNodeInput struct {
 	Location             string `json:"location"`
 	TailnetName          string `json:"tailnetName"`
 	TailnetControlServer string `json:"tailnetControlServer"`
+	Size                 string `json:"size"`
 	Ephemeral            bool   `json:"ephemeral"`
 }
 

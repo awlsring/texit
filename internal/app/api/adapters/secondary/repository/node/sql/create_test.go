@@ -36,6 +36,7 @@ func TestCreate(t *testing.T) {
 		TailnetName:        tailnet.DeviceName("test-tailnet-name"),
 		TailnetIdentifier:  tailnet.DeviceIdentifier("test-tailnet-identifier"),
 		Ephemeral:          true,
+		Size:               node.SizeSmall,
 		CreatedAt:          time.Now(),
 		UpdatedAt:          time.Now(),
 	}

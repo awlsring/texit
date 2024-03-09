@@ -18,6 +18,7 @@ func (r *SqlNodeRepository) initTables(ctx context.Context) error {
 			tailnet TEXT NOT NULL,
 			location TEXT NOT NULL,
 			preauth_key TEXT NOT NULL,
+			size TEXT NOT NULL,
 			ephemeral BOOLEAN NOT NULL,
 			created_at TIMESTAMP NOT NULL,
 			updated_at TIMESTAMP NOT NULL

@@ -1417,6 +1417,50 @@ func (s *ListTailnetsResponseContent) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes NodeSize as json.
+func (s NodeSize) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes NodeSize from json.
+func (s *NodeSize) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode NodeSize to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch NodeSize(v) {
+	case NodeSizeSmall:
+		*s = NodeSizeSmall
+	case NodeSizeMedium:
+		*s = NodeSizeMedium
+	case NodeSizeLarge:
+		*s = NodeSizeLarge
+	case NodeSizeUnknown:
+		*s = NodeSizeUnknown
+	default:
+		*s = NodeSize(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s NodeSize) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *NodeSize) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes NodeStatus as json.
 func (s NodeStatus) Encode(e *jx.Encoder) {
 	e.Str(string(s))
@@ -1501,6 +1545,10 @@ func (s *NodeSummary) encodeFields(e *jx.Encoder) {
 		e.Str(s.TailnetDeviceIdentifier)
 	}
 	{
+		e.FieldStart("Size")
+		s.Size.Encode(e)
+	}
+	{
 		e.FieldStart("ephemeral")
 		e.Bool(s.Ephemeral)
 	}
@@ -1514,17 +1562,18 @@ func (s *NodeSummary) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfNodeSummary = [10]string{
-	0: "identifier",
-	1: "provider",
-	2: "location",
-	3: "providerNodeIdentifier",
-	4: "tailnet",
-	5: "tailnetDeviceName",
-	6: "TailnetDeviceIdentifier",
-	7: "ephemeral",
-	8: "created",
-	9: "updated",
+var jsonFieldsNameOfNodeSummary = [11]string{
+	0:  "identifier",
+	1:  "provider",
+	2:  "location",
+	3:  "providerNodeIdentifier",
+	4:  "tailnet",
+	5:  "tailnetDeviceName",
+	6:  "TailnetDeviceIdentifier",
+	7:  "Size",
+	8:  "ephemeral",
+	9:  "created",
+	10: "updated",
 }
 
 // Decode decodes NodeSummary from json.
@@ -1620,8 +1669,18 @@ func (s *NodeSummary) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"TailnetDeviceIdentifier\"")
 			}
-		case "ephemeral":
+		case "Size":
 			requiredBitSet[0] |= 1 << 7
+			if err := func() error {
+				if err := s.Size.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"Size\"")
+			}
+		case "ephemeral":
+			requiredBitSet[1] |= 1 << 0
 			if err := func() error {
 				v, err := d.Bool()
 				s.Ephemeral = bool(v)
@@ -1633,7 +1692,7 @@ func (s *NodeSummary) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"ephemeral\"")
 			}
 		case "created":
-			requiredBitSet[1] |= 1 << 0
+			requiredBitSet[1] |= 1 << 1
 			if err := func() error {
 				v, err := d.Float64()
 				s.Created = float64(v)
@@ -1645,7 +1704,7 @@ func (s *NodeSummary) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"created\"")
 			}
 		case "updated":
-			requiredBitSet[1] |= 1 << 1
+			requiredBitSet[1] |= 1 << 2
 			if err := func() error {
 				v, err := d.Float64()
 				s.Updated = float64(v)
@@ -1667,7 +1726,7 @@ func (s *NodeSummary) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11111111,
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1953,6 +2012,39 @@ func (s *OptFloat64) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes NodeSize as json.
+func (o OptNodeSize) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes NodeSize from json.
+func (o *OptNodeSize) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptNodeSize to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptNodeSize) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptNodeSize) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes string as json.
 func (o OptString) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -2172,13 +2264,20 @@ func (s *ProvisionNodeRequestContent) encodeFields(e *jx.Encoder) {
 			s.Ephemeral.Encode(e)
 		}
 	}
+	{
+		if s.Size.Set {
+			e.FieldStart("size")
+			s.Size.Encode(e)
+		}
+	}
 }
 
-var jsonFieldsNameOfProvisionNodeRequestContent = [4]string{
+var jsonFieldsNameOfProvisionNodeRequestContent = [5]string{
 	0: "provider",
 	1: "location",
 	2: "tailnet",
 	3: "ephemeral",
+	4: "size",
 }
 
 // Decode decodes ProvisionNodeRequestContent from json.
@@ -2235,6 +2334,16 @@ func (s *ProvisionNodeRequestContent) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"ephemeral\"")
+			}
+		case "size":
+			if err := func() error {
+				s.Size.Reset()
+				if err := s.Size.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"size\"")
 			}
 		default:
 			return d.Skip()

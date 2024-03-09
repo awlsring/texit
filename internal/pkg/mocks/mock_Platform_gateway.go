@@ -27,9 +27,9 @@ func (_m *MockPlatform_gateway) EXPECT() *MockPlatform_gateway_Expecter {
 	return &MockPlatform_gateway_Expecter{mock: &_m.Mock}
 }
 
-// CreateNode provides a mock function with given fields: _a0, _a1, _a2, _a3, _a4, _a5
-func (_m *MockPlatform_gateway) CreateNode(_a0 context.Context, _a1 node.Identifier, _a2 tailnet.DeviceName, _a3 provider.Location, _a4 tailnet.ControlServer, _a5 tailnet.PreauthKey) (node.PlatformIdentifier, error) {
-	ret := _m.Called(_a0, _a1, _a2, _a3, _a4, _a5)
+// CreateNode provides a mock function with given fields: _a0, _a1, _a2, _a3, _a4, _a5, _a6
+func (_m *MockPlatform_gateway) CreateNode(_a0 context.Context, _a1 node.Identifier, _a2 tailnet.DeviceName, _a3 provider.Location, _a4 tailnet.ControlServer, _a5 tailnet.PreauthKey, _a6 node.Size) (node.PlatformIdentifier, error) {
+	ret := _m.Called(_a0, _a1, _a2, _a3, _a4, _a5, _a6)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateNode")
@@ -37,17 +37,17 @@ func (_m *MockPlatform_gateway) CreateNode(_a0 context.Context, _a1 node.Identif
 
 	var r0 node.PlatformIdentifier
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.ControlServer, tailnet.PreauthKey) (node.PlatformIdentifier, error)); ok {
-		return rf(_a0, _a1, _a2, _a3, _a4, _a5)
+	if rf, ok := ret.Get(0).(func(context.Context, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.ControlServer, tailnet.PreauthKey, node.Size) (node.PlatformIdentifier, error)); ok {
+		return rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.ControlServer, tailnet.PreauthKey) node.PlatformIdentifier); ok {
-		r0 = rf(_a0, _a1, _a2, _a3, _a4, _a5)
+	if rf, ok := ret.Get(0).(func(context.Context, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.ControlServer, tailnet.PreauthKey, node.Size) node.PlatformIdentifier); ok {
+		r0 = rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6)
 	} else {
 		r0 = ret.Get(0).(node.PlatformIdentifier)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.ControlServer, tailnet.PreauthKey) error); ok {
-		r1 = rf(_a0, _a1, _a2, _a3, _a4, _a5)
+	if rf, ok := ret.Get(1).(func(context.Context, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.ControlServer, tailnet.PreauthKey, node.Size) error); ok {
+		r1 = rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -67,13 +67,14 @@ type MockPlatform_gateway_CreateNode_Call struct {
 //   - _a3 provider.Location
 //   - _a4 tailnet.ControlServer
 //   - _a5 tailnet.PreauthKey
-func (_e *MockPlatform_gateway_Expecter) CreateNode(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 interface{}, _a4 interface{}, _a5 interface{}) *MockPlatform_gateway_CreateNode_Call {
-	return &MockPlatform_gateway_CreateNode_Call{Call: _e.mock.On("CreateNode", _a0, _a1, _a2, _a3, _a4, _a5)}
+//   - _a6 node.Size
+func (_e *MockPlatform_gateway_Expecter) CreateNode(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 interface{}, _a4 interface{}, _a5 interface{}, _a6 interface{}) *MockPlatform_gateway_CreateNode_Call {
+	return &MockPlatform_gateway_CreateNode_Call{Call: _e.mock.On("CreateNode", _a0, _a1, _a2, _a3, _a4, _a5, _a6)}
 }
 
-func (_c *MockPlatform_gateway_CreateNode_Call) Run(run func(_a0 context.Context, _a1 node.Identifier, _a2 tailnet.DeviceName, _a3 provider.Location, _a4 tailnet.ControlServer, _a5 tailnet.PreauthKey)) *MockPlatform_gateway_CreateNode_Call {
+func (_c *MockPlatform_gateway_CreateNode_Call) Run(run func(_a0 context.Context, _a1 node.Identifier, _a2 tailnet.DeviceName, _a3 provider.Location, _a4 tailnet.ControlServer, _a5 tailnet.PreauthKey, _a6 node.Size)) *MockPlatform_gateway_CreateNode_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(node.Identifier), args[2].(tailnet.DeviceName), args[3].(provider.Location), args[4].(tailnet.ControlServer), args[5].(tailnet.PreauthKey))
+		run(args[0].(context.Context), args[1].(node.Identifier), args[2].(tailnet.DeviceName), args[3].(provider.Location), args[4].(tailnet.ControlServer), args[5].(tailnet.PreauthKey), args[6].(node.Size))
 	})
 	return _c
 }
@@ -83,7 +84,7 @@ func (_c *MockPlatform_gateway_CreateNode_Call) Return(_a0 node.PlatformIdentifi
 	return _c
 }
 
-func (_c *MockPlatform_gateway_CreateNode_Call) RunAndReturn(run func(context.Context, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.ControlServer, tailnet.PreauthKey) (node.PlatformIdentifier, error)) *MockPlatform_gateway_CreateNode_Call {
+func (_c *MockPlatform_gateway_CreateNode_Call) RunAndReturn(run func(context.Context, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.ControlServer, tailnet.PreauthKey, node.Size) (node.PlatformIdentifier, error)) *MockPlatform_gateway_CreateNode_Call {
 	_c.Call.Return(run)
 	return _c
 }

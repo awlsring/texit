@@ -21,6 +21,7 @@ func TestToNode(t *testing.T) {
 		Location:           "test-location",
 		PreauthKey:         "test-preauth-key",
 		Ephemeral:          true,
+		Size:               "small",
 		CreatedAt:          time.Now(),
 		UpdatedAt:          time.Now(),
 	}
@@ -35,6 +36,7 @@ func TestToNode(t *testing.T) {
 		Location:           provider.Location(testRecord.Location),
 		PreauthKey:         tailnet.PreauthKey(testRecord.PreauthKey),
 		Ephemeral:          testRecord.Ephemeral,
+		Size:               node.SizeSmall,
 		CreatedAt:          testRecord.CreatedAt,
 		UpdatedAt:          testRecord.UpdatedAt,
 	}

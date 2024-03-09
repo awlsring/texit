@@ -13,7 +13,7 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (s *Service) CreateNodeRecord(ctx context.Context, nid node.Identifier, pid node.PlatformIdentifier, p provider.Identifier, l provider.Location, pk tailnet.PreauthKey, t tailnet.Identifier, tid tailnet.DeviceIdentifier, tn tailnet.DeviceName, e bool) error {
+func (s *Service) CreateNodeRecord(ctx context.Context, nid node.Identifier, pid node.PlatformIdentifier, p provider.Identifier, l provider.Location, pk tailnet.PreauthKey, t tailnet.Identifier, tid tailnet.DeviceIdentifier, tn tailnet.DeviceName, si node.Size, e bool) error {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating node record")
 
@@ -28,6 +28,7 @@ func (s *Service) CreateNodeRecord(ctx context.Context, nid node.Identifier, pid
 		Tailnet:            t,
 		TailnetIdentifier:  tid,
 		TailnetName:        tn,
+		Size:               si,
 		Ephemeral:          e,
 		CreatedAt:          now,
 		UpdatedAt:          now,
@@ -43,7 +44,7 @@ func (s *Service) CreateNodeRecord(ctx context.Context, nid node.Identifier, pid
 	return nil
 }
 
-func (s *Service) CreateNode(ctx context.Context, provider provider.Identifier, tcs tailnet.ControlServer, node node.Identifier, tailName tailnet.DeviceName, location provider.Location, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
+func (s *Service) CreateNode(ctx context.Context, provider provider.Identifier, tcs tailnet.ControlServer, node node.Identifier, tailName tailnet.DeviceName, location provider.Location, key tailnet.PreauthKey, size node.Size) (node.PlatformIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msgf("Creating node on provider %s in location %s", provider, location)
 
@@ -55,7 +56,7 @@ func (s *Service) CreateNode(ctx context.Context, provider provider.Identifier, 
 	}
 
 	log.Debug().Msg("Creating node")
-	id, err := platform.CreateNode(ctx, node, tailName, location, tcs, key)
+	id, err := platform.CreateNode(ctx, node, tailName, location, tcs, key, size)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create node")
 		return "", err

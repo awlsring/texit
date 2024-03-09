@@ -77,9 +77,9 @@ func (_c *MockActivity_service_CloseExecution_Call) RunAndReturn(run func(contex
 	return _c
 }
 
-// CreateNode provides a mock function with given fields: _a0, _a1, _a2, _a3, _a4, _a5, _a6
-func (_m *MockActivity_service) CreateNode(_a0 context.Context, _a1 provider.Identifier, _a2 tailnet.ControlServer, _a3 node.Identifier, _a4 tailnet.DeviceName, _a5 provider.Location, _a6 tailnet.PreauthKey) (node.PlatformIdentifier, error) {
-	ret := _m.Called(_a0, _a1, _a2, _a3, _a4, _a5, _a6)
+// CreateNode provides a mock function with given fields: _a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7
+func (_m *MockActivity_service) CreateNode(_a0 context.Context, _a1 provider.Identifier, _a2 tailnet.ControlServer, _a3 node.Identifier, _a4 tailnet.DeviceName, _a5 provider.Location, _a6 tailnet.PreauthKey, _a7 node.Size) (node.PlatformIdentifier, error) {
+	ret := _m.Called(_a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateNode")
@@ -87,17 +87,17 @@ func (_m *MockActivity_service) CreateNode(_a0 context.Context, _a1 provider.Ide
 
 	var r0 node.PlatformIdentifier
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, provider.Identifier, tailnet.ControlServer, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.PreauthKey) (node.PlatformIdentifier, error)); ok {
-		return rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6)
+	if rf, ok := ret.Get(0).(func(context.Context, provider.Identifier, tailnet.ControlServer, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.PreauthKey, node.Size) (node.PlatformIdentifier, error)); ok {
+		return rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, provider.Identifier, tailnet.ControlServer, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.PreauthKey) node.PlatformIdentifier); ok {
-		r0 = rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6)
+	if rf, ok := ret.Get(0).(func(context.Context, provider.Identifier, tailnet.ControlServer, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.PreauthKey, node.Size) node.PlatformIdentifier); ok {
+		r0 = rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7)
 	} else {
 		r0 = ret.Get(0).(node.PlatformIdentifier)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, provider.Identifier, tailnet.ControlServer, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.PreauthKey) error); ok {
-		r1 = rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6)
+	if rf, ok := ret.Get(1).(func(context.Context, provider.Identifier, tailnet.ControlServer, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.PreauthKey, node.Size) error); ok {
+		r1 = rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -118,13 +118,14 @@ type MockActivity_service_CreateNode_Call struct {
 //   - _a4 tailnet.DeviceName
 //   - _a5 provider.Location
 //   - _a6 tailnet.PreauthKey
-func (_e *MockActivity_service_Expecter) CreateNode(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 interface{}, _a4 interface{}, _a5 interface{}, _a6 interface{}) *MockActivity_service_CreateNode_Call {
-	return &MockActivity_service_CreateNode_Call{Call: _e.mock.On("CreateNode", _a0, _a1, _a2, _a3, _a4, _a5, _a6)}
+//   - _a7 node.Size
+func (_e *MockActivity_service_Expecter) CreateNode(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 interface{}, _a4 interface{}, _a5 interface{}, _a6 interface{}, _a7 interface{}) *MockActivity_service_CreateNode_Call {
+	return &MockActivity_service_CreateNode_Call{Call: _e.mock.On("CreateNode", _a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7)}
 }
 
-func (_c *MockActivity_service_CreateNode_Call) Run(run func(_a0 context.Context, _a1 provider.Identifier, _a2 tailnet.ControlServer, _a3 node.Identifier, _a4 tailnet.DeviceName, _a5 provider.Location, _a6 tailnet.PreauthKey)) *MockActivity_service_CreateNode_Call {
+func (_c *MockActivity_service_CreateNode_Call) Run(run func(_a0 context.Context, _a1 provider.Identifier, _a2 tailnet.ControlServer, _a3 node.Identifier, _a4 tailnet.DeviceName, _a5 provider.Location, _a6 tailnet.PreauthKey, _a7 node.Size)) *MockActivity_service_CreateNode_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(provider.Identifier), args[2].(tailnet.ControlServer), args[3].(node.Identifier), args[4].(tailnet.DeviceName), args[5].(provider.Location), args[6].(tailnet.PreauthKey))
+		run(args[0].(context.Context), args[1].(provider.Identifier), args[2].(tailnet.ControlServer), args[3].(node.Identifier), args[4].(tailnet.DeviceName), args[5].(provider.Location), args[6].(tailnet.PreauthKey), args[7].(node.Size))
 	})
 	return _c
 }
@@ -134,22 +135,22 @@ func (_c *MockActivity_service_CreateNode_Call) Return(_a0 node.PlatformIdentifi
 	return _c
 }
 
-func (_c *MockActivity_service_CreateNode_Call) RunAndReturn(run func(context.Context, provider.Identifier, tailnet.ControlServer, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.PreauthKey) (node.PlatformIdentifier, error)) *MockActivity_service_CreateNode_Call {
+func (_c *MockActivity_service_CreateNode_Call) RunAndReturn(run func(context.Context, provider.Identifier, tailnet.ControlServer, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.PreauthKey, node.Size) (node.PlatformIdentifier, error)) *MockActivity_service_CreateNode_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// CreateNodeRecord provides a mock function with given fields: _a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8, _a9
-func (_m *MockActivity_service) CreateNodeRecord(_a0 context.Context, _a1 node.Identifier, _a2 node.PlatformIdentifier, _a3 provider.Identifier, _a4 provider.Location, _a5 tailnet.PreauthKey, _a6 tailnet.Identifier, _a7 tailnet.DeviceIdentifier, _a8 tailnet.DeviceName, _a9 bool) error {
-	ret := _m.Called(_a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8, _a9)
+// CreateNodeRecord provides a mock function with given fields: _a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8, _a9, _a10
+func (_m *MockActivity_service) CreateNodeRecord(_a0 context.Context, _a1 node.Identifier, _a2 node.PlatformIdentifier, _a3 provider.Identifier, _a4 provider.Location, _a5 tailnet.PreauthKey, _a6 tailnet.Identifier, _a7 tailnet.DeviceIdentifier, _a8 tailnet.DeviceName, _a9 node.Size, _a10 bool) error {
+	ret := _m.Called(_a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8, _a9, _a10)
 
 	if len(ret) == 0 {
 		panic("no return value specified for CreateNodeRecord")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, node.Identifier, node.PlatformIdentifier, provider.Identifier, provider.Location, tailnet.PreauthKey, tailnet.Identifier, tailnet.DeviceIdentifier, tailnet.DeviceName, bool) error); ok {
-		r0 = rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8, _a9)
+	if rf, ok := ret.Get(0).(func(context.Context, node.Identifier, node.PlatformIdentifier, provider.Identifier, provider.Location, tailnet.PreauthKey, tailnet.Identifier, tailnet.DeviceIdentifier, tailnet.DeviceName, node.Size, bool) error); ok {
+		r0 = rf(_a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8, _a9, _a10)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -172,14 +173,15 @@ type MockActivity_service_CreateNodeRecord_Call struct {
 //   - _a6 tailnet.Identifier
 //   - _a7 tailnet.DeviceIdentifier
 //   - _a8 tailnet.DeviceName
-//   - _a9 bool
-func (_e *MockActivity_service_Expecter) CreateNodeRecord(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 interface{}, _a4 interface{}, _a5 interface{}, _a6 interface{}, _a7 interface{}, _a8 interface{}, _a9 interface{}) *MockActivity_service_CreateNodeRecord_Call {
-	return &MockActivity_service_CreateNodeRecord_Call{Call: _e.mock.On("CreateNodeRecord", _a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8, _a9)}
+//   - _a9 node.Size
+//   - _a10 bool
+func (_e *MockActivity_service_Expecter) CreateNodeRecord(_a0 interface{}, _a1 interface{}, _a2 interface{}, _a3 interface{}, _a4 interface{}, _a5 interface{}, _a6 interface{}, _a7 interface{}, _a8 interface{}, _a9 interface{}, _a10 interface{}) *MockActivity_service_CreateNodeRecord_Call {
+	return &MockActivity_service_CreateNodeRecord_Call{Call: _e.mock.On("CreateNodeRecord", _a0, _a1, _a2, _a3, _a4, _a5, _a6, _a7, _a8, _a9, _a10)}
 }
 
-func (_c *MockActivity_service_CreateNodeRecord_Call) Run(run func(_a0 context.Context, _a1 node.Identifier, _a2 node.PlatformIdentifier, _a3 provider.Identifier, _a4 provider.Location, _a5 tailnet.PreauthKey, _a6 tailnet.Identifier, _a7 tailnet.DeviceIdentifier, _a8 tailnet.DeviceName, _a9 bool)) *MockActivity_service_CreateNodeRecord_Call {
+func (_c *MockActivity_service_CreateNodeRecord_Call) Run(run func(_a0 context.Context, _a1 node.Identifier, _a2 node.PlatformIdentifier, _a3 provider.Identifier, _a4 provider.Location, _a5 tailnet.PreauthKey, _a6 tailnet.Identifier, _a7 tailnet.DeviceIdentifier, _a8 tailnet.DeviceName, _a9 node.Size, _a10 bool)) *MockActivity_service_CreateNodeRecord_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(node.Identifier), args[2].(node.PlatformIdentifier), args[3].(provider.Identifier), args[4].(provider.Location), args[5].(tailnet.PreauthKey), args[6].(tailnet.Identifier), args[7].(tailnet.DeviceIdentifier), args[8].(tailnet.DeviceName), args[9].(bool))
+		run(args[0].(context.Context), args[1].(node.Identifier), args[2].(node.PlatformIdentifier), args[3].(provider.Identifier), args[4].(provider.Location), args[5].(tailnet.PreauthKey), args[6].(tailnet.Identifier), args[7].(tailnet.DeviceIdentifier), args[8].(tailnet.DeviceName), args[9].(node.Size), args[10].(bool))
 	})
 	return _c
 }
@@ -189,7 +191,7 @@ func (_c *MockActivity_service_CreateNodeRecord_Call) Return(_a0 error) *MockAct
 	return _c
 }
 
-func (_c *MockActivity_service_CreateNodeRecord_Call) RunAndReturn(run func(context.Context, node.Identifier, node.PlatformIdentifier, provider.Identifier, provider.Location, tailnet.PreauthKey, tailnet.Identifier, tailnet.DeviceIdentifier, tailnet.DeviceName, bool) error) *MockActivity_service_CreateNodeRecord_Call {
+func (_c *MockActivity_service_CreateNodeRecord_Call) RunAndReturn(run func(context.Context, node.Identifier, node.PlatformIdentifier, provider.Identifier, provider.Location, tailnet.PreauthKey, tailnet.Identifier, tailnet.DeviceIdentifier, tailnet.DeviceName, node.Size, bool) error) *MockActivity_service_CreateNodeRecord_Call {
 	_c.Call.Return(run)
 	return _c
 }

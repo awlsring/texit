@@ -21,6 +21,7 @@ const (
 	AttributeLocation           = "location"
 	AttributePreauthKey         = "preauth_key"
 	AttributeEphemeral          = "ephemeral"
+	AttributeSize               = "size"
 	AttributeCreatedAt          = "created_at"
 	AttributeUpdatedAt          = "updated_at"
 )
@@ -35,6 +36,7 @@ type NodeDdbRecord struct {
 	Location           string    `dynamodbav:"location"`
 	PreauthKey         string    `dynamodbav:"preauth_key"`
 	Ephemeral          bool      `dynamodbav:"ephemeral"`
+	Size               string    `dynamodbav:"size"`
 	CreatedAt          time.Time `dynamodbav:"created_at"`
 	UpdatedAt          time.Time `dynamodbav:"updated_at"`
 }
@@ -50,6 +52,7 @@ func recordFromNode(e *node.Node) *NodeDdbRecord {
 		Location:           e.Location.String(),
 		PreauthKey:         e.PreauthKey.String(),
 		Ephemeral:          e.Ephemeral,
+		Size:               e.Size.String(),
 		CreatedAt:          e.CreatedAt,
 		UpdatedAt:          e.UpdatedAt,
 	}
@@ -68,6 +71,7 @@ func recordFromDdb(item map[string]types.AttributeValue) (*NodeDdbRecord, error)
 }
 
 func (n *NodeDdbRecord) ToNode() *node.Node {
+	size, _ := node.SizeFromString(n.Size)
 	return &node.Node{
 		Identifier:         node.Identifier(n.Identifier),
 		PlatformIdentifier: node.PlatformIdentifier(n.PlatformIdentifier),
@@ -77,6 +81,7 @@ func (n *NodeDdbRecord) ToNode() *node.Node {
 		TailnetName:        tailnet.DeviceName(n.TailnetName),
 		Location:           provider.Location(n.Location),
 		PreauthKey:         tailnet.PreauthKey(n.PreauthKey),
+		Size:               size,
 		Ephemeral:          n.Ephemeral,
 		CreatedAt:          n.CreatedAt,
 		UpdatedAt:          n.UpdatedAt,

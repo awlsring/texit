@@ -61,6 +61,7 @@ func TestNodeToSummary(t *testing.T) {
 		TailnetName:        tailnet.DeviceName("test-tailnet-name"),
 		TailnetIdentifier:  tailnet.DeviceIdentifier("test-tailnet-id"),
 		Ephemeral:          true,
+		Size:               node.SizeSmall,
 		CreatedAt:          time.Now(),
 		UpdatedAt:          time.Now(),
 	}
@@ -72,6 +73,7 @@ func TestNodeToSummary(t *testing.T) {
 		Tailnet:                 "test-tailnet",
 		TailnetDeviceName:       "test-tailnet-name",
 		TailnetDeviceIdentifier: "test-tailnet-id",
+		Size:                    texit.NodeSizeSmall,
 		Ephemeral:               true,
 		Created:                 float64(time.Now().Unix()),
 		Updated:                 float64(time.Now().Unix()),

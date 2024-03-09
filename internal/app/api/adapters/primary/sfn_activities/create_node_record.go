@@ -18,6 +18,7 @@ type CreateNodeRecordInput struct {
 	TailnetName       string `json:"tailnetName"`
 	TailnetIdentifier string `json:"tailnetDeviceId"`
 	TailnetDeviceName string `json:"tailnetDeviceName"`
+	Size              string `json:"size"`
 	Ephemeral         bool   `json:"ephemeral"`
 }
 
@@ -74,8 +75,14 @@ func (h *SfnActivityHandler) createNodeRecordActivity(ctx context.Context, input
 		return err
 	}
 
+	size, err := node.SizeFromString(input.Size)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse node size")
+		return err
+	}
+
 	log.Debug().Msg("Creating node record")
-	err = h.actSvc.CreateNodeRecord(ctx, nodeId, platformId, prov, location, key, tn, tid, dev, input.Ephemeral)
+	err = h.actSvc.CreateNodeRecord(ctx, nodeId, platformId, prov, location, key, tn, tid, dev, size, input.Ephemeral)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create node record")
 		return err

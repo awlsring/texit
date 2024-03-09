@@ -9,7 +9,9 @@ import (
 )
 
 const (
-	DefaultInstanceType = "g6-nanode-1"
+	DefaultSmallInstanceType  = "g6-nanode-1"
+	DefaultMediumInstanceType = "g6-standard-1"
+	DefaultLargeInstanceType  = "g6-standard-2"
 )
 
 type PlatformLinode struct {

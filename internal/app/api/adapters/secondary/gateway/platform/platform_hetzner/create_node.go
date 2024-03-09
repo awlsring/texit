@@ -13,29 +13,36 @@ import (
 )
 
 const (
-	DefaultUsServerType = "cpx11"
-	DefaultEuServerType = "cx11"
-	DefaultImage        = "debian-12"
+	DefaultSmallServerType  = "cpx11"
+	DefaultMediumServerType = "cpx21"
+	DefaultLargeServerType  = "cpx31"
+	DefaultImage            = "debian-12"
 )
 
-func selectServerTypeForLocation(loc provider.Location) string {
-	switch loc.String() {
-	case "ash", "hil":
-		return DefaultUsServerType
+func instanceSizeForNodeSize(size node.Size) string {
+	switch size {
+	case node.SizeSmall:
+		return DefaultSmallServerType
+	case node.SizeMedium:
+		return DefaultMediumServerType
+	case node.SizeLarge:
+		return DefaultLargeServerType
 	default:
-		return DefaultEuServerType
+		return DefaultSmallServerType
 	}
 }
 
-func (p *PlatformHetzner) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, loc provider.Location, tcs tailnet.ControlServer, key tailnet.PreauthKey) (node.PlatformIdentifier, error) {
+func (p *PlatformHetzner) CreateNode(ctx context.Context, id node.Identifier, tid tailnet.DeviceName, loc provider.Location, tcs tailnet.ControlServer, key tailnet.PreauthKey, size node.Size) (node.PlatformIdentifier, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating server")
+
+	instanceSize := instanceSizeForNodeSize(size)
 
 	log.Debug().Msg("calling create server")
 	res, _, err := p.client.Server.Create(ctx, hcloud.ServerCreateOpts{
 		Name: id.String(),
 		ServerType: &hcloud.ServerType{
-			Name: selectServerTypeForLocation(loc),
+			Name: instanceSize,
 		},
 		Image: &hcloud.Image{
 			Name: DefaultImage,
