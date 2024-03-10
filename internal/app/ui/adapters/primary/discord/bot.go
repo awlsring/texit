@@ -166,6 +166,11 @@ func (b *Bot) Init() error {
 		return err
 	}
 
+	// set commands
+	if err := b.tmpst.SyncCommands(nil, nil, false); err != nil {
+		return err
+	}
+	// set guild commands
 	if err := b.tmpst.SyncCommands(b.guildIds, nil, false); err != nil {
 		return err
 	}

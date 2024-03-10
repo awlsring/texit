@@ -37,8 +37,8 @@ func NewProvisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto f
 			{
 				Type:        tempest.STRING_OPTION_TYPE,
 				Name:        OptionNodeSize,
-				Description: "The size of the node to create",
-				Required:    true,
+				Description: "The size of the node to create. Defaults to small.",
+				Required:    false,
 				Choices: []tempest.Choice{
 					{
 						Name:  "small",
