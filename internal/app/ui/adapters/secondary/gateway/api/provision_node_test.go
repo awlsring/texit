@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -20,6 +21,7 @@ func TestApiGateway_ProvisionNode(t *testing.T) {
 	provId, _ := provider.IdentifierFromString("test-provider")
 	loc := provider.Location("us-east-1")
 	tnId, _ := tailnet.IdentifierFromString("test-tailnet")
+	sz := node.SizeSmall
 	eph := true
 
 	testExecutionId := workflow.ExecutionIdentifier("test-execution")
@@ -31,12 +33,13 @@ func TestApiGateway_ProvisionNode(t *testing.T) {
 			Provider:  provId.String(),
 			Location:  loc.String(),
 			Tailnet:   tnId.String(),
-			Ephemeral: texit.OptBool{},
+			Ephemeral: texit.NewOptBool(eph),
+			Size:      texit.NewOptNodeSize(texit.NodeSizeSmall),
 		}).Return(&texit.ProvisionNodeResponseContent{
 			Execution: testExecutionId.String(),
 		}, nil)
 
-		executionId, err := g.ProvisionNode(ctx, provId, loc, tnId, eph)
+		executionId, err := g.ProvisionNode(ctx, provId, loc, tnId, sz, eph)
 
 		assert.NoError(t, err)
 		assert.Equal(t, testExecutionId, executionId)
@@ -49,10 +52,11 @@ func TestApiGateway_ProvisionNode(t *testing.T) {
 			Provider:  provId.String(),
 			Location:  loc.String(),
 			Tailnet:   tnId.String(),
-			Ephemeral: texit.OptBool{},
+			Ephemeral: texit.NewOptBool(eph),
+			Size:      texit.NewOptNodeSize(texit.NodeSizeSmall),
 		}).Return(nil, errors.New("provision node failed"))
 
-		executionId, err := g.ProvisionNode(ctx, provId, loc, tnId, eph)
+		executionId, err := g.ProvisionNode(ctx, provId, loc, tnId, sz, eph)
 
 		assert.Error(t, err)
 		assert.ErrorIs(t, err, gateway.ErrInternalServerError)
@@ -66,12 +70,13 @@ func TestApiGateway_ProvisionNode(t *testing.T) {
 			Provider:  provId.String(),
 			Location:  loc.String(),
 			Tailnet:   tnId.String(),
-			Ephemeral: texit.OptBool{},
+			Ephemeral: texit.NewOptBool(eph),
+			Size:      texit.NewOptNodeSize(texit.NodeSizeSmall),
 		}).Return(&texit.ProvisionNodeResponseContent{
 			Execution: "",
 		}, nil)
 
-		executionId, err := g.ProvisionNode(ctx, provId, loc, tnId, eph)
+		executionId, err := g.ProvisionNode(ctx, provId, loc, tnId, sz, eph)
 
 		assert.Error(t, err)
 		assert.Equal(t, workflow.ExecutionIdentifier(""), executionId)

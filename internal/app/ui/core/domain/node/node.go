@@ -19,6 +19,7 @@ type Node struct {
 	TailnetName        tailnet.DeviceName
 	TailnetIdentifier  tailnet.DeviceIdentifier
 	Location           provider.Location
+	Size               node.Size
 	Ephemeral          bool
 	CreatedAt          time.Time
 	UpdatedAt          time.Time
@@ -36,6 +37,7 @@ func NewBaseNode(n *node.Node) *Node {
 		TailnetName:        n.TailnetName,
 		TailnetIdentifier:  n.TailnetIdentifier,
 		Location:           n.Location,
+		Size:               n.Size,
 		Ephemeral:          n.Ephemeral,
 		CreatedAt:          n.CreatedAt,
 		UpdatedAt:          n.UpdatedAt,

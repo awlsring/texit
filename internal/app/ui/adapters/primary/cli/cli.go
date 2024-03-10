@@ -84,6 +84,13 @@ func New(hdl *handler.Handler) *CLI {
 								Usage:    "The location to provision the node in",
 								Required: true,
 							},
+							&cli.StringFlag{
+								Name:        flag.NodeSize,
+								Aliases:     []string{"l"},
+								Usage:       "The size of the node to provision",
+								DefaultText: "small",
+								Required:    false,
+							},
 							&cli.BoolFlag{
 								Name:    flag.EphemeralNode,
 								Aliases: []string{"e"},

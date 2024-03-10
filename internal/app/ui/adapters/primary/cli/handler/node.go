@@ -84,7 +84,13 @@ func (h *Handler) ProvisionNode(c *cli.Context) error {
 		return e
 	}
 
-	exId, err := h.apiSvc.ProvisionNode(context.Background(), prov, location, tn, ephemeral)
+	size, err := node.SizeFromString(c.String(flag.NodeSize))
+	if err != nil {
+		e := errors.Wrap(err, "failed to parse node size")
+		return e
+	}
+
+	exId, err := h.apiSvc.ProvisionNode(context.Background(), prov, location, tn, size, ephemeral)
 	if err != nil {
 		return err
 	}

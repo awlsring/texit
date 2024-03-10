@@ -7,6 +7,7 @@ import (
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/command"
 	"github.com/awlsring/texit/internal/app/ui/adapters/primary/discord/context"
 	"github.com/awlsring/texit/internal/app/ui/ports/service"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/logger"
@@ -59,8 +60,20 @@ func (h *Handler) ProvisionNode(ctx *context.CommandContext) {
 		ephemeral = ephRaw.(bool)
 	}
 
+	sizeStr := "small"
+	sizeRaw, ok := ctx.GetOptionValue(command.OptionNodeSize)
+	if ok {
+		sizeStr = sizeRaw.(string)
+	}
+	size, err := node.SizeFromString(sizeStr)
+	if err != nil {
+		log.Error().Msg("Failed to read size from interaction")
+		_ = ctx.EditResponse("Please specify a valid node size.")
+		return
+	}
+
 	log.Debug().Msg("Calling provision node method")
-	exId, err := h.apiSvc.ProvisionNode(ctx, pr, pl, tn, ephemeral)
+	exId, err := h.apiSvc.ProvisionNode(ctx, pr, pl, tn, size, ephemeral)
 	if err != nil {
 		if errors.Is(err, service.ErrInvalidInputError) {
 			InvalidInputErrorResponse(ctx, err)

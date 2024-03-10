@@ -35,6 +35,26 @@ func NewProvisionNodeCommand(slash func(itx *tempest.CommandInteraction), auto f
 				AutoComplete: true,
 			},
 			{
+				Type:        tempest.STRING_OPTION_TYPE,
+				Name:        OptionNodeSize,
+				Description: "The size of the node to create",
+				Required:    true,
+				Choices: []tempest.Choice{
+					{
+						Name:  "small",
+						Value: "small",
+					},
+					{
+						Name:  "medium",
+						Value: "medium",
+					},
+					{
+						Name:  "large",
+						Value: "large",
+					},
+				},
+			},
+			{
 				Type:        tempest.BOOLEAN_OPTION_TYPE,
 				Name:        OptionEphemeral,
 				Description: "Whether the created exit node should be ephemeral or not. Defaults to false.",

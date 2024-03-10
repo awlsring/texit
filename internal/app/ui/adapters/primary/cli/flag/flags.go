@@ -2,6 +2,7 @@ package flag
 
 const (
 	NodeId           = "id"
+	NodeSize         = "size"
 	ProviderName     = "name"
 	Provider         = "provider"
 	ProviderLocation = "location"

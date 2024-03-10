@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/awlsring/texit/internal/app/ui/ports/gateway"
+	"github.com/awlsring/texit/internal/pkg/domain/node"
 	"github.com/awlsring/texit/internal/pkg/domain/provider"
 	"github.com/awlsring/texit/internal/pkg/domain/tailnet"
 	"github.com/awlsring/texit/internal/pkg/domain/workflow"
@@ -11,12 +12,26 @@ import (
 	"github.com/go-faster/errors"
 )
 
-func (g *ApiGateway) ProvisionNode(ctx context.Context, prov provider.Identifier, loc provider.Location, tn tailnet.Identifier, eph bool) (workflow.ExecutionIdentifier, error) {
+func setNodeSize(size node.Size) texit.OptNodeSize {
+	var s texit.NodeSize
+	switch size {
+	case node.SizeSmall:
+		s = texit.NodeSizeSmall
+	case node.SizeMedium:
+		s = texit.NodeSizeMedium
+	case node.SizeLarge:
+		s = texit.NodeSizeLarge
+	}
+	return texit.NewOptNodeSize(s)
+}
+
+func (g *ApiGateway) ProvisionNode(ctx context.Context, prov provider.Identifier, loc provider.Location, tn tailnet.Identifier, sz node.Size, eph bool) (workflow.ExecutionIdentifier, error) {
 	req := &texit.ProvisionNodeRequestContent{
 		Provider:  prov.String(),
 		Location:  loc.String(),
 		Tailnet:   tn.String(),
-		Ephemeral: texit.OptBool{},
+		Ephemeral: texit.NewOptBool(eph),
+		Size:      setNodeSize(sz),
 	}
 
 	resp, err := g.client.ProvisionNode(ctx, req)

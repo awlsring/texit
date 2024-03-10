@@ -82,6 +82,19 @@ func translateNodeStatus(s texit.NodeStatus) node.Status {
 	}
 }
 
+func translateNodeSize(s texit.NodeSize) node.Size {
+	switch s {
+	case texit.NodeSizeSmall:
+		return node.SizeSmall
+	case texit.NodeSizeMedium:
+		return node.SizeMedium
+	case texit.NodeSizeLarge:
+		return node.SizeLarge
+	default:
+		return node.SizeUnknown
+	}
+}
+
 func SummaryToNode(summary texit.NodeSummary) (*node.Node, error) {
 	nid, err := node.IdentifierFromString(summary.Identifier)
 	if err != nil {
@@ -123,6 +136,7 @@ func SummaryToNode(summary texit.NodeSummary) (*node.Node, error) {
 		Tailnet:            tailId,
 		TailnetIdentifier:  tailDevId,
 		TailnetName:        tailDevName,
+		Size:               translateNodeSize(summary.Size),
 		Ephemeral:          summary.Ephemeral,
 		CreatedAt:          float64ToTime(summary.Created),
 		UpdatedAt:          float64ToTime(summary.Updated),

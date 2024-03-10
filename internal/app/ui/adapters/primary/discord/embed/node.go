@@ -25,6 +25,19 @@ func statusToColor(status cnode.Status) uint32 {
 	}
 }
 
+func statusToEmoji(status cnode.Status) string {
+	switch status {
+	case cnode.StatusRunning:
+		return "🟢"
+	case cnode.StatusStarting, cnode.StatusStopping, cnode.StatusStopped:
+		return "🔴"
+	case cnode.StatusUnknown:
+		return "🟡"
+	default:
+		return "❓"
+	}
+}
+
 func NodeAsEmbed(n *node.Node) *tempest.Embed {
 	embedTitle := fmt.Sprintf("Node `%s` (`%s`)", n.Identifier.String(), n.TailnetName.String())
 
@@ -45,12 +58,22 @@ func NodeAsEmbed(n *node.Node) *tempest.Embed {
 	}
 	statusField := &tempest.EmbedField{
 		Name:   "Status",
-		Value:  n.Status.String(),
+		Value:  fmt.Sprintf("%s %s", statusToEmoji(n.Status), n.Status.String()),
+		Inline: true,
+	}
+	sizeField := &tempest.EmbedField{
+		Name:   "Size",
+		Value:  n.Size.String(),
 		Inline: true,
 	}
 	ephemeralField := &tempest.EmbedField{
 		Name:   "Ephemeral",
 		Value:  fmt.Sprintf("%t", n.Ephemeral),
+		Inline: true,
+	}
+	spacerField := &tempest.EmbedField{
+		Name:   "\u200b",
+		Value:  "\u200b",
 		Inline: true,
 	}
 
@@ -61,8 +84,14 @@ func NodeAsEmbed(n *node.Node) *tempest.Embed {
 			providerField,
 			tailnetField,
 			locationField,
+			spacerField,
 			statusField,
+			sizeField,
+			spacerField,
 			ephemeralField,
+		},
+		Footer: &tempest.EmbedFooter{
+			Text: fmt.Sprintf("Created at %s", n.CreatedAt.Format("2006-01-02 15:04:05")),
 		},
 	}
 }

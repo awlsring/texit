@@ -6,5 +6,6 @@ const (
 	OptionTailnetName      = "tailnet-name"
 	OptionExecutionId      = "execution-id"
 	OptionNodeId           = "node-id"
+	OptionNodeSize         = "size"
 	OptionEphemeral        = "ephemeral"
 )
