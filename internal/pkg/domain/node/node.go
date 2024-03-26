@@ -27,7 +27,11 @@ type Node struct {
 	// if the node will be deleted when stopped
 	Ephemeral bool
 	// the size of the node
-	Size      Size
+	Size Size
+	// The time the node was created
 	CreatedAt time.Time
+	// The time the node was last updated
 	UpdatedAt time.Time
+	// Creation Status
+	ProvisionStatus ProvisionStatus
 }

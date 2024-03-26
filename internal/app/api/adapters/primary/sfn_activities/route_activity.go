@@ -55,6 +55,13 @@ func (h *SfnActivityHandler) routeActivity(ctx context.Context, activity, input 
 		}
 		err = h.createNodeRecordActivity(ctx, in)
 		return nil, err
+	case "updateNodeRecord":
+		in, err := stringToInput[UpdateNodeRecordInput](input)
+		if err != nil {
+			return nil, err
+		}
+		err = h.updateNodeRecordActivity(ctx, in)
+		return nil, err
 	case "createPreauthKey":
 		in, err := stringToInput[CreatePreauthKeyInput](input)
 		if err != nil {

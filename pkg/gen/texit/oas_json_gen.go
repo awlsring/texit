@@ -1477,6 +1477,8 @@ func (s *NodeStatus) Decode(d *jx.Decoder) error {
 	}
 	// Try to use constant string.
 	switch NodeStatus(v) {
+	case NodeStatusPending:
+		*s = NodeStatusPending
 	case NodeStatusStarting:
 		*s = NodeStatusStarting
 	case NodeStatusRunning:
@@ -1541,11 +1543,11 @@ func (s *NodeSummary) encodeFields(e *jx.Encoder) {
 		e.Str(s.TailnetDeviceName)
 	}
 	{
-		e.FieldStart("TailnetDeviceIdentifier")
+		e.FieldStart("tailnetDeviceIdentifier")
 		e.Str(s.TailnetDeviceIdentifier)
 	}
 	{
-		e.FieldStart("Size")
+		e.FieldStart("size")
 		s.Size.Encode(e)
 	}
 	{
@@ -1560,20 +1562,25 @@ func (s *NodeSummary) encodeFields(e *jx.Encoder) {
 		e.FieldStart("updated")
 		e.Float64(s.Updated)
 	}
+	{
+		e.FieldStart("provisioningStatus")
+		s.ProvisioningStatus.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfNodeSummary = [11]string{
+var jsonFieldsNameOfNodeSummary = [12]string{
 	0:  "identifier",
 	1:  "provider",
 	2:  "location",
 	3:  "providerNodeIdentifier",
 	4:  "tailnet",
 	5:  "tailnetDeviceName",
-	6:  "TailnetDeviceIdentifier",
-	7:  "Size",
+	6:  "tailnetDeviceIdentifier",
+	7:  "size",
 	8:  "ephemeral",
 	9:  "created",
 	10: "updated",
+	11: "provisioningStatus",
 }
 
 // Decode decodes NodeSummary from json.
@@ -1657,7 +1664,7 @@ func (s *NodeSummary) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"tailnetDeviceName\"")
 			}
-		case "TailnetDeviceIdentifier":
+		case "tailnetDeviceIdentifier":
 			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := d.Str()
@@ -1667,9 +1674,9 @@ func (s *NodeSummary) Decode(d *jx.Decoder) error {
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"TailnetDeviceIdentifier\"")
+				return errors.Wrap(err, "decode field \"tailnetDeviceIdentifier\"")
 			}
-		case "Size":
+		case "size":
 			requiredBitSet[0] |= 1 << 7
 			if err := func() error {
 				if err := s.Size.Decode(d); err != nil {
@@ -1677,7 +1684,7 @@ func (s *NodeSummary) Decode(d *jx.Decoder) error {
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"Size\"")
+				return errors.Wrap(err, "decode field \"size\"")
 			}
 		case "ephemeral":
 			requiredBitSet[1] |= 1 << 0
@@ -1715,6 +1722,16 @@ func (s *NodeSummary) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"updated\"")
 			}
+		case "provisioningStatus":
+			requiredBitSet[1] |= 1 << 3
+			if err := func() error {
+				if err := s.ProvisioningStatus.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"provisioningStatus\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -1726,7 +1743,7 @@ func (s *NodeSummary) Decode(d *jx.Decoder) error {
 	var failures []validate.FieldError
 	for i, mask := range [2]uint8{
 		0b11111111,
-		0b00000111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2493,6 +2510,50 @@ func (s *ProvisionNodeResponseContent) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *ProvisionNodeResponseContent) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes ProvisioningStatus as json.
+func (s ProvisioningStatus) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes ProvisioningStatus from json.
+func (s *ProvisioningStatus) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode ProvisioningStatus to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch ProvisioningStatus(v) {
+	case ProvisioningStatusCreated:
+		*s = ProvisioningStatusCreated
+	case ProvisioningStatusCreating:
+		*s = ProvisioningStatusCreating
+	case ProvisioningStatusFailed:
+		*s = ProvisioningStatusFailed
+	case ProvisioningStatusUnknown:
+		*s = ProvisioningStatusUnknown
+	default:
+		*s = ProvisioningStatus(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s ProvisioningStatus) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *ProvisioningStatus) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

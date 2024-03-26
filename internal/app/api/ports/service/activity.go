@@ -15,7 +15,8 @@ var (
 )
 
 type Activity interface {
-	CreateNodeRecord(context.Context, node.Identifier, node.PlatformIdentifier, provider.Identifier, provider.Location, tailnet.PreauthKey, tailnet.Identifier, tailnet.DeviceIdentifier, tailnet.DeviceName, node.Size, bool) error
+	CreateNodeRecord(context.Context, node.Identifier, provider.Identifier, provider.Location, tailnet.Identifier, tailnet.DeviceName, node.Size, bool) (*node.Node, error)
+	UpdateNodeRecord(context.Context, *node.Node) error
 	CreateNode(context.Context, provider.Identifier, tailnet.ControlServer, node.Identifier, tailnet.DeviceName, provider.Location, tailnet.PreauthKey, node.Size) (node.PlatformIdentifier, error)
 	CreatePreauthKey(context.Context, tailnet.Identifier, bool) (tailnet.PreauthKey, error)
 	EnableExitNode(context.Context, tailnet.Identifier, tailnet.DeviceIdentifier) error

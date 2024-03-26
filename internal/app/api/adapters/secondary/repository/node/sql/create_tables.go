@@ -11,17 +11,18 @@ func (r *SqlNodeRepository) initTables(ctx context.Context) error {
 	nodeTable := `
 		CREATE TABLE IF NOT EXISTS nodes (
 			identifier TEXT PRIMARY KEY,
-			platform_identifier TEXT NOT NULL,
+			platform_identifier TEXT,
 			provider_identifier TEXT NOT NULL,
-			tailnet_identifier TEXT NOT NULL,
-			tailnet_device_name TEXT NOT NULL,
+			tailnet_identifier TEXT,
+			tailnet_device_name TEXT,
 			tailnet TEXT NOT NULL,
 			location TEXT NOT NULL,
 			preauth_key TEXT NOT NULL,
 			size TEXT NOT NULL,
 			ephemeral BOOLEAN NOT NULL,
 			created_at TIMESTAMP NOT NULL,
-			updated_at TIMESTAMP NOT NULL
+			updated_at TIMESTAMP NOT NULL,
+			provisioning_status TEXT NOT NULL
 		);`
 
 	log.Debug().Msg("creating nodes table")

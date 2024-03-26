@@ -68,12 +68,20 @@ func (w *Worker) provisionNodeWorkflow(ctx context.Context, input *workflow.Prov
 	tailName := tailnet.FormDeviceName(input.Location, id.String())
 	log.Debug().Msgf("New tailnet device name: %s", tailName)
 
+	log.Debug().Msg("Creating node in repository")
+	n, err := w.actSvc.CreateNodeRecord(ctx, id, provName, location, tn, tailName, size, input.Ephemeral)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to create node record")
+		return returnFailure(err, results)
+	}
+
 	log.Debug().Msg("Creating preauth key for node")
 	preauthKey, err := w.actSvc.CreatePreauthKey(ctx, tn, input.Ephemeral)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create preauth key")
 		return returnFailure(err, results)
 	}
+	n.PreauthKey = preauthKey
 
 	log.Debug().Msg("Creating node on platform")
 	platId, err := w.actSvc.CreateNode(ctx, provName, tcs, id, tailName, location, preauthKey, size)
@@ -81,6 +89,7 @@ func (w *Worker) provisionNodeWorkflow(ctx context.Context, input *workflow.Prov
 		log.Error().Err(err).Msg("Failed to create node")
 		return returnFailure(err, results)
 	}
+	n.PlatformIdentifier = platId
 
 	log.Debug().Msg("Getting the tailnet device id")
 	var tid tailnet.DeviceIdentifier
@@ -101,6 +110,7 @@ func (w *Worker) provisionNodeWorkflow(ctx context.Context, input *workflow.Prov
 			return returnFailure(err, results)
 		}
 	}
+	n.TailnetIdentifier = tid
 
 	log.Debug().Msg("Enabling as exit node")
 	err = w.actSvc.EnableExitNode(ctx, tn, tid)
@@ -109,8 +119,9 @@ func (w *Worker) provisionNodeWorkflow(ctx context.Context, input *workflow.Prov
 		return returnFailure(err, results)
 	}
 
+	n.ProvisionStatus = node.ProvisionStatusCreated
 	log.Debug().Msg("Creating node in repository")
-	err = w.actSvc.CreateNodeRecord(ctx, id, platId, provName, location, preauthKey, tn, tid, tailName, size, input.Ephemeral)
+	err = w.actSvc.UpdateNodeRecord(ctx, n)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create node record")
 		return returnFailure(err, results)

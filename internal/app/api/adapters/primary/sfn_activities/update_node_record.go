@@ -9,24 +9,33 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-type CreateNodeRecordInput struct {
+type UpdateNodeRecordInput struct {
 	NodeId            string `json:"nodeId"`
+	PlatformId        string `json:"platformId"`
 	ProviderName      string `json:"providerName"`
 	Location          string `json:"location"`
+	PreauthKey        string `json:"preauthKey"`
 	TailnetName       string `json:"tailnetName"`
+	TailnetIdentifier string `json:"tailnetDeviceId"`
 	TailnetDeviceName string `json:"tailnetDeviceName"`
 	Size              string `json:"size"`
 	Ephemeral         bool   `json:"ephemeral"`
 }
 
-func (h *SfnActivityHandler) createNodeRecordActivity(ctx context.Context, input *CreateNodeRecordInput) error {
+func (h *SfnActivityHandler) updateNodeRecordActivity(ctx context.Context, input *UpdateNodeRecordInput) error {
 	log := logger.FromContext(ctx)
-	log.Debug().Msg("Creating node record")
+	log.Debug().Msg("Updating node record")
 
 	log.Debug().Msg("Validating data")
 	nodeId, err := node.IdentifierFromString(input.NodeId)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse node id")
+		return err
+	}
+
+	platformId, err := node.PlatformIdentifierFromString(input.PlatformId)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse platform id")
 		return err
 	}
 
@@ -42,9 +51,21 @@ func (h *SfnActivityHandler) createNodeRecordActivity(ctx context.Context, input
 		return err
 	}
 
+	key, err := tailnet.PreauthKeyFromString(input.PreauthKey)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse preauth key")
+		return err
+	}
+
 	tn, err := tailnet.IdentifierFromString(input.TailnetName)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to parse tailnet name")
+		return err
+	}
+
+	tid, err := tailnet.DeviceIdentifierFromString(input.TailnetIdentifier)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to parse tailnet identifier")
 		return err
 	}
 
@@ -60,10 +81,24 @@ func (h *SfnActivityHandler) createNodeRecordActivity(ctx context.Context, input
 		return err
 	}
 
-	log.Debug().Msg("Creating node record")
-	_, err = h.actSvc.CreateNodeRecord(ctx, nodeId, prov, location, tn, dev, size, input.Ephemeral)
+	node := node.Node{
+		Identifier:         nodeId,
+		PlatformIdentifier: platformId,
+		Provider:           prov,
+		Tailnet:            tn,
+		TailnetIdentifier:  tid,
+		TailnetName:        dev,
+		Location:           location,
+		PreauthKey:         key,
+		Size:               size,
+		Ephemeral:          input.Ephemeral,
+		ProvisionStatus:    node.ProvisionStatusCreated,
+	}
+
+	log.Debug().Msg("Updating node record")
+	err = h.actSvc.UpdateNodeRecord(ctx, &node)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to create node record")
+		log.Error().Err(err).Msg("Failed to update node record")
 		return err
 	}
 

@@ -432,6 +432,8 @@ func (s NodeSize) Validate() error {
 
 func (s NodeStatus) Validate() error {
 	switch s {
+	case "pending":
+		return nil
 	case "starting":
 		return nil
 	case "running":
@@ -517,7 +519,7 @@ func (s *NodeSummary) Validate() error {
 		return nil
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
-			Name:  "Size",
+			Name:  "size",
 			Error: err,
 		})
 	}
@@ -540,6 +542,17 @@ func (s *NodeSummary) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "updated",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.ProvisioningStatus.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "provisioningStatus",
 			Error: err,
 		})
 	}
@@ -760,6 +773,21 @@ func (s *ProvisionNodeResponseContent) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+
+func (s ProvisioningStatus) Validate() error {
+	switch s {
+	case "created":
+		return nil
+	case "creating":
+		return nil
+	case "failed":
+		return nil
+	case "unknown":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
 }
 
 func (s *TailnetSummary) Validate() error {

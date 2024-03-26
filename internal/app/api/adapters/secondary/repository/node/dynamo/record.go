@@ -24,6 +24,7 @@ const (
 	AttributeSize               = "size"
 	AttributeCreatedAt          = "created_at"
 	AttributeUpdatedAt          = "updated_at"
+	AttributeProvisioningStatus = "provisioning_status"
 )
 
 type NodeDdbRecord struct {
@@ -39,6 +40,7 @@ type NodeDdbRecord struct {
 	Size               string    `dynamodbav:"size"`
 	CreatedAt          time.Time `dynamodbav:"created_at"`
 	UpdatedAt          time.Time `dynamodbav:"updated_at"`
+	ProvisioningStatus string    `dynamodbav:"provisioning_status"`
 }
 
 func recordFromNode(e *node.Node) *NodeDdbRecord {
@@ -55,6 +57,7 @@ func recordFromNode(e *node.Node) *NodeDdbRecord {
 		Size:               e.Size.String(),
 		CreatedAt:          e.CreatedAt,
 		UpdatedAt:          e.UpdatedAt,
+		ProvisioningStatus: e.ProvisionStatus.String(),
 	}
 }
 
@@ -72,6 +75,7 @@ func recordFromDdb(item map[string]types.AttributeValue) (*NodeDdbRecord, error)
 
 func (n *NodeDdbRecord) ToNode() *node.Node {
 	size, _ := node.SizeFromString(n.Size)
+	status, _ := node.ProvisionStatusFromString(n.ProvisioningStatus)
 	return &node.Node{
 		Identifier:         node.Identifier(n.Identifier),
 		PlatformIdentifier: node.PlatformIdentifier(n.PlatformIdentifier),
@@ -85,5 +89,6 @@ func (n *NodeDdbRecord) ToNode() *node.Node {
 		Ephemeral:          n.Ephemeral,
 		CreatedAt:          n.CreatedAt,
 		UpdatedAt:          n.UpdatedAt,
+		ProvisionStatus:    status,
 	}
 }

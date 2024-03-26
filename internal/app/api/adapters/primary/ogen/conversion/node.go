@@ -15,8 +15,23 @@ func TranslateNodeStatus(s node.Status) texit.NodeStatus {
 		return texit.NodeStatusStopping
 	case node.StatusStopped:
 		return texit.NodeStatusStopped
+	case node.StatusPending:
+		return texit.NodeStatusPending
 	default:
 		return texit.NodeStatusUnknown
+	}
+}
+
+func TranslateNodeProvisioningStatus(s node.ProvisionStatus) texit.ProvisioningStatus {
+	switch s {
+	case node.ProvisionStatusCreated:
+		return texit.ProvisioningStatusCreated
+	case node.ProvisionStatusCreating:
+		return texit.ProvisioningStatusCreating
+	case node.ProvisionStatusFailed:
+		return texit.ProvisioningStatusFailed
+	default:
+		return texit.ProvisioningStatusUnknown
 	}
 }
 
@@ -46,5 +61,6 @@ func NodeToSummary(n *node.Node) texit.NodeSummary {
 		Size:                    TranslateNodeSize(n.Size),
 		Created:                 float64(n.CreatedAt.Unix()),
 		Updated:                 float64(n.UpdatedAt.Unix()),
+		ProvisioningStatus:      TranslateNodeProvisioningStatus(n.ProvisionStatus),
 	}
 }

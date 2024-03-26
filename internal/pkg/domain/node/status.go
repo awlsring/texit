@@ -14,6 +14,7 @@ const (
 	StatusStarting
 	StatusStopping
 	StatusStopped
+	StatusPending
 )
 
 var (
@@ -30,6 +31,8 @@ func (s Status) String() string {
 		return "stopping"
 	case StatusStopped:
 		return "stopped"
+	case StatusPending:
+		return "pending"
 	default:
 		return "unknown"
 	}
@@ -45,6 +48,8 @@ func StatusFromString(s string) (Status, error) {
 		return StatusStopping, nil
 	case "stopped":
 		return StatusStopped, nil
+	case "pending":
+		return StatusPending, nil
 	default:
 		return StatusUnknown, ErrUnknownStatus
 	}

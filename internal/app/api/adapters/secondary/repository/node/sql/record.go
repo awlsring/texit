@@ -21,10 +21,12 @@ type NodeSqlRecord struct {
 	Size               string    `db:"size"`
 	CreatedAt          time.Time `db:"created_at"`
 	UpdatedAt          time.Time `db:"updated_at"`
+	ProvisioningStatus string    `db:"provisioning_status"`
 }
 
 func (n *NodeSqlRecord) ToNode() *node.Node {
 	s, _ := node.SizeFromString(n.Size)
+	status, _ := node.ProvisionStatusFromString(n.ProvisioningStatus)
 	return &node.Node{
 		Identifier:         node.Identifier(n.Identifier),
 		PlatformIdentifier: node.PlatformIdentifier(n.PlatformIdentifier),
@@ -38,5 +40,6 @@ func (n *NodeSqlRecord) ToNode() *node.Node {
 		Size:               s,
 		CreatedAt:          n.CreatedAt,
 		UpdatedAt:          n.UpdatedAt,
+		ProvisionStatus:    status,
 	}
 }

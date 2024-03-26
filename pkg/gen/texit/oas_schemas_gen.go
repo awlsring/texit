@@ -406,6 +406,7 @@ func (s *NodeSize) UnmarshalText(data []byte) error {
 type NodeStatus string
 
 const (
+	NodeStatusPending  NodeStatus = "pending"
 	NodeStatusStarting NodeStatus = "starting"
 	NodeStatusRunning  NodeStatus = "running"
 	NodeStatusStopping NodeStatus = "stopping"
@@ -416,6 +417,7 @@ const (
 // AllValues returns all NodeStatus values.
 func (NodeStatus) AllValues() []NodeStatus {
 	return []NodeStatus{
+		NodeStatusPending,
 		NodeStatusStarting,
 		NodeStatusRunning,
 		NodeStatusStopping,
@@ -427,6 +429,8 @@ func (NodeStatus) AllValues() []NodeStatus {
 // MarshalText implements encoding.TextMarshaler.
 func (s NodeStatus) MarshalText() ([]byte, error) {
 	switch s {
+	case NodeStatusPending:
+		return []byte(s), nil
 	case NodeStatusStarting:
 		return []byte(s), nil
 	case NodeStatusRunning:
@@ -445,6 +449,9 @@ func (s NodeStatus) MarshalText() ([]byte, error) {
 // UnmarshalText implements encoding.TextUnmarshaler.
 func (s *NodeStatus) UnmarshalText(data []byte) error {
 	switch NodeStatus(data) {
+	case NodeStatusPending:
+		*s = NodeStatusPending
+		return nil
 	case NodeStatusStarting:
 		*s = NodeStatusStarting
 		return nil
@@ -480,14 +487,15 @@ type NodeSummary struct {
 	// The name of a tailnet device.
 	TailnetDeviceName string `json:"tailnetDeviceName"`
 	// The identifier of a tailnet device.
-	TailnetDeviceIdentifier string   `json:"TailnetDeviceIdentifier"`
-	Size                    NodeSize `json:"Size"`
+	TailnetDeviceIdentifier string   `json:"tailnetDeviceIdentifier"`
+	Size                    NodeSize `json:"size"`
 	// If a node is ephemeral.
 	Ephemeral bool `json:"ephemeral"`
 	// When a node was created.
 	Created float64 `json:"created"`
 	// When a node was last updated.
-	Updated float64 `json:"updated"`
+	Updated            float64            `json:"updated"`
+	ProvisioningStatus ProvisioningStatus `json:"provisioningStatus"`
 }
 
 // GetIdentifier returns the value of Identifier.
@@ -545,6 +553,11 @@ func (s *NodeSummary) GetUpdated() float64 {
 	return s.Updated
 }
 
+// GetProvisioningStatus returns the value of ProvisioningStatus.
+func (s *NodeSummary) GetProvisioningStatus() ProvisioningStatus {
+	return s.ProvisioningStatus
+}
+
 // SetIdentifier sets the value of Identifier.
 func (s *NodeSummary) SetIdentifier(val string) {
 	s.Identifier = val
@@ -598,6 +611,11 @@ func (s *NodeSummary) SetCreated(val float64) {
 // SetUpdated sets the value of Updated.
 func (s *NodeSummary) SetUpdated(val float64) {
 	s.Updated = val
+}
+
+// SetProvisioningStatus sets the value of ProvisioningStatus.
+func (s *NodeSummary) SetProvisioningStatus(val ProvisioningStatus) {
+	s.ProvisioningStatus = val
 }
 
 // Ref: #/components/schemas/NotifierSummary
@@ -1044,6 +1062,63 @@ func (s *ProvisionNodeResponseContent) SetExecution(val string) {
 }
 
 func (*ProvisionNodeResponseContent) provisionNodeRes() {}
+
+// The provisioning status of a node.
+// Ref: #/components/schemas/ProvisioningStatus
+type ProvisioningStatus string
+
+const (
+	ProvisioningStatusCreated  ProvisioningStatus = "created"
+	ProvisioningStatusCreating ProvisioningStatus = "creating"
+	ProvisioningStatusFailed   ProvisioningStatus = "failed"
+	ProvisioningStatusUnknown  ProvisioningStatus = "unknown"
+)
+
+// AllValues returns all ProvisioningStatus values.
+func (ProvisioningStatus) AllValues() []ProvisioningStatus {
+	return []ProvisioningStatus{
+		ProvisioningStatusCreated,
+		ProvisioningStatusCreating,
+		ProvisioningStatusFailed,
+		ProvisioningStatusUnknown,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s ProvisioningStatus) MarshalText() ([]byte, error) {
+	switch s {
+	case ProvisioningStatusCreated:
+		return []byte(s), nil
+	case ProvisioningStatusCreating:
+		return []byte(s), nil
+	case ProvisioningStatusFailed:
+		return []byte(s), nil
+	case ProvisioningStatusUnknown:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *ProvisioningStatus) UnmarshalText(data []byte) error {
+	switch ProvisioningStatus(data) {
+	case ProvisioningStatusCreated:
+		*s = ProvisioningStatusCreated
+		return nil
+	case ProvisioningStatusCreating:
+		*s = ProvisioningStatusCreating
+		return nil
+	case ProvisioningStatusFailed:
+		*s = ProvisioningStatusFailed
+		return nil
+	case ProvisioningStatusUnknown:
+		*s = ProvisioningStatusUnknown
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
 
 // Ref: #/components/schemas/ResourceNotFoundErrorResponseContent
 type ResourceNotFoundErrorResponseContent struct {

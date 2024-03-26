@@ -17,10 +17,19 @@ resource Node {
 
 @documentation("The status of a node.")
 enum NodeStatus {
+    PENDING = "pending"
     STARTING = "starting"
     RUNNING = "running"
     STOPPING = "stopping"
     STOPPED = "stopped"
+    UNKNOWN = "unknown"
+}
+
+@documentation("The provisioning status of a node.")
+enum ProvisioningStatus {
+    CREATED = "created"
+    CREATING = "creating"
+    FAILED = "failed"
     UNKNOWN = "unknown"
 }
 
@@ -52,10 +61,10 @@ structure NodeSummary {
     tailnetDeviceName: TailnetDeviceName
 
     @required
-    TailnetDeviceIdentifier: TailnetDeviceIdentifier
+    tailnetDeviceIdentifier: TailnetDeviceIdentifier
 
     @required
-    Size: NodeSize
+    size: NodeSize
 
     @required
     @documentation("If a node is ephemeral.")
@@ -68,6 +77,9 @@ structure NodeSummary {
     @required
     @documentation("When a node was last updated.")
     updated: Timestamp
+
+    @required
+    provisioningStatus: ProvisioningStatus
 }
 
 list NodeSummaries {

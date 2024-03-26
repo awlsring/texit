@@ -13,31 +13,45 @@ import (
 	"github.com/awlsring/texit/internal/pkg/logger"
 )
 
-func (s *Service) CreateNodeRecord(ctx context.Context, nid node.Identifier, pid node.PlatformIdentifier, p provider.Identifier, l provider.Location, pk tailnet.PreauthKey, t tailnet.Identifier, tid tailnet.DeviceIdentifier, tn tailnet.DeviceName, si node.Size, e bool) error {
+func (s *Service) CreateNodeRecord(ctx context.Context, nid node.Identifier, p provider.Identifier, l provider.Location, t tailnet.Identifier, tn tailnet.DeviceName, si node.Size, e bool) (*node.Node, error) {
 	log := logger.FromContext(ctx)
 	log.Debug().Msg("Creating node record")
 
 	now := time.Now()
 
 	n := &node.Node{
-		Identifier:         nid,
-		PlatformIdentifier: pid,
-		Provider:           p,
-		Location:           l,
-		PreauthKey:         pk,
-		Tailnet:            t,
-		TailnetIdentifier:  tid,
-		TailnetName:        tn,
-		Size:               si,
-		Ephemeral:          e,
-		CreatedAt:          now,
-		UpdatedAt:          now,
+		Identifier:      nid,
+		Provider:        p,
+		Location:        l,
+		Tailnet:         t,
+		TailnetName:     tn,
+		Size:            si,
+		Ephemeral:       e,
+		CreatedAt:       now,
+		UpdatedAt:       now,
+		ProvisionStatus: node.ProvisionStatusCreating,
 	}
 
 	log.Debug().Msg("Creating node record")
 	err := s.nodeRepo.Create(ctx, n)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to create node record")
+		return nil, err
+	}
+
+	return n, nil
+}
+
+func (s *Service) UpdateNodeRecord(ctx context.Context, n *node.Node) error {
+	log := logger.FromContext(ctx)
+	log.Debug().Msg("Updating node record")
+
+	now := time.Now()
+	n.UpdatedAt = now
+
+	err := s.nodeRepo.Update(ctx, n)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to update node record")
 		return err
 	}
 

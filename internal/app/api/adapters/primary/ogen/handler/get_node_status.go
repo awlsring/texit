@@ -20,15 +20,31 @@ func (h *Handler) GetNodeStatus(ctx context.Context, req texit.GetNodeStatusPara
 		return nil, err
 	}
 
-	log.Debug().Msg("Getting node status")
-	status, err := h.nodeSvc.Status(ctx, id)
+	n, err := h.nodeSvc.Describe(ctx, id)
 	if err != nil {
-		log.Error().Err(err).Msg("Failed to get node status")
+		log.Error().Err(err).Msg("Failed to get node")
 		return nil, err
 	}
 
-	log.Debug().Msg("Successfully got node status")
+	var status texit.NodeStatus
+	switch n.ProvisionStatus {
+	case node.ProvisionStatusCreated:
+		log.Debug().Msg("Getting node status")
+		st, err := h.nodeSvc.Status(ctx, id)
+		if err != nil {
+			log.Error().Err(err).Msg("Failed to get node status")
+			return nil, err
+		}
+		status = conversion.TranslateNodeStatus(st)
+	case node.ProvisionStatusCreating:
+		log.Debug().Msg("Node is still being created")
+		status = texit.NodeStatusPending
+	default:
+		log.Debug().Msg("Node is not created")
+		status = texit.NodeStatusUnknown
+	}
+
 	return &texit.GetNodeStatusResponseContent{
-		Status: conversion.TranslateNodeStatus(status),
+		Status: status,
 	}, nil
 }
