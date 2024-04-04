@@ -40,7 +40,7 @@ func (h *Handler) GetNodeStatus(ctx context.Context, req texit.GetNodeStatusPara
 		log.Debug().Msg("Node is still being created")
 		status = texit.NodeStatusPending
 	default:
-		log.Debug().Msg("Node is not created")
+		log.Debug().Msg("Node status is unknown")
 		status = texit.NodeStatusUnknown
 	}
 

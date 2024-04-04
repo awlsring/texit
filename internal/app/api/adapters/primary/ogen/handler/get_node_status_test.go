@@ -22,8 +22,13 @@ func TestGetNodeStatus(t *testing.T) {
 	h := New(mockNodeSvc, nil, nil, nil, nil, nil)
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
+	mockNode := node.Node{
+		Identifier:      nodeId,
+		ProvisionStatus: node.ProvisionStatusCreated,
+	}
 	testStatus := node.StatusRunning
 
+	mockNodeSvc.EXPECT().Describe(ctx, nodeId).Return(&mockNode, nil)
 	mockNodeSvc.EXPECT().Status(ctx, nodeId).Return(testStatus, nil)
 
 	res, err := h.GetNodeStatus(ctx, req)
@@ -59,7 +64,7 @@ func TestGetNodeStatusError(t *testing.T) {
 
 	nodeId, _ := node.IdentifierFromString(req.Identifier)
 
-	mockNodeSvc.EXPECT().Status(ctx, nodeId).Return(node.StatusUnknown, errors.New("test error"))
+	mockNodeSvc.EXPECT().Describe(ctx, nodeId).Return(nil, errors.New("test error"))
 
 	res, err := h.GetNodeStatus(ctx, req)
 

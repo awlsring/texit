@@ -64,6 +64,7 @@ func TestNodeToSummary(t *testing.T) {
 		Size:               node.SizeSmall,
 		CreatedAt:          time.Now(),
 		UpdatedAt:          time.Now(),
+		ProvisionStatus:    node.ProvisionStatusCreated,
 	}
 	summary := texit.NodeSummary{
 		Identifier:              "test-id",
@@ -75,6 +76,7 @@ func TestNodeToSummary(t *testing.T) {
 		TailnetDeviceIdentifier: "test-tailnet-id",
 		Size:                    texit.NodeSizeSmall,
 		Ephemeral:               true,
+		ProvisioningStatus:      texit.ProvisioningStatusCreated,
 		Created:                 float64(time.Now().Unix()),
 		Updated:                 float64(time.Now().Unix()),
 	}
